@@ -122,7 +122,7 @@ public class SwingView extends JFrame implements GameView {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (startButtonListener != null) {
-                    startButtonListener.onStartButtonClicked();
+                    new SwingPlayScreen(getSelectedPlayerCount(), getSelectedPieceCount(), getSelectedBoardType());
                 }
             }
         });
