@@ -1,19 +1,19 @@
 package controller;
 
 import model.BoardType;
-import model.Model;
+import model.GameManager;
 import model.StartInfo;
 import view.GameView;
 
 public class StartScreenController {
 
     private GameView view;
-    private Model model;
+    private GameManager gameManger;
 
-    // 생성자
-    public StartScreenController(GameView view, Model model) {
+    // 생성자 (메인 함수에서 넣어주겠죠?)
+    public StartScreenController(GameView view, GameManager gameManager) {
         this.view = view;
-        this.model = model;
+        this.gameManger = gameManager;
 
         initController();
     }
@@ -40,10 +40,10 @@ public class StartScreenController {
         BoardType boardType = view.getSelectedBoardType();
 
         // 사용자 입력에 대해 유효성 검사 진행
-        if (model.validate(playerCount, pieceCount, boardType)) {
+        if (gameManger.validate(playerCount, pieceCount, boardType)) {
 
             StartInfo startInfo = new StartInfo(playerCount, pieceCount, boardType);
-            model.setStartInfo(startInfo);
+            gameManger.setStartInfo(startInfo);
 
             // 모델에 정보 제대로 담겼는지 확인
             check();
@@ -58,7 +58,7 @@ public class StartScreenController {
         // 게임 설정하는 화면 닫고
         view.close();
         // model 에 게임 설정 정보가 제대로 담겼는지 확인
-        model.test();
+        gameManger.test();
     }
 
     // getter
@@ -66,7 +66,8 @@ public class StartScreenController {
         return view;
     }
 
-    public Model getModel() {
-        return model;
+    // getter
+    public GameManager getModel() {
+        return gameManger;
     }
 }
