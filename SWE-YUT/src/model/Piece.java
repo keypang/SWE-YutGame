@@ -5,10 +5,12 @@ public class Piece {
     private Cell startCell;
     private Cell priorCell;
     private boolean finished;
+    private Player player;
 
-    public Piece(int id, boolean finished){
+    public Piece(int id, boolean finished, Player player) {
         this.id = id;
         this.finished = finished;
+        this.player = player;
     }
 
     public void setStartCell(Cell startCell) {

@@ -12,7 +12,7 @@ public class Player {
 
     private void makePiece(int pieceNum) {
         for(int i = 0; i < pieceNum; i++) {
-            pieces[i] = new Piece(i,false);
+            pieces[i] = new Piece(i,false, this);
         }
     }
 
