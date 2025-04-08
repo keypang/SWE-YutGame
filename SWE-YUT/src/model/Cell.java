@@ -50,4 +50,16 @@ public class Cell {
     public void addPiece(Piece piece){
         this.pieces.add(piece);
     }
+
+    public Cell getPreviousCellWithMinId() {
+        if (previousCells.isEmpty()) return null;
+
+        Cell minCell = previousCells.get(0);
+        for (Cell cell : previousCells) {
+            if (cell.getId() < minCell.getId()) {
+                minCell = cell;
+            }
+        }
+        return minCell;
+    }
 }

@@ -16,8 +16,13 @@ public class Main {
         Scanner in = new Scanner(System.in);
         System.out.println("숫자 입력");
         int test = in.nextInt();
-        while(test > -1){
-            board.movePiecePositive(player1.getPieces(0),test);
+        while(test > -100){
+            if(test > 0) {
+                board.movePiecePositive(player1.getPieces(0),test);
+            }
+            else {
+                board.movePieceNegative(player1.getPieces(0));
+            }
 
             for(int i = 0; i < 31; i++){
                 Cell testCell = board.getCell(i);

@@ -21,6 +21,10 @@ public class Piece {
         this.finished = finished;
     }
 
+    public void setPriorCell(Cell priorCell) { this.priorCell = priorCell; }
+
+    public Cell getPriorCell() { return priorCell; }
+
     public Cell getStartCell() {
         return startCell;
     }

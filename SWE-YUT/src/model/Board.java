@@ -114,8 +114,12 @@ public class Board {
     public void movePiecePositive(Piece piece, int move) {
         Cell current = piece.getStartCell();
         Cell startAt = piece.getStartCell();
+        Cell priorCell = piece.getStartCell();
         for(int i = 0; i < move; i++) {
             List<Cell> nextList = current.getNextCells();
+
+            priorCell = current;
+
             if (nextList.isEmpty()) break;
 
             if(current.getType().equals("갈림길")) {
@@ -141,20 +145,38 @@ public class Board {
             }
             System.out.println(current.getType()+"/"+current.getId());
         }
+
+        piece.setPriorCell(priorCell);
+
         piece.setStartCell(current);
     }
 
-    private void movePieceNegative(Piece piece) {
+    public void movePieceNegative(Piece piece) {
         Cell current = piece.getStartCell();
+
+        System.out.println(piece.getPriorCell().getId());
+
         if(current.getPreviousCells().size() == 1) {
-             
+             current = current.getPreviousCells().getFirst();
         }
         else if(current.getPreviousCells().size() >= 2) {
+            for(Cell cell : current.getPreviousCells()) {
+                if(cell.getId() == piece.getPriorCell().getId()) {
+                    current = cell;
+                    break;
+                }
+                else {
+                    current = current.getPreviousCellWithMinId();
+                    break;
+                }
+            }
 
         }
         else {
             // 백도 불가
         }
+        System.out.println(current.getType()+"/"+current.getId());
+        piece.setStartCell(current);
     }
 
     public Cell getCell(int i) {
