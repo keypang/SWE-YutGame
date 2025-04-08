@@ -37,6 +37,8 @@ public class Cell {
         return nextCells;
     }
 
+    public List<Cell> getPreviousCells() { return previousCells; }
+
     public int getId() {
         return id;
     }
