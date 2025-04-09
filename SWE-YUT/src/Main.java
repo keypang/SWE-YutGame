@@ -8,7 +8,7 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        /*Player player1 = new Player(1,4);
+        Player player1 = new Player(1,4);
         ArrayList<Player> players = new ArrayList<>();
         players.add(player1);
         Board board = new Board(players,BoardType.HEXAGON);
@@ -34,10 +34,10 @@ public class Main {
 
             System.out.println("숫자 입력");
             test = in.nextInt();
-        }*/
-        GameManager gameManager = new GameManager();
+        }
+/*        GameManager gameManager = new GameManager();
         GameView view = new SwingView();
-        StartScreenController controller = new StartScreenController(view, gameManager);
+        StartScreenController controller = new StartScreenController(view, gameManager);*/
 
     }
 }

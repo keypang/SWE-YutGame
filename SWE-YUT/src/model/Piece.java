@@ -11,6 +11,8 @@ public class Piece {
         this.id = id;
         this.finished = finished;
         this.player = player;
+
+        this.priorCell = new Cell(-1,"임시", -1);
     }
 
     public void setStartCell(Cell startCell) {

@@ -173,6 +173,7 @@ public class Board {
 
         }
         else {
+            System.out.println("백도 불가");
             // 백도 불가
         }
         System.out.println(current.getType()+"/"+current.getId());
