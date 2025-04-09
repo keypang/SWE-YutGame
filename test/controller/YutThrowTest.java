@@ -3,8 +3,8 @@ package controller;
 import model.GameManager;
 import model.YutResult;
 import org.junit.jupiter.api.Test;
-import view.GameView;
-import view.SwingView;
+import view.GameConfigView;
+import view.SwingConfigScreen;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -13,7 +13,7 @@ public class YutThrowTest {
     @Test
     void testyutthrow(){
         GameManager gameManager = new GameManager();
-        GameView view = new SwingView();
+        GameConfigView view = new SwingConfigScreen();
         GameScreenController gameScreenController = new GameScreenController(view, gameManager);
 
         YutResult result = gameScreenController.RandomYutThrow();

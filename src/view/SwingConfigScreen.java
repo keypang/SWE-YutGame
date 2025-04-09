@@ -7,7 +7,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class SwingView extends JFrame implements GameView {
+public class SwingConfigScreen extends JFrame implements GameConfigView {
 
     private JComboBox<Integer> playerCountCombo;
     private JComboBox<Integer> pieceCountCombo;
@@ -37,7 +37,7 @@ public class SwingView extends JFrame implements GameView {
      *
      */
 
-    public SwingView() {
+    public SwingConfigScreen() {
         super("게임 설정");
         initUI();
     }
@@ -123,18 +123,10 @@ public class SwingView extends JFrame implements GameView {
             public void actionPerformed(ActionEvent e) {
                 if (startButtonListener != null) {
                     startButtonListener.onStartButtonClicked();
-                    new SwingPlayScreen(getSelectedPlayerCount(), getSelectedPieceCount(), getSelectedBoardType());
                 }
             }
         });
 
-
-//        // 아래 방식으로 리팩토링 가능
-//        startButton.addActionListener(e-> {
-//                if (startButtonListener != null) {
-//                    startButtonListener.onStartButtonClicked();
-//                }
-//        });
 
         gbc.gridy = 4;
         gbc.gridwidth = 3;

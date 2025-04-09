@@ -3,16 +3,31 @@ package controller;
 import model.GameManager;
 import model.Yut;
 import model.YutResult;
-import view.GameView;
+import view.GamePlayView;
 
 public class GameScreenController {
-    private GameView gameView;
+    private GamePlayView gameView;
     private GameManager gameManager;
     private Yut yut;
 
-    public GameScreenController(GameView gameView, GameManager model){
+    public GameScreenController(GamePlayView gameView, GameManager model){
         this.gameView = gameView;
         this.gameManager = model;
+
+        initController();
+    }
+
+
+    // 컨트롤러 초기화
+    private void initController() {
+
+        gameView.setThrowButtonListener(new GamePlayView.ThrowButtonListener(){
+            @Override
+            public YutResult onThrowButtonClicked() {
+                return RandomYutThrow();
+            }
+        });
+
     }
 
     // 랜덤 윷 던지는 버튼을 눌렀을 때
@@ -20,13 +35,15 @@ public class GameScreenController {
         // View로 부터 정보를 어떻게 받아오겠죠?
         YutResult yutResult = gameManager.throwYut();
         return yutResult;
+
     }
 
     // 지정 윷 던지는 버튼을 눌렀을 때
-    public YutResult FixedYutThrow(String getresult){
+    public YutResult  FixedYutThrow(String getresult){
         // View로 부터 정보를 어떻게 받아오겠죠?
         YutResult yutResult = gameManager.throwFixedYut(getresult);
         return yutResult;
+
     }
 
     // 윷 굴리기 이전 초기상태 설정 (턴 넘어 갔을 때)
