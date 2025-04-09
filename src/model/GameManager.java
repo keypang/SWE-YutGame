@@ -6,7 +6,7 @@ public class GameManager {
     private StartInfo startInfo;
     private Board board;
     private Yut yut;
-    private int currentplayer = 1;
+    private int currentPlayer = 1;
     private boolean extraTurn = false;
     ArrayList<Player> players = new ArrayList<>();
     ArrayList<YutResult> yutresults = new ArrayList<>();
@@ -56,16 +56,18 @@ public class GameManager {
         System.out.println("Board: " + startInfo.getBoardType());
     }
 
-    public void checkPlayer() {
-        // 리스트에 값이 들어있는지 확인 + 추가 턴 여부 확인
+    public int checkPlayer() {
+        // 윷 리스트에 값이 들어있는지 + 추가 턴 여부 확인
         // 있으면 currentplayer값 변경 x
         // 없으면 currentplayer값 1 증가시키는데 4를 넘어가는 값이면 다시 1로 변환
-        if(yutresults.isEmpty() && extraTurn==false) {
-            currentplayer++;
-            if (currentplayer > 4) {
-                currentplayer = 1;
+        if(yutresults.isEmpty() && extraTurn == false) {
+            currentPlayer++;
+            if(currentPlayer > startInfo.getPlayerCount()) {
+                currentPlayer = 1;  // 전체 수 넘어가면 다시 1번으로
             }
         }
+
+        return currentPlayer;
     }
 
     // 윷 결과가 남아있는지 판단
@@ -103,7 +105,7 @@ public class GameManager {
         // 들어온 값을 찾아서 리스트에서 없애야지
         for (YutResult result : yutresults) {
             if (result.name().equals(getresult)) {
-                board.movePiecePostive(players.get(currentplayer).getPieces(piecenum), result.getMove());
+                board.movePiecePostive(players.get(currentPlayer).getPieces(piecenum), result.getMove());
                 // 여기서 잡혔는지 안잡혔는지 판단해야함. 만약에 잡혔으면 extraTurn은 true로 바꿔줘야함.
                 yutresults.remove(result);
             }
