@@ -29,14 +29,18 @@ public class GameScreenController {
         return yutResult;
     }
 
-    // 말을 선택했을 때
-    public void TokenSelect(){
+    // 윷 굴리기 이전 초기상태 설정 (턴 넘어 갔을 때)
 
+    // 말을 선택했을 때
+    public void PieceSelect(int selectpiece){
+        // 선택된 말이 갈 수 있는 곳을 표현해주는 메서드 구현
+        // 모델로 부터 받아올 값은 좌표 값들 (ex. 7,9,12..) view로 넘겨주면 됨.
 
     }
 
-    // 말을 움직일 때
-    public void PieceAction(){
-
+    // 좌표 선택했을 때
+    public void playercontrolresult(String selectedyut){
+        // 모델에서는 선택된 말이 무엇인지를 알고 있어야함.
+        // 모델에서 그 선택된 좌표 계산해서 옮기고 전체상태 넘겨주면됨. (여기서 만약 추가 턴 여부 발생시 윷굴리는 과정 시작)
     }
 }
