@@ -7,7 +7,7 @@ public class GameManager {
     private Board board;
     private Yut yut;
     private int currentplayer = 1;
-    private boolean extraTurn;
+    private boolean extraTurn = false;
     ArrayList<Player> players = new ArrayList<>();
     ArrayList<YutResult> yutresults = new ArrayList<>();
 
@@ -57,22 +57,28 @@ public class GameManager {
     }
 
     public void checkPlayer() {
-        // 리스트에 값이 들어있는지 확인
+        // 리스트에 값이 들어있는지 확인 + 추가 턴 여부 확인
         // 있으면 currentplayer값 변경 x
         // 없으면 currentplayer값 1 증가시키는데 4를 넘어가는 값이면 다시 1로 변환
+        if(yutresults.isEmpty() && extraTurn==false) {
+            currentplayer++;
+            if (currentplayer > 4) {
+                currentplayer = 1;
+            }
+        }
     }
 
-    public void checkExtraTurn() {
-        // extraTurn 변수가 true이면 더굴릴 수 있게
-    }
-
-    // 말이 잡혔는지 판단
     // 윷 결과가 남아있는지 판단
 
     // 랜덤 윷 던지기
     public YutResult throwYut() {
         YutResult result = yut.yutThrowRandom();
         yutresults.add(result);
+        // 윷, 모 판단 후 추가 턴 여부 체크
+        if (result.canRollAgain()) {
+            extraTurn = true;
+            System.out.println(extraTurn);
+        }
         return result;
     }
 
@@ -80,12 +86,27 @@ public class GameManager {
     public YutResult throwFixedYut(String getresult) {
         YutResult result = yut.yutThrowFixed(getresult);
         yutresults.add(result);
+        // 윷, 모 판단 후 추가 턴 여부 체크
+        if (result.canRollAgain()) {
+            extraTurn = true;
+            System.out.println(extraTurn);
+        }
         return result;
     }
 
-    public void processYutResult(){
+    public void calculatePlayerResult(String selectedyut){
+
+    }
+
+    public void processYutResult(int piecenum, String getresult){
         // 여기에 current플레이어 이용
         // 들어온 값을 찾아서 리스트에서 없애야지
-
+        for (YutResult result : yutresults) {
+            if (result.name().equals(getresult)) {
+                board.movePiecePostive(players.get(currentplayer).getPieces(piecenum), result.getMove());
+                // 여기서 잡혔는지 안잡혔는지 판단해야함. 만약에 잡혔으면 extraTurn은 true로 바꿔줘야함.
+                yutresults.remove(result);
+            }
+        }
     }
 }
