@@ -1,6 +1,6 @@
 package model;
 
-import java.util.ArrayList;
+import java.util.*;
 
 public class GameManager {
     private StartInfo startInfo;
@@ -111,4 +111,25 @@ public class GameManager {
             }
         }
     }
+
+    // 전체 말 위치 리턴
+    public List<Map.Entry<Integer, Integer>> getAllPiecePos() {
+        // <cell id, piece id>
+        List<Map.Entry<Integer, Integer>> result = new ArrayList<>();
+
+        for (Map.Entry<Integer, Cell> entry : board.getCells().entrySet()) {
+            int cellId = entry.getKey();
+            Cell cell = entry.getValue();
+
+            if (!cell.getPieces().isEmpty()) {
+                for (Piece piece : cell.getPieces()) {
+                    // Board의 각 Cell에서 말 정보 가져와 저장
+                    result.add(new AbstractMap.SimpleEntry<>(cellId, piece.getId()));
+                }
+            }
+        }
+
+        return result;
+    }
+
 }
