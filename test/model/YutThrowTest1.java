@@ -11,10 +11,19 @@ public class YutThrowTest1 {
         GameManager gameManager = new GameManager();
         Yut yut = new Yut();
         gameManager.setYut(yut);
-        int result = gameManager.throwYut();
-        System.out.println("랜덤 윷 결과: " + result);
+        YutResult result1 = gameManager.throwYut();
+        YutResult result2 = gameManager.throwFixedYut("도");
+        System.out.println("랜덤 윷 결과: " + result1);
+        System.out.println("고정 윷 결과: " + result2);
 
 
-        assertTrue(result >= 0 && result <= 4, "결과 값은 0 이상 4 이하이어야 합니다.");
+        assertTrue(
+                result1.name().equals("도") ||
+                        result1.name().equals("개") ||
+                        result1.name().equals("걸") ||
+                        result1.name().equals("윷") ||
+                        result1.name().equals("모") ||
+                        result1.name().equals("백도")
+        );
     }
 }
