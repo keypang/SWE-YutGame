@@ -6,9 +6,9 @@ public class StartInfo {
     private int pieceCount;
     private BoardType boardType;
 
-    public StartInfo(int playerCount, int tokenCount, BoardType boardType) {
+    public StartInfo(int playerCount, int pieceCount, BoardType boardType) {
         this.playerCount = playerCount;
-        this.pieceCount = tokenCount;
+        this.pieceCount = pieceCount;
         this.boardType = boardType;
     }
 
@@ -22,8 +22,8 @@ public class StartInfo {
 
     public int getPieceCount() { return pieceCount; }
 
-    public void setPieceCount(int tokenCount) {
-        this.pieceCount = tokenCount;
+    public void setPieceCount(int pieceCount) {
+        this.pieceCount = pieceCount;
     }
 
     public BoardType getBoardType() {

@@ -36,12 +36,12 @@ public class GameManager {
     }
 
     // 유효성 검사
-    public boolean validate(int playerCount, int tokenCount, BoardType boardType) {
+    public boolean validate(int playerCount, int pieceCount, BoardType boardType) {
 
         if (playerCount < 2 || playerCount > 4) {
             return false;
         }
-        if (tokenCount < 2 || tokenCount > 5) {
+        if (pieceCount < 2 || pieceCount > 5) {
             return false;
         }
         if (boardType == null) {
@@ -55,7 +55,7 @@ public class GameManager {
 
         System.out.println("Game started with settings:");
         System.out.println("Players: " + startInfo.getPlayerCount());
-        System.out.println("Tokens: " + startInfo.getPieceCount());
+        System.out.println("Pieces: " + startInfo.getPieceCount());
         System.out.println("Board: " + startInfo.getBoardType());
     }
 
