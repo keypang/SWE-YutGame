@@ -13,7 +13,7 @@ public class GameManager {
 
     // 기본 생성자
     public GameManager() {
-
+        this.yut = new Yut();
     }
 
     public void setStartInfo(StartInfo startInfo) {
@@ -27,12 +27,9 @@ public class GameManager {
         System.out.println("게임 모델 생성 끝!");
     }
 
+    // 초기 설정값 리턴
     public StartInfo getStartInfo() {
         return startInfo;
-    }
-
-    public void setYut(Yut yut) {
-        this.yut = yut;
     }
 
     // 유효성 검사
