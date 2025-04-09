@@ -136,9 +136,6 @@ public class SwingPlayScreen extends JFrame implements GamePlayView{
         setLocationRelativeTo(null);
         setVisible(true);
 
-
-
-
     }
 
     // 윷 결과를 화면에 표시하는 메서드
@@ -146,7 +143,7 @@ public class SwingPlayScreen extends JFrame implements GamePlayView{
         String resultText;
 
         switch (result) {
-            case 0:
+            case -1:
                 resultText = "백도";
                 break;
             case 1:
@@ -171,13 +168,6 @@ public class SwingPlayScreen extends JFrame implements GamePlayView{
 
         yutResultLabel.setText("윷 결과: " + resultText);
 
-        // 추가적으로 윷 이미지를 표시하려면 아래와 같이 할 수 있습니다
-        // ImageIcon yutIcon = new ImageIcon(getClass().getResource("/view/images/" + resultText + ".png"));
-        // JLabel yutImageLabel = new JLabel(yutIcon);
-        // yutImageLabel.setBounds(730, 450, 100, 50);
-        // add(yutImageLabel);
-        // revalidate();
-        // repaint();
     }
     public void renewalFrame() {
         //정보 받아와 갱신하는 작업
