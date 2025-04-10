@@ -13,14 +13,14 @@ class GameManagerTest {
     void getAllPiecePos() {
         GameManager gameManager = new GameManager();
         StartInfo startInfo = new StartInfo(4, 3, BoardType.HEXAGON);
-        gameManager.setStartInfo(startInfo);
+        gameManager.initGM(startInfo);
 
-        List<Map.Entry<Integer, Integer>> result = gameManager.getAllPiecePos();
+        List<PositionDTO> result = gameManager.getAllPiecePos();
 
         System.out.println("말 위치 정보 개수: "+result.size());
 
-        for (Map.Entry<Integer, Integer> entry : result) {
-            System.out.println("Key: " + entry.getKey() + ", Value: " + entry.getValue());
+        for (PositionDTO dto: result) {
+            System.out.println(dto.toString());
         }
 
         //TODO: 처음 상태 세팅 확인

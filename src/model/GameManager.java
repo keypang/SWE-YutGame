@@ -20,10 +20,11 @@ public class GameManager {
     public void initGM(StartInfo startInfo) {
         setStartInfo(startInfo);
 
+        initPlayers();
+
         // 윷놀이 판 설정
         this.board = new Board(players, startInfo.getBoardType());
 
-        initPlayers();
         initPosInfo();
 
         // 윷 초기화
