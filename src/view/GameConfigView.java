@@ -2,7 +2,7 @@ package view;
 
 import model.BoardType;
 
-public interface GameView {
+public interface GameConfigView {
 
     /**
      * 아래와 같은 메소드를 정의한 이유
