@@ -114,7 +114,7 @@ public class GameManager {
         // 윷, 모 판단 후 추가 턴 여부 체크
         if (result.canRollAgain()) {
             extraTurn = true;
-            System.out.println(extraTurn);
+            // System.out.println(extraTurn);
         }
         return result;
     }
@@ -179,4 +179,8 @@ public class GameManager {
         return posInfo;
     }
 
+    // 윷 결과 리스트 반환
+    public ArrayList<YutResult> getYutResults() {
+        return yutResults;
+    }
 }
