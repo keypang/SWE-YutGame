@@ -45,4 +45,9 @@ class GameManagerTest {
 
         System.out.println(gameManager.getYutResults());
     }
+
+    @Test
+    void getExtraTurn() {
+        System.out.println(gameManager.getExtraTurn());
+    }
 }

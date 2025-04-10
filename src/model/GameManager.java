@@ -183,4 +183,9 @@ public class GameManager {
     public ArrayList<YutResult> getYutResults() {
         return yutResults;
     }
+
+    // 추가 기회 여부 반환
+    public Boolean getExtraTurn(){
+        return extraTurn;
+    }
 }
