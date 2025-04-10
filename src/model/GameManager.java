@@ -9,7 +9,7 @@ public class GameManager {
     private int currentPlayer = 1;
     private boolean extraTurn = false;
     ArrayList<Player> players = new ArrayList<>();
-    ArrayList<YutResult> yutresults = new ArrayList<>();
+    ArrayList<YutResult> yutResults = new ArrayList<>();
     ArrayList<PositionDTO> posInfo = new ArrayList<>();
 
     // 기본 생성자
@@ -17,18 +17,34 @@ public class GameManager {
         this.yut = new Yut();
     }
 
-    public void setStartInfo(StartInfo startInfo) {
-        this.startInfo = startInfo;
+    public void initGM(StartInfo startInfo) {
+        setStartInfo(startInfo);
 
-        for(int i=1; i<=startInfo.getPlayerCount(); i++){
-            players.add(new Player(i, startInfo.getPieceCount()));
-        }
-        board = new Board(players, startInfo.getBoardType());
+        // 윷놀이 판 설정
+        this.board = new Board(players, startInfo.getBoardType());
+
+        initPlayers();
+        initPosInfo();
+
+        // 윷 초기화
         this.yut = new Yut();
+
         System.out.println("게임 모델 생성 끝!");
     }
 
-    // 초기화 위치 정보 세팅
+    // 사용자 입력 정보 저장(윷놀이 판 생성)
+    public void setStartInfo(StartInfo startInfo) {
+        this.startInfo = startInfo;
+    }
+
+    // 플레이어 초기화
+    public void initPlayers(){
+        for(int i=1; i<=startInfo.getPlayerCount(); i++){
+            players.add(new Player(i, startInfo.getPieceCount()));
+        }
+    }
+
+    // 최초 위치 정보 세팅
     public void initPosInfo(){
         // 말 id, 플레이어 id, 지점 id
         for (Player player : players) {
@@ -78,7 +94,7 @@ public class GameManager {
         // 윷 리스트에 값이 들어있는지 + 추가 턴 여부 확인
         // 있으면 currentplayer값 변경 x
         // 없으면 currentplayer값 1 증가시키는데 4를 넘어가는 값이면 다시 1로 변환
-        if(yutresults.isEmpty() && extraTurn == false) {
+        if(yutResults.isEmpty() && extraTurn == false) {
             currentPlayer++;
             if(currentPlayer > startInfo.getPlayerCount()) {
                 currentPlayer = 1;  // 전체 수 넘어가면 다시 1번으로
@@ -93,7 +109,7 @@ public class GameManager {
     // 랜덤 윷 던지기
     public YutResult throwYut() {
         YutResult result = yut.yutThrowRandom();
-        yutresults.add(result);
+        yutResults.add(result);
         // 윷, 모 판단 후 추가 턴 여부 체크
         if (result.canRollAgain()) {
             extraTurn = true;
@@ -105,7 +121,7 @@ public class GameManager {
     // 지정 윷 던지기 (테스트용)
     public YutResult throwFixedYut(String getresult) {
         YutResult result = yut.yutThrowFixed(getresult);
-        yutresults.add(result);
+        yutResults.add(result);
         // 윷, 모 판단 후 추가 턴 여부 체크
         if (result.canRollAgain()) {
             extraTurn = true;
@@ -121,11 +137,11 @@ public class GameManager {
     public void processYutResult(int piecenum, String getresult){
         // 여기에 current플레이어 이용
         // 들어온 값을 찾아서 리스트에서 없애야지
-        for (YutResult result : yutresults) {
+        for (YutResult result : yutResults) {
             if (result.name().equals(getresult)) {
                 board.movePiecePostive(players.get(currentPlayer).getPieces(piecenum), result.getMove());
                 // 여기서 잡혔는지 안잡혔는지 판단해야함. 만약에 잡혔으면 extraTurn은 true로 바꿔줘야함.
-                yutresults.remove(result);
+                yutResults.remove(result);
             }
         }
     }
