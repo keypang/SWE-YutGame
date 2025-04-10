@@ -50,4 +50,20 @@ class GameManagerTest {
     void getExtraTurn() {
         System.out.println(gameManager.getExtraTurn());
     }
+
+    @Test
+    void checkWinner() {
+        // 임시 테스트 - 2번 플레이어 승리하게
+        for (Piece piece : gameManager.players.get(1).getALlPieces()){
+            piece.setFinished(true);
+        }
+
+        int winnerIndex = gameManager.checkWin();
+        if(winnerIndex==0){
+            System.out.println("승자 없음. 게임 진행");
+        }
+        else{
+            System.out.println(winnerIndex+"번 플레이어 승!");
+        }
+    }
 }

@@ -188,4 +188,26 @@ public class GameManager {
     public Boolean getExtraTurn(){
         return extraTurn;
     }
+
+    // 승리 판단 - 0이면 계속 진행, 유효한 플레이어 인덱스면 게임 종료
+    public int checkWin(){
+        int winnerIndex = 0;
+        for (Player player : players) {
+            boolean allFinished = true;
+
+            for (Piece piece : player.getALlPieces()) {
+                if (!piece.isFinished()){
+                    // 말이 남아있으면 다음 플레이어 판단으로 넘어감
+                    allFinished = false;
+                    break;
+                }
+            }
+
+            if(allFinished){
+                winnerIndex = player.getId();
+            }
+        }
+
+        return winnerIndex;
+    }
 }
