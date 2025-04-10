@@ -1,8 +1,8 @@
 package model;
 
 public class PositionDTO {
-    private int pieceId;
-    private int playerId;
+    private final int pieceId;
+    private final int playerId;
     private int cellId;
 
     public PositionDTO(int pieceId, int playerId) {

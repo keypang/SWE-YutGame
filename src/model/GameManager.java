@@ -30,7 +30,19 @@ public class GameManager {
 
     // 초기화 위치 정보 세팅
     public void initPosInfo(){
+        // 말 id, 플레이어 id, 지점 id
+        for (Player player : players) {
+            int playerId = player.getId();
+            Piece[] pieces = player.getALlPieces();
 
+            for (Piece piece : pieces) {
+                // 말 id 받아오기
+                int pieceId =  piece.getId();
+
+                // DTO 객체 생성
+                posInfo.add(new PositionDTO(pieceId, playerId));
+            }
+        }
     }
 
     // 초기 설정값 리턴
