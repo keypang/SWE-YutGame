@@ -27,4 +27,8 @@ public class Player {
     public int getPieceNum() {
         return pieces.length;
     }
+
+    public int getId() {
+        return id;
+    }
 }

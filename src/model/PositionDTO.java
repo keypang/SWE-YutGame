@@ -28,6 +28,15 @@ public class PositionDTO {
         this.cellId = cellId;
     }
 
+    // 객체 일치 확인
+    public PositionDTO getCorrectDTO(int pieceId, int playerId) {
+        if (pieceId == this.pieceId && playerId == this.playerId) {
+            return this;
+        }
+
+        return null;
+    }
+
     // TODO: 나중에 JUnit으로 구체적인 테스트 구현 후 삭제
     @Override
     public String toString() {

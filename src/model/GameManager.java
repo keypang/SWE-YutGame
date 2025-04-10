@@ -10,6 +10,7 @@ public class GameManager {
     private boolean extraTurn = false;
     ArrayList<Player> players = new ArrayList<>();
     ArrayList<YutResult> yutresults = new ArrayList<>();
+    ArrayList<PositionDTO> posInfo = new ArrayList<>();
 
     // 기본 생성자
     public GameManager() {
@@ -25,6 +26,11 @@ public class GameManager {
         board = new Board(players, startInfo.getBoardType());
         this.yut = new Yut();
         System.out.println("게임 모델 생성 끝!");
+    }
+
+    // 초기화 위치 정보 세팅
+    public void initPosInfo(){
+
     }
 
     // 초기 설정값 리턴
@@ -112,24 +118,36 @@ public class GameManager {
         }
     }
 
-    // 전체 말 위치 리턴
-    public List<PositionDTO> getAllPiecePos() {
-        // 말 id, 플레이어 id, 지점 id
-        List<PositionDTO> result = new ArrayList<>();
-
+    // 전체 말 위치 세팅
+    public void setPosInfo(){
         // player 돌면서 각 player의 말 정보 받아오기
         for (Player player : players) {
+            int playerId = player.getId();
             Piece[] pieces = player.getALlPieces();
+
             for (Piece piece : pieces) {
                 // 말 id랑 현재 위치 cell id 받아오기
                 int pieceId =  piece.getId();
                 int cellId = piece.getStartCell().getId();
 
-                // TODO: DTO에 데이터 담아 보내기
+                // 플레이어 id와 말 id 일치하는 DTO 객체 받아와서 데이터 담기
+                for(PositionDTO positionDTO : posInfo) {
+                    PositionDTO dto = positionDTO.getCorrectDTO(playerId, pieceId);
+                    if (dto != null) {
+                        dto.setCellId(cellId);
+                    }
+                }
             }
         }
+    }
 
-        return result;
+    // 전체 말 위치 리턴
+    public List<PositionDTO> getAllPiecePos() {
+        // 위치 정보 업데이트
+        setPosInfo();
+
+        // 전달
+        return posInfo;
     }
 
 }
