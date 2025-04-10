@@ -113,19 +113,19 @@ public class GameManager {
     }
 
     // 전체 말 위치 리턴
-    public List<Map.Entry<Integer, Integer>> getAllPiecePos() {
-        // <cell id, piece id>
-        List<Map.Entry<Integer, Integer>> result = new ArrayList<>();
+    public List<PositionDTO> getAllPiecePos() {
+        // 말 id, 플레이어 id, 지점 id
+        List<PositionDTO> result = new ArrayList<>();
 
-        for (Map.Entry<Integer, Cell> entry : board.getCells().entrySet()) {
-            int cellId = entry.getKey();
-            Cell cell = entry.getValue();
+        // player 돌면서 각 player의 말 정보 받아오기
+        for (Player player : players) {
+            Piece[] pieces = player.getALlPieces();
+            for (Piece piece : pieces) {
+                // 말 id랑 현재 위치 cell id 받아오기
+                int pieceId =  piece.getId();
+                int cellId = piece.getStartCell().getId();
 
-            if (!cell.getPieces().isEmpty()) {
-                for (Piece piece : cell.getPieces()) {
-                    // Board의 각 Cell에서 말 정보 가져와 저장
-                    result.add(new AbstractMap.SimpleEntry<>(cellId, piece.getId()));
-                }
+                // TODO: DTO에 데이터 담아 보내기
             }
         }
 

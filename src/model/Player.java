@@ -20,6 +20,10 @@ public class Player {
         return pieces[id];
     }
 
+    public Piece[] getALlPieces(){
+        return pieces.clone();
+    }
+
     public int getPieceNum() {
         return pieces.length;
     }
