@@ -45,7 +45,7 @@ public class StartScreenController {
         if (gameManger.validate(playerCount, pieceCount, boardType)) {
 
             StartInfo startInfo = new StartInfo(playerCount, pieceCount, boardType);
-            gameManger.setStartInfo(startInfo);
+            gameManger.initGM(startInfo);
 
             // 모델에 정보 제대로 담겼는지 확인
             check();

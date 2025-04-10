@@ -9,8 +9,6 @@ public class YutThrowTest1 {
     @Test
     void yutthrow(){
         GameManager gameManager = new GameManager();
-        Yut yut = new Yut();
-        gameManager.setYut(yut);
         YutResult result1 = gameManager.throwYut();
         YutResult result2 = gameManager.throwFixedYut("도");
         System.out.println("랜덤 윷 결과: " + result1);

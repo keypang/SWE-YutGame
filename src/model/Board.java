@@ -135,4 +135,8 @@ public class Board {
     public Cell getCell(int i) {
         return cells.get(i);
     }
+
+    public Map<Integer, Cell> getCells() {
+        return cells;
+    }
 }
