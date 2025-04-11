@@ -5,10 +5,14 @@ public class Piece {
     private Cell startCell;
     private Cell priorCell;
     private boolean finished;
+    private Player player;
 
-    public Piece(int id, boolean finished){
+    public Piece(int id, boolean finished, Player player) {
         this.id = id;
         this.finished = finished;
+        this.player = player;
+
+        this.priorCell = new Cell(-1,"임시", -1);
     }
 
     public void setStartCell(Cell startCell) {
@@ -18,6 +22,10 @@ public class Piece {
     public void setFinished(boolean finished) {
         this.finished = finished;
     }
+
+    public void setPriorCell(Cell priorCell) { this.priorCell = priorCell; }
+
+    public Cell getPriorCell() { return priorCell; }
 
     public Cell getStartCell() {
         return startCell;
