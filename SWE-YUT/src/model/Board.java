@@ -115,6 +115,8 @@ public class Board {
         Cell current = piece.getStartCell();
         Cell startAt = piece.getStartCell();
         Cell priorCell = piece.getStartCell();
+
+
         for(int i = 0; i < move; i++) {
             List<Cell> nextList = current.getNextCells();
 
@@ -149,6 +151,12 @@ public class Board {
         piece.setPriorCell(priorCell);
 
         piece.setStartCell(current);
+
+
+        //test 코드
+        for(Piece p : current.getPieces()) {
+            System.out.println(p.getId());
+        }
     }
 
     public void movePieceNegative(Piece piece) {
@@ -177,8 +185,16 @@ public class Board {
             // 백도 불가
         }
         System.out.println(current.getType()+"/"+current.getId());
+
         piece.setStartCell(current);
+
+
+        //test 코드
+        for(Piece p : current.getPieces()) {
+            System.out.println(p.getId());
+        }
     }
+
 
     public Cell getCell(int i) {
         return cells.get(i);

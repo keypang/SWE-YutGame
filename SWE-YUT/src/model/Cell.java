@@ -47,8 +47,13 @@ public class Cell {
         return pieces;
     }
 
-    public void addPiece(Piece piece){
-        this.pieces.add(piece);
+    public void addPiece(List<Piece> piece){
+        this.pieces.addAll(piece);
+
+    }
+
+    public void clearPieces() {
+        this.pieces.clear();
     }
 
     public Cell getPreviousCellWithMinId() {
