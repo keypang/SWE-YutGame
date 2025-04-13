@@ -37,6 +37,8 @@ public class Cell {
         return nextCells;
     }
 
+    public List<Cell> getPreviousCells() { return previousCells; }
+
     public int getId() {
         return id;
     }
@@ -45,7 +47,24 @@ public class Cell {
         return pieces;
     }
 
-    public void addPiece(Piece piece){
-        this.pieces.add(piece);
+    public void addPiece(List<Piece> piece){
+        this.pieces.addAll(piece);
+
+    }
+
+    public void clearPieces() {
+        this.pieces.clear();
+    }
+
+    public Cell getPreviousCellWithMinId() {
+        if (previousCells.isEmpty()) return null;
+
+        Cell minCell = previousCells.get(0);
+        for (Cell cell : previousCells) {
+            if (cell.getId() < minCell.getId()) {
+                minCell = cell;
+            }
+        }
+        return minCell;
     }
 }

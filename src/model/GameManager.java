@@ -131,18 +131,17 @@ public class GameManager {
         return result;
     }
 
-    public void calculatePlayerResult(String selectedYut){
-
-    }
-
     public void processYutResult(int pieceNum, String getResult){
         // 여기에 current플레이어 이용
         // 들어온 값을 찾아서 리스트에서 없애야지
         for (YutResult result : yutResults) {
             if (result.name().equals(getResult)) {
-                board.movePiecePostive(players.get(currentPlayer).getPieces(pieceNum), result.getMove());
-                // 여기서 잡혔는지 안잡혔는지 판단해야함. 만약에 잡혔으면 extraTurn은 true로 바꿔줘야함.
-                yutResults.remove(result);
+                if (result.getMove() == -1){
+                    board.movePieceNegative(players.get(currentPlayer).getPieces(pieceNum));
+                }
+                else {
+                    board.movePiecePositive(players.get(currentPlayer).getPieces(pieceNum), result.getMove());
+                }
             }
         }
     }
@@ -171,7 +170,7 @@ public class GameManager {
     }
 
     // 전체 말 위치 리턴
-    public List<PositionDTO> getAllPiecePos() {
+    public ArrayList<PositionDTO> getAllPiecePos() {
         // 위치 정보 업데이트
         setPosInfo();
 

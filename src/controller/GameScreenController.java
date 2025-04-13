@@ -1,9 +1,13 @@
 package controller;
 
 import model.GameManager;
+import model.PositionDTO;
 import model.Yut;
 import model.YutResult;
 import view.GamePlayView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class GameScreenController {
     private GamePlayView gameView;
@@ -16,7 +20,6 @@ public class GameScreenController {
 
         initController();
     }
-
 
     // 컨트롤러 초기화
     private void initController() {
@@ -34,19 +37,24 @@ public class GameScreenController {
     public YutResult RandomYutThrow(){
         // View로 부터 정보를 어떻게 받아오겠죠?
         YutResult yutResult = gameManager.throwYut();
+        // 이거 받아올 때 extratrun 값도 받아와서 true면 주사위 굴리게 해야함.
         return yutResult;
-
     }
 
     // 지정 윷 던지는 버튼을 눌렀을 때
-    public YutResult  FixedYutThrow(String getresult){
+    public YutResult FixedYutThrow(String getresult){
         // View로 부터 정보를 어떻게 받아오겠죠?
         YutResult yutResult = gameManager.throwFixedYut(getresult);
         return yutResult;
 
     }
 
-    // 윷 굴리기 이전 초기상태 설정 (턴 넘어 갔을 때)
+    // 전체 상태를 넘겨주는 과정
+    public ArrayList<PositionDTO> fetchBoardStatus() {
+        ArrayList<PositionDTO> status = gameManager.getAllPiecePos();
+        // 이거 받아올 때 extratrun 값도 받아와서 true면 주사위 굴리게 하고 false면 턴 넘겨야함.
+        return status;
+    }
 
     // 말을 선택했을 때
     public void PieceSelect(int selectpiece){
@@ -60,4 +68,5 @@ public class GameScreenController {
         // 모델에서는 선택된 말이 무엇인지를 알고 있어야함.
         // 모델에서 그 선택된 좌표 계산해서 옮기고 전체상태 넘겨주면됨. (여기서 만약 추가 턴 여부 발생시 윷굴리는 과정 시작)
     }
+
 }

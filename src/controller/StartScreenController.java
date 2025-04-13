@@ -12,7 +12,6 @@ public class StartScreenController {
     private GameConfigView view; // 게임 설정화면
     private GameManager gameManger;
 
-    // 생성자 (메인 함수에서 넣어주겠죠?)
     public StartScreenController(GameConfigView view, GameManager gameManager) {
         this.view = view;
         this.gameManger = gameManager;
@@ -29,11 +28,8 @@ public class StartScreenController {
                 process();
             }
         });
-
-        // 좀 복잡해보이는데.. 나중에 람다식으로 리팩토링 할 수 있음
     }
 
-    // 간단한 예시
     private void process() {
 
         // 뷰에서 사용자 입력 따오기
