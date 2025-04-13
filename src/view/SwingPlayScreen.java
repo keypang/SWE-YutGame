@@ -16,6 +16,7 @@ public class SwingPlayScreen extends JFrame implements GamePlayView{
     private JButton testRollButton;
     private ArrayList<ImageIcon> playerIcons = new ArrayList<>();
 
+    private JLabel yutImageLabel;
 
     private JLabel yutResultLabel;
     // 추가
@@ -59,6 +60,10 @@ public class SwingPlayScreen extends JFrame implements GamePlayView{
         yutResultLabel.setBounds(730, 560, 300, 40);
         add(yutResultLabel);
 
+
+        yutImageLabel = new JLabel();
+        yutImageLabel.setBounds(730, 450, 100, 100); // 위치 및 크기 설정
+        add(yutImageLabel);
 
 
         //윷 던지기 버튼
@@ -141,33 +146,77 @@ public class SwingPlayScreen extends JFrame implements GamePlayView{
     // 윷 결과를 화면에 표시하는 메서드
     private void displayYutResult(int result) {
         String resultText;
+        String imageName = "";
 
         switch (result) {
             case -1:
                 resultText = "백도";
+                imageName = "빽도";
                 break;
             case 1:
                 resultText = "도";
+                imageName = "도";
                 break;
             case 2:
                 resultText = "개";
+                imageName = "개";
                 break;
             case 3:
                 resultText = "걸";
+                imageName = "걸";
                 break;
             case 4:
                 resultText = "윷";
+                imageName = "윷";
                 break;
             case 5:
+                resultText = "모";
                 resultText = "모";
                 break;
             default:
                 resultText = "알 수 없음";
+                imageName = null;
                 break;
         }
 
         yutResultLabel.setText("윷 결과: " + resultText);
 
+        // 팝업 창에 이미지 표시
+        if (imageName != null) {
+            // 새 팝업 창 생성
+            JDialog resultDialog = new JDialog(this, "윷 결과: " + resultText, true);
+            resultDialog.setLayout(new BorderLayout());
+
+
+            ImageIcon yutIcon = new ImageIcon(getClass().getResource("/view/images/" + imageName + ".png"));
+
+            Image img = yutIcon.getImage();
+            Image resizedImg = img.getScaledInstance(300, 300, Image.SCALE_SMOOTH);
+            yutIcon = new ImageIcon(resizedImg);
+
+            JLabel imageLabel = new JLabel(yutIcon);
+            imageLabel.setHorizontalAlignment(JLabel.CENTER);
+            resultDialog.add(imageLabel, BorderLayout.CENTER);
+
+
+            JButton confirmButton = new JButton("확인");
+            confirmButton.addActionListener(e -> resultDialog.dispose());
+            JPanel buttonPanel = new JPanel();
+            buttonPanel.add(confirmButton);
+            resultDialog.add(buttonPanel, BorderLayout.SOUTH);
+
+
+            resultDialog.setSize(400, 450);
+            resultDialog.setLocationRelativeTo(this);
+
+            // 팝업 창이 3초후에 닫히도록 타이머 설정하기
+            Timer timer = new Timer(2000, e -> resultDialog.dispose());
+            timer.setRepeats(false);
+            timer.start();
+
+
+            resultDialog.setVisible(true);
+        }
     }
     public void renewalFrame() {
         //정보 받아와 갱신하는 작업
