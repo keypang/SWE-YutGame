@@ -148,7 +148,11 @@ public class Board {
         Cell startAt = piece.getStartCell();
         Cell priorCell = piece.getStartCell();
 
-
+        if(current.getType().equals("도착")){
+            System.out.println("끝");
+            piece.setFinished(true);
+            return false;
+        }
         for(int i = 0; i < move; i++) {
             List<Cell> nextList = current.getNextCells();
 
