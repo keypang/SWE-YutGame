@@ -295,4 +295,15 @@ public class Board {
     public Map<Integer, Cell> getCells() {
         return cells;
     }
+
+    // Cell id에 해당하는 객체 찾기
+    public Cell getCellById(int id){
+        for (Cell cell : cells.values()) {
+            if (cell.getId() == id) {
+                return cell;
+            }
+        }
+
+        return null;
+    }
 }
