@@ -111,12 +111,42 @@ public class Board {
         }
     }
 
+    private boolean updatePieceLocation(Cell current, Cell startAt, Piece piece) {
+
+        if(current.checkCatchPiece(piece)) {
+            System.out.println("잡았다");
+            for (Piece p : current.getPieces()) {
+                p.setStartCell(getCell(0));
+                p.clearPriorCell();
+            }
+
+            current.clearPieces();
+            current.addPiece(piece);
+            startAt.clearPieces();
+
+
+            for (Piece p : current.getPieces()) {
+                System.out.println(p.getId());  // 각 Piece의 id를 출력
+            }
+
+            return true;
+        }
+        else {
+            System.out.println("업었다");
+            current.addPiece(piece);
+            startAt.clearPieces();
+
+            for (Piece p : current.getPieces()) {
+                System.out.println(p.getId());  // 각 Piece의 id를 출력
+            }
+            return false;
+        }
+    }
+
     public boolean movePiecePositive(Piece piece, int move) {
         Cell current = piece.getStartCell();
         Cell startAt = piece.getStartCell();
         Cell priorCell = piece.getStartCell();
-
-        boolean checkCol = false;
 
 
         for(int i = 0; i < move; i++) {
@@ -145,7 +175,7 @@ public class Board {
                 }
             }
             else {
-                current = nextList.getFirst();
+                current = nextList.get(0);
             }
             System.out.println(current.getType()+"/"+current.getId());
         }
@@ -154,38 +184,12 @@ public class Board {
 
         piece.setStartCell(current);
 
-        if(current.checkCatchPiece(piece)) {
-            System.out.println("잡았다");
-            for (Piece p : current.getPieces()) {
-                p.setStartCell(getCell(0));
-                p.clearPriorCell();
-            }
-
-            current.clearPieces();
-            current.addPiece(piece);
-            startAt.clearPieces();
-
-
-            for (Piece p : current.getPieces()) {
-                System.out.println(p.getId());  // 각 Piece의 id를 출력
-            }
-        }
-        else {
-            System.out.println("업었다");
-            current.addPiece(piece);
-            startAt.clearPieces();
-
-            for (Piece p : current.getPieces()) {
-                System.out.println(p.getId());  // 각 Piece의 id를 출력
-            }
-        }
-        return checkCol;
+        return updatePieceLocation(current, startAt, piece);
     }
 
     public boolean movePieceNegative(Piece piece) {
         Cell current = piece.getStartCell();
-
-        boolean checkCol = false;
+        Cell startAt = piece.getStartCell();
 
         System.out.println(piece.getPriorCell().getId());
 
@@ -194,6 +198,8 @@ public class Board {
         }
         else if(current.getPreviousCells().size() >= 2) {
             for(Cell cell : current.getPreviousCells()) {
+
+                //
                 if(cell.getId() == piece.getPriorCell().getId()) {
                     current = cell;
                     break;
@@ -212,13 +218,7 @@ public class Board {
 
         piece.setStartCell(current);
 
-
-        //test 코드
-        for(Piece p : current.getPieces()) {
-            System.out.println(p.getId());
-        }
-
-        return checkCol;
+        return updatePieceLocation(current, startAt, piece);
     }
 
 

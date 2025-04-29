@@ -72,7 +72,7 @@ public class Cell {
         if (pieces.isEmpty()) {
             return false;
         } else {
-            return !pieces.get(0).getPlayer().equals(piece.getPlayer());
+            return !pieces.getFirst().getPlayer().equals(piece.getPlayer());
         }
     }
 }

@@ -36,14 +36,26 @@ public class Main {
             int pieceNum = scanner.nextInt();
             System.out.println("윷 입력");
             int yutNum = scanner.nextInt();
-            if(playerNum == 1){
-                board.movePiecePositive(player1.getPieces(pieceNum),yutNum);
-            }
-            else if(playerNum == 2){
-                board.movePiecePositive(player2.getPieces(pieceNum),yutNum);
-            }
-            else{
-                break;
+            if(yutNum >= 0){
+                if(playerNum == 1){
+                    board.movePiecePositive(player1.getPieces(pieceNum),yutNum);
+                }
+                else if(playerNum == 2){
+                    board.movePiecePositive(player2.getPieces(pieceNum),yutNum);
+                }
+                else{
+                    break;
+                }
+            } else {
+                if(playerNum == 1){
+                    board.movePieceNegative(player1.getPieces(pieceNum));
+                }
+                else if(playerNum == 2){
+                    board.movePieceNegative(player2.getPieces(pieceNum));
+                }
+                else{
+                    break;
+                }
             }
         }
     }
