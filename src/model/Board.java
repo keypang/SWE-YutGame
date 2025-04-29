@@ -143,6 +143,49 @@ public class Board {
         }
     }
 
+    public int[] getMovableCells(Cell cell, int[] moves) {
+        int[] movableCellsId = new int[moves.length];
+
+
+        for(int i = 0; i<moves.length; i++) {
+            Cell testCell = cell;
+            for(int j = 0; j<moves[i]; j++) {
+                if (testCell.getType().equals("도착")) {
+                    movableCellsId[i] = -1;
+                    break;
+                }
+
+                List<Cell> nextList = testCell.getNextCells();
+
+                if(testCell.getType().equals("갈림길")) {
+                    if(testCell == cell) {
+                        for (Cell celln : nextList) {
+                            if (celln.getType().equals("지름길")) {
+                                testCell = celln;
+                                break;
+                            }
+                        }
+                    }
+                    else {
+                        for (Cell celln : nextList) {
+                            if (celln.getType().equals("일반")) {
+                                testCell = celln;
+                                break;
+                            }
+                        }
+                    }
+                }
+                else {
+                    testCell = nextList.getFirst();
+                }
+            }
+
+            movableCellsId[i] = testCell.getId();
+        }
+        return movableCellsId;
+    }
+
+
     public boolean movePiecePositive(Piece piece, int move) {
         Cell current = piece.getStartCell();
         Cell startAt = piece.getStartCell();
@@ -165,6 +208,7 @@ public class Board {
             priorCell = current;
 
             if (nextList.isEmpty()) break;
+            //없어도 될 듯 한데 일단 대기
 
             if(current.getType().equals("갈림길")) {
                 if(current == startAt) {

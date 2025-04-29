@@ -27,36 +27,14 @@ public class Main {
         players.add(player1);
         players.add(player2);
         Board board = new Board(players, BoardType.SQUARE);
+        int[] moves = new int[3];
+        moves[0] = 1;
+        moves[1] = 4;
+        moves[2] = 5;
+        int[] movea = board.getMovableCells(board.getCell(5),moves);
 
-        Scanner scanner = new Scanner(System.in);
-        while(true){
-            System.out.println("Player 숫자 입력");
-            int playerNum = scanner.nextInt();
-            System.out.println("Piece ID 입력");
-            int pieceNum = scanner.nextInt();
-            System.out.println("윷 입력");
-            int yutNum = scanner.nextInt();
-            if(yutNum >= 0){
-                if(playerNum == 1){
-                    board.movePiecePositive(player1.getPieces(pieceNum),yutNum);
-                }
-                else if(playerNum == 2){
-                    board.movePiecePositive(player2.getPieces(pieceNum),yutNum);
-                }
-                else{
-                    break;
-                }
-            } else {
-                if(playerNum == 1){
-                    board.movePieceNegative(player1.getPieces(pieceNum));
-                }
-                else if(playerNum == 2){
-                    board.movePieceNegative(player2.getPieces(pieceNum));
-                }
-                else{
-                    break;
-                }
-            }
+        for (int j : movea) {
+            System.out.println(j);
         }
     }
 }
