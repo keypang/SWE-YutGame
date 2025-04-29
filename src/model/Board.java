@@ -148,12 +148,18 @@ public class Board {
         Cell startAt = piece.getStartCell();
         Cell priorCell = piece.getStartCell();
 
-        if(current.getType().equals("도착")){
-            System.out.println("끝");
-            piece.setFinished(true);
-            return false;
-        }
+
         for(int i = 0; i < move; i++) {
+
+            if(current.getType().equals("도착")){
+                for(Piece p : current.getPieces()) {
+                    p.setFinished(true);
+                    System.out.println("끝");
+                }
+
+                return false;
+            }
+
             List<Cell> nextList = current.getNextCells();
 
             priorCell = current;
@@ -179,16 +185,28 @@ public class Board {
                 }
             }
             else {
-                current = nextList.get(0);
+                current = nextList.getFirst();
             }
             System.out.println(current.getType()+"/"+current.getId());
         }
+
+        boolean checkCol = updatePieceLocation(current, startAt, piece);
 
         piece.setPriorCell(priorCell);
 
         piece.setStartCell(current);
 
-        return updatePieceLocation(current, startAt, piece);
+        //test 코드 psy
+        for(Piece p : startAt.getPieces()) {
+            System.out.println("1."+p.getId());
+            p.setPriorCell(priorCell);
+
+            p.setStartCell(current);
+        }
+
+
+
+        return checkCol;
     }
 
     public boolean movePieceNegative(Piece piece) {
