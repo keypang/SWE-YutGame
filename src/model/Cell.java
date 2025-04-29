@@ -47,8 +47,8 @@ public class Cell {
         return pieces;
     }
 
-    public void addPiece(List<Piece> piece){
-        this.pieces.addAll(piece);
+    public void addPiece(Piece piece){
+        this.pieces.add(piece);
 
     }
 
@@ -59,12 +59,20 @@ public class Cell {
     public Cell getPreviousCellWithMinId() {
         if (previousCells.isEmpty()) return null;
 
-        Cell minCell = previousCells.get(0);
+        Cell minCell = previousCells.getFirst();
         for (Cell cell : previousCells) {
             if (cell.getId() < minCell.getId()) {
                 minCell = cell;
             }
         }
         return minCell;
+    }
+
+    public boolean checkCatchPiece(Piece piece){
+        if (pieces.isEmpty()) {
+            return false;
+        } else {
+            return !pieces.get(0).getPlayer().equals(piece.getPlayer());
+        }
     }
 }

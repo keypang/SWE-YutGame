@@ -111,10 +111,12 @@ public class Board {
         }
     }
 
-    public void movePiecePositive(Piece piece, int move) {
+    public boolean movePiecePositive(Piece piece, int move) {
         Cell current = piece.getStartCell();
         Cell startAt = piece.getStartCell();
         Cell priorCell = piece.getStartCell();
+
+        boolean checkCol = false;
 
 
         for(int i = 0; i < move; i++) {
@@ -152,15 +154,38 @@ public class Board {
 
         piece.setStartCell(current);
 
+        if(current.checkCatchPiece(piece)) {
+            System.out.println("잡았다");
+            for (Piece p : current.getPieces()) {
+                p.setStartCell(getCell(0));
+                p.clearPriorCell();
+            }
 
-        //test 코드
-        for(Piece p : current.getPieces()) {
-            System.out.println(p.getId());
+            current.clearPieces();
+            current.addPiece(piece);
+            startAt.clearPieces();
+
+
+            for (Piece p : current.getPieces()) {
+                System.out.println(p.getId());  // 각 Piece의 id를 출력
+            }
         }
+        else {
+            System.out.println("업었다");
+            current.addPiece(piece);
+            startAt.clearPieces();
+
+            for (Piece p : current.getPieces()) {
+                System.out.println(p.getId());  // 각 Piece의 id를 출력
+            }
+        }
+        return checkCol;
     }
 
-    public void movePieceNegative(Piece piece) {
+    public boolean movePieceNegative(Piece piece) {
         Cell current = piece.getStartCell();
+
+        boolean checkCol = false;
 
         System.out.println(piece.getPriorCell().getId());
 
@@ -181,7 +206,6 @@ public class Board {
 
         }
         else {
-            System.out.println("백도 불가");
             // 백도 불가
         }
         System.out.println(current.getType()+"/"+current.getId());
@@ -193,6 +217,8 @@ public class Board {
         for(Piece p : current.getPieces()) {
             System.out.println(p.getId());
         }
+
+        return checkCol;
     }
 
 
