@@ -65,6 +65,7 @@ public class Board {
             cells.get(i).addNextCell(cells.get(i+1));
             cells.get(i+1).addPreviousCell(cells.get(i));
         }
+        cells.get(30).addPreviousCell(cells.get(29));
 
         //교차로 셀
         cell = new Cell(1000, "갈림길", 100);
