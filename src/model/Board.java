@@ -149,38 +149,48 @@ public class Board {
 
         for(int i = 0; i<moves.length; i++) {
             Cell testCell = cell;
-            for(int j = 0; j<moves[i]; j++) {
-                if (testCell.getType().equals("도착")) {
-                    movableCellsId[i] = -1;
-                    break;
-                }
-
-                List<Cell> nextList = testCell.getNextCells();
-
-                if(testCell.getType().equals("갈림길")) {
-                    if(testCell == cell) {
-                        for (Cell celln : nextList) {
-                            if (celln.getType().equals("지름길")) {
-                                testCell = celln;
-                                break;
+            if(moves[i]>0){
+                for(int j = 0; j<moves[i]; j++) {
+                    List<Cell> nextList = testCell.getNextCells();
+                    if (testCell.getType().equals("도착")) {
+                        movableCellsId[i] = -1;
+                        break;
+                    }
+                    else if(testCell.getType().equals("갈림길")) {
+                        if(testCell == cell) {
+                            for (Cell celln : nextList) {
+                                if (celln.getType().equals("지름길")) {
+                                    testCell = celln;
+                                    break;
+                                }
+                            }
+                        }
+                        else {
+                            for (Cell celln : nextList) {
+                                if (celln.getType().equals("일반")) {
+                                    testCell = celln;
+                                    break;
+                                }
                             }
                         }
                     }
                     else {
-                        for (Cell celln : nextList) {
-                            if (celln.getType().equals("일반")) {
-                                testCell = celln;
-                                break;
-                            }
-                        }
+                        testCell = nextList.getFirst();
                     }
+                    movableCellsId[i] = testCell.getId();
                 }
-                else {
-                    testCell = nextList.getFirst();
+
+            }
+            else {
+                if(testCell.getPreviousCells().size() == 1) {
+                    testCell = testCell.getPreviousCells().getFirst();
+                    movableCellsId[i] = testCell.getId();
+                }
+                else if(testCell.getPreviousCells().size() >= 2) {
+                    testCell = testCell.getPreviousCellWithMinId();
+                    movableCellsId[i] = testCell.getId();
                 }
             }
-
-            movableCellsId[i] = testCell.getId();
         }
         return movableCellsId;
     }
@@ -275,7 +285,6 @@ public class Board {
                     break;
                 }
             }
-
         }
         else {
             // 백도 불가
