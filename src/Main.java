@@ -1,8 +1,14 @@
 import controller.GameScreenController;
 import controller.StartScreenController;
+import model.Board;
+import model.BoardType;
 import model.GameManager;
+import model.Player;
 import view.GameConfigView;
 import view.SwingConfigScreen;
+
+import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {

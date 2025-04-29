@@ -27,6 +27,10 @@ public class Piece {
 
     public Cell getPriorCell() { return priorCell; }
 
+    public void clearPriorCell() {
+        this.priorCell = null;
+    }
+
     public Cell getStartCell() {
         return startCell;
     }
@@ -37,5 +41,9 @@ public class Piece {
 
     public int getId() {
         return id;
+    }
+
+    public Player getPlayer() {
+        return player;
     }
 }
