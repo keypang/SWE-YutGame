@@ -148,11 +148,14 @@ public class Board {
         }
         else {
             System.out.println("업었다");
-            for (Piece p : startAt.getPieces()) {
+
+            List<Piece> pieceList = new ArrayList<>(startAt.getPieces());
+            startAt.clearPieces();
+            for (Piece p : pieceList) {
                 current.addPiece(p);
                 p.setStartCell(current);
             }
-            startAt.clearPieces();
+
             return false;
         }
     }
