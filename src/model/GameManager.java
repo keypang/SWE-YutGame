@@ -1,5 +1,6 @@
 package model;
 
+import java.lang.reflect.Array;
 import java.util.*;
 
 public class GameManager {
@@ -208,5 +209,27 @@ public class GameManager {
         }
 
         return winnerIndex;
+    }
+
+    // Cell id 넘겨받아서 이동 가능한 Cell 리스트 반환
+    public int[] findMovableCells(int cellId){
+        // 현재 위치한 Cell
+        Cell currentCell =  board.getCell(cellId);
+
+        // 보유하고 있는 윳 리스트
+        ArrayList<Integer> movableNumList = new ArrayList<>();
+        for(YutResult yut: yutResults){
+            // 이동하는 칸 수로 변환
+            movableNumList.add(yut.getMove());
+        }
+
+        // 중복 제거하고 int 배열로 변환
+        int[] movableNumArray = movableNumList.stream().distinct().mapToInt(Integer::intValue).toArray();
+
+        int[] movableCellIdArray = new int[movableNumArray.length];
+
+        movableCellIdArray = board.getMovableCells(currentCell, movableNumArray);
+
+        return movableCellIdArray;
     }
 }

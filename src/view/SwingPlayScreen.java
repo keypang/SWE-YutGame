@@ -43,13 +43,13 @@ public class SwingPlayScreen extends JFrame implements GamePlayView{
         JLabel boardLabel = new JLabel(boardIcon);
 
         if(boardType == BoardType.SQUARE) {
-            boardLabel.setBounds(-155,-155,1000,1000);
+        	boardLabel.setBounds(-155,-155,1000,1000); 
         }
         else if(boardType == BoardType.PENTAGON) {
-            boardLabel.setBounds(-210,-185,1150,1150);
+        	boardLabel.setBounds(-210,-235,1150,1150); 
         }
         else if(boardType == BoardType.HEXAGON){
-            boardLabel.setBounds(-190,-155,1000,1000);
+        	boardLabel.setBounds(-190,-165,1000,1000); 
         }
 
         getContentPane().add(boardLabel);
@@ -98,6 +98,14 @@ public class SwingPlayScreen extends JFrame implements GamePlayView{
         testRollButton.setBounds(730,610,200,60);
 
         add(testRollButton);
+        
+        testRollButton.addActionListener(new ActionListener() {
+        	@Override
+        	public void actionPerformed(ActionEvent e) {
+        		//추후 controller에게 전달
+        		displayResultSelect();
+        	}
+        });
 
         //클릭 시 좌표 출력
         getContentPane().addMouseListener(new MouseAdapter() {
@@ -141,6 +149,15 @@ public class SwingPlayScreen extends JFrame implements GamePlayView{
         setLocationRelativeTo(null);
         setVisible(true);
 
+    }
+    
+    //지정 윷을 정하는 화면 표시하는 메서드
+    private int displayResultSelect() {
+    	int result = 0;
+    	
+    	new SelectYutResultScreen();
+    	
+    	return result;
     }
 
     // 윷 결과를 화면에 표시하는 메서드

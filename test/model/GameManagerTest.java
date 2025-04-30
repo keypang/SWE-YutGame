@@ -3,6 +3,7 @@ package model;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -65,5 +66,23 @@ class GameManagerTest {
         else{
             System.out.println(winnerIndex+"번 플레이어 승!");
         }
+    }
+
+    @Test
+    void findMovableCells(){
+        // 윷 세팅
+        gameManager.throwFixedYut("도");
+        gameManager.throwFixedYut("도");
+        gameManager.throwFixedYut("개");
+        gameManager.throwFixedYut("걸");
+        gameManager.throwFixedYut("윷");
+        gameManager.throwFixedYut("모");
+
+        // 윷 결과 확인
+        System.out.println(gameManager.getYutResults());
+
+        // 이동 가능 지점 확인
+        System.out.println(Arrays.toString(gameManager.findMovableCells(5)));
+
     }
 }
