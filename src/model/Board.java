@@ -113,6 +113,9 @@ public class Board {
 
     private boolean updatePieceLocation(Cell current, Cell startAt, Piece piece) {
 
+        if(startAt.getPieces().isEmpty()){
+            startAt.addPiece(piece);
+        }
         if(current.checkCatchPiece(piece)) {
             System.out.println("잡았다");
             for (Piece p : current.getPieces()) {
@@ -121,8 +124,20 @@ public class Board {
             }
 
             current.clearPieces();
-            current.addPiece(piece);
+            for(Piece p : startAt.getPieces()) {
+                current.addPiece(p);
+                p.setStartCell(current);
+            }
             startAt.clearPieces();
+
+            //test psy
+            for(Piece p : startAt.getPieces()) {
+                System.out.println("s."+p.getId());
+            }
+
+            for(Piece p : current.getPieces()) {
+                System.out.println("c."+p.getId());
+            }
 
 
             for (Piece p : current.getPieces()) {
@@ -133,12 +148,11 @@ public class Board {
         }
         else {
             System.out.println("업었다");
-            current.addPiece(piece);
-            startAt.clearPieces();
-
-            for (Piece p : current.getPieces()) {
-                System.out.println(p.getId());  // 각 Piece의 id를 출력
+            for (Piece p : startAt.getPieces()) {
+                current.addPiece(p);
+                p.setStartCell(current);
             }
+            startAt.clearPieces();
             return false;
         }
     }
@@ -199,23 +213,26 @@ public class Board {
     public boolean movePiecePositive(Piece piece, int move) {
         Cell current = piece.getStartCell();
         Cell startAt = piece.getStartCell();
-        Cell priorCell = piece.getStartCell();
-
+        //Cell priorCell = piece.getStartCell();
 
         for(int i = 0; i < move; i++) {
 
+
+            //완주 처리
             if(current.getType().equals("도착")){
-                for(Piece p : current.getPieces()) {
+
+                for(Piece p : startAt.getPieces()) {
                     p.setFinished(true);
-                    System.out.println("끝");
+                    System.out.println("끝"+p.getFinished());
                 }
+                startAt.clearPieces();
 
                 return false;
             }
 
             List<Cell> nextList = current.getNextCells();
 
-            priorCell = current;
+            //priorCell = current;
 
             if (nextList.isEmpty()) break;
             //없어도 될 듯 한데 일단 대기
@@ -246,19 +263,27 @@ public class Board {
 
         boolean checkCol = updatePieceLocation(current, startAt, piece);
 
-        piece.setPriorCell(priorCell);
+        //piece.setPriorCell(priorCell);
 
         piece.setStartCell(current);
+        System.out.println("startCell."+piece.getStartCell().getId());
 
         //test 코드 psy
         for(Piece p : startAt.getPieces()) {
             System.out.println("1."+p.getId());
-            p.setPriorCell(priorCell);
+            //p.setPriorCell(priorCell);
 
             p.setStartCell(current);
         }
 
+        startAt.clearPieces();
+        for(Piece p : startAt.getPieces()) {
+            System.out.println("startAt "+p.getId());
+        }
 
+        for(Piece p : current.getPieces()) {
+            System.out.println("current "+p.getId());
+        }
 
         return checkCol;
     }
