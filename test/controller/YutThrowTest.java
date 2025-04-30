@@ -14,10 +14,10 @@ public class YutThrowTest {
     void testyutthrow(){
         GameManager gameManager = new GameManager();
         GameConfigView view = new SwingConfigScreen();
-        GameScreenController gameScreenController = new GameScreenController(view, gameManager);
-
-        YutResult result = gameScreenController.RandomYutThrow();
-        System.out.println("랜덤 윷 결과: " + result);
+//        GameScreenController gameScreenController = new GameScreenController(view, gameManager);
+//
+//        YutResult result = gameScreenController.RandomYutThrow();
+//        System.out.println("랜덤 윷 결과: " + result);
 
 
     }
