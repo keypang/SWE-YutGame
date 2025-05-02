@@ -1,9 +1,6 @@
 import controller.GameScreenController;
 import controller.StartScreenController;
-import model.Board;
-import model.BoardType;
-import model.GameManager;
-import model.Player;
+import model.*;
 import view.GameConfigView;
 import view.SwingConfigScreen;
 

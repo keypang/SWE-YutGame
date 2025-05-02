@@ -35,19 +35,35 @@ public class GameManager {
     }
 
     public void initGM(StartInfo startInfo) {
+        // 기존 윷 결과 초기화
+        yutResults.clear();
+        extraTurn = false;
+
+        // 플레이어 초기화
         setStartInfo(startInfo);
 
+        // 플레이어 초기화
         initPlayers();
 
         // 윷놀이 판 설정
         this.board = new Board(players, startInfo.getBoardType());
 
+        // 위치 정보 초기화
         initPosInfo();
 
         // 윷 초기화
         this.yut = new Yut();
 
-        System.out.println("게임 모델 생성 끝!");
+        // 현재 플레이어 초기화
+        currentPlayer = 1;
+
+        // 디버깅용
+        System.out.println("플레이어 수: " + startInfo.getPlayerCount() +
+                ", 말 개수: " + startInfo.getPieceCount() +
+                ", 보드 타입: " + startInfo.getBoardType());
+
+        // 디버깅 용
+        System.out.println("윷 결과 개수: " + yutResults.size() + ", 추가 턴 여부: " + extraTurn);
     }
 
     // 사용자 입력 정보 저장(윷놀이 판 생성)

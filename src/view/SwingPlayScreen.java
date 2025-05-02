@@ -7,21 +7,42 @@ import model.BoardType;
 import model.YutResult;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-public class SwingPlayScreen extends JFrame implements GamePlayView{
+public class SwingPlayScreen extends JFrame implements GamePlayView {
+
     private int playerCount;
     private int pieceCount;
     private BoardType boardType;
-    private JButton rollButton;
-    private JButton testRollButton;
     private ArrayList<ImageIcon> playerIcons = new ArrayList<>();
 
-    private JLabel yutImageLabel;
+    // 버튼
+    private JButton rollButton;
+    private JButton testRollButton;
 
-    private JLabel yutResultLabel;
-    // 추가
+    // 필드 추가
+    private FixedYutButtonListener fixedYutButtonListener;
     private ThrowButtonListener throwButtonListener;
+    private GameEndListener gameEndListener;
 
+    // 라벨
+    private JLabel yutImageLabel;
+    private JLabel yutResultLabel;
+    private JLabel currentPlayerLabel; // 현재 플레이어 표시 라벨
+    private JLabel statusMessageLabel; // 게임 상태 메시지 라벨
+    private List<JLabel> yutResultLabels = new ArrayList<>();
+    private ArrayList<JLabel> pieceLabels = new ArrayList<>(); // 말 아이콘 라벨들
+    private JLabel turnArrowLabel; // 턴 화살표 라벨
+
+    private JPanel yutResultsPanel;// 윷 결과 리스트를 표시할 패널 추가
+
+    private int currentPlayerIndex = 0; // 현재 플레이어 인덱스
+
+    // 플레이어 패널에 있는 말 이미지 (키: playerID_pieceID)
+    private Map<String, JLabel> playerPiecesMap = new HashMap<>();
 
     public SwingPlayScreen(int playerCount, int pieceCount, BoardType boardType) {
         super("게임 화면");
@@ -33,195 +54,418 @@ public class SwingPlayScreen extends JFrame implements GamePlayView{
 
     private void initUI() {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(1280, 720);
-        setLayout(null);
-        getContentPane().setBackground(new Color(255, 245, 230));
+        setSize(1280, 800); // 화면 높이 증가
+        setResizable(false);
 
+        // 전체 패널 생성 (메인 컨테이너)
+        JPanel mainPanel = new JPanel(new BorderLayout(10, 0));
+        mainPanel.setBackground(new Color(255, 245, 230));
 
-        //판 생성 및 배치
+        // 게임 판 패널 (왼쪽 영역)
+        JPanel boardPanel = createBoardPanel();
+        boardPanel.setPreferredSize(new Dimension(700, 720)); // 윷 판이 온전히 보이도록 충분한 공간 확보
+        mainPanel.add(boardPanel, BorderLayout.WEST);
+
+        // 게임 정보 및 컨트롤 패널 (오른쪽 영역)
+        JPanel controlPanel = createControlPanel();
+        mainPanel.add(controlPanel, BorderLayout.CENTER);
+
+        // 메인 패널을 프레임에 추가
+        setContentPane(mainPanel);
+
+        setLocationRelativeTo(null);
+        setVisible(true);
+    }
+
+    // 게임 판 패널 생성
+    private JPanel createBoardPanel() {
+        JPanel panel = new JPanel();
+        panel.setPreferredSize(new Dimension(700, 720));
+        panel.setLayout(null); // null 레이아웃 사용 (절대 위치)
+        panel.setBackground(new Color(255, 245, 230));
+
+        // 윷놀이 판 이미지 추가
         ImageIcon boardIcon = new ImageIcon(getClass().getResource("/view/images/" + boardType.toString() + ".png"));
-        JLabel boardLabel = new JLabel(boardIcon);
 
+        // 이미지 크기 조정 (윷판이 완전히 보이도록)
+        Image img = boardIcon.getImage();
+        Image resizedImg;
+
+        // 보드 타입에 따라 크기 조정
         if(boardType == BoardType.SQUARE) {
-        	boardLabel.setBounds(-155,-155,1000,1000); 
+            resizedImg = img.getScaledInstance(600, 600, Image.SCALE_SMOOTH);
         }
         else if(boardType == BoardType.PENTAGON) {
-        	boardLabel.setBounds(-210,-235,1150,1150); 
+            resizedImg = img.getScaledInstance(600, 600, Image.SCALE_SMOOTH);
         }
-        else if(boardType == BoardType.HEXAGON){
-        	boardLabel.setBounds(-190,-165,1000,1000); 
+        else { // HEXAGON
+            resizedImg = img.getScaledInstance(600, 600, Image.SCALE_SMOOTH);
         }
 
-        getContentPane().add(boardLabel);
+        boardIcon = new ImageIcon(resizedImg);
+        JLabel boardLabel = new JLabel(boardIcon);
+        boardLabel.setBounds(50, 50, 600, 600); // 절대 위치 지정
 
-        // 윷 결과 라벨 추가
-        yutResultLabel = new JLabel("윷 결과: ");
-        yutResultLabel.setFont(new Font("SansSerif", Font.BOLD, 24));
-        yutResultLabel.setBounds(730, 560, 300, 40);
-        add(yutResultLabel);
+        // 보드 레이블 추가
+        panel.add(boardLabel);
 
+        return panel;
+    }
 
-        yutImageLabel = new JLabel();
-        yutImageLabel.setBounds(730, 450, 100, 100); // 위치 및 크기 설정
-        add(yutImageLabel);
+    // 게임 정보 및 컨트롤 패널 생성
+    private JPanel createControlPanel() {
+        JPanel panel = new JPanel();
+        panel.setBackground(new Color(255, 245, 230));
+        panel.setBorder(BorderFactory.createEmptyBorder(20, 10, 20, 20));
 
+        // 전체 패널에 GridBagLayout 적용
+        panel.setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1.0;
 
-        //윷 던지기 버튼
+        // 플레이어 정보 패널
+        JPanel playerInfoPanel = createPlayerInfoPanel();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weighty = 0.5;
+        panel.add(playerInfoPanel, gbc);
+
+        // 현재 플레이어 정보 패널
+        JPanel currentPlayerPanel = new JPanel();
+        currentPlayerPanel.setLayout(new BoxLayout(currentPlayerPanel, BoxLayout.Y_AXIS));
+        currentPlayerPanel.setBackground(new Color(255, 245, 230));
+        currentPlayerPanel.setBorder(BorderFactory.createTitledBorder("게임 상태"));
+
+        // 현재 플레이어 표시
+        currentPlayerLabel = new JLabel("현재 플레이어: 1");
+        currentPlayerLabel.setFont(new Font("SansSerif", Font.BOLD, 18));
+        currentPlayerLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        // 게임 상태 메시지
+        statusMessageLabel = new JLabel("게임 시작! 윷을 던져주세요.");
+        statusMessageLabel.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        statusMessageLabel.setForeground(new Color(0, 100, 0));
+        statusMessageLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        currentPlayerPanel.add(currentPlayerLabel);
+        currentPlayerPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        currentPlayerPanel.add(statusMessageLabel);
+
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.weighty = 0;
+        panel.add(currentPlayerPanel, gbc);
+
+        // 윷 결과 표시 패널
+        JPanel yutResultPanel = createYutResultPanel();
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.weighty = 0.3;
+        panel.add(yutResultPanel, gbc);
+
+        // 버튼 패널
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new GridLayout(1, 2, 10, 0));
+        buttonPanel.setBackground(new Color(255, 245, 230));
+
+        // 지정 윷 던지기 버튼
+        testRollButton = new JButton("지정윷 던지기");
+        testRollButton.setFont(new Font("SansSerif", Font.BOLD, 16));
+        testRollButton.setBackground(new Color(120, 200, 120));
+        testRollButton.setForeground(Color.WHITE);
+        testRollButton.setFocusPainted(false);
+        testRollButton.setPreferredSize(new Dimension(150, 60));
+
+        testRollButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                displayResultSelect();
+            }
+        });
+
+        // 윷 던지기 버튼
         rollButton = new JButton("윷 던지기");
         rollButton.setFont(new Font("SansSerif", Font.BOLD, 16));
         rollButton.setBackground(new Color(120, 200, 120));
         rollButton.setForeground(Color.WHITE);
         rollButton.setFocusPainted(false);
-
-        rollButton.setBounds(950,610,300,60);
-
-        add(rollButton);
+        rollButton.setPreferredSize(new Dimension(150, 60));
 
         rollButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (throwButtonListener != null) {
                     YutResult yutResult = throwButtonListener.onThrowButtonClicked();
-                    displayYutResult(yutResult.getMove());
+                    displaySingleYutResult(yutResult);
                 }
             }
         });
 
+        buttonPanel.add(testRollButton);
+        buttonPanel.add(rollButton);
 
-        //지정 윷 던지기 버튼
-        testRollButton = new JButton("지정윷 던지기");
-        testRollButton.setFont(new Font("SansSerif", Font.BOLD, 16));
-        testRollButton.setBackground(new Color(120, 200, 120));
-        testRollButton.setForeground(Color.WHITE);
-        testRollButton.setFocusPainted(false);
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        gbc.weighty = 0;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.anchor = GridBagConstraints.CENTER;
+        panel.add(buttonPanel, gbc);
 
-        testRollButton.setBounds(730,610,200,60);
+        // 게임 종료 테스트 버튼 (테스트용)
+        JButton testEndGameButton = new JButton("게임 종료 테스트");
+        testEndGameButton.setFont(new Font("SansSerif", Font.BOLD, 14));
+        testEndGameButton.setBackground(new Color(255, 100, 100));
+        testEndGameButton.setForeground(Color.WHITE);
+        testEndGameButton.setFocusPainted(false);
+        testEndGameButton.setPreferredSize(new Dimension(200, 40));
 
-        add(testRollButton);
-        
-        testRollButton.addActionListener(new ActionListener() {
-        	@Override
-        	public void actionPerformed(ActionEvent e) {
-        		//추후 controller에게 전달
-        		displayResultSelect();
-        	}
-        });
-
-        //클릭 시 좌표 출력
-        getContentPane().addMouseListener(new MouseAdapter() {
+        testEndGameButton.addActionListener(new ActionListener() {
             @Override
-            public void mouseClicked(MouseEvent e) {
-                int x = e.getX();
-                int y = e.getY();
-                System.out.println("클릭한 위치: (" + x + ", " + y + ")");
+            public void actionPerformed(ActionEvent e) {
+                // 게임 종료 다이얼로그 테스트 (현재 플레이어를 승자로 설정)
+                showGameEndDialog(currentPlayerIndex + 1);
             }
         });
 
-        //플레이어 정보 최초 초기화
-        ArrayList<JLabel> playerLabels = new ArrayList();
-        for(int i = 0; i < playerCount; i++) {
-            playerLabels.add(new JLabel("PLAYER" + String.valueOf(i+1)));
-            playerLabels.get(i).setFont(new Font("SansSerif", Font.BOLD, 24));
-            playerLabels.get(i).setBounds(830,90+i*140,200,30);
-            add(playerLabels.get(i));
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        gbc.weighty = 0;
+        gbc.insets = new Insets(20, 5, 5, 5); // 위쪽 여백 추가
+        panel.add(testEndGameButton, gbc);
+
+        return panel;
+    }
+    // 플레이어 정보 패널 생성
+    private JPanel createPlayerInfoPanel() {
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridLayout(playerCount, 1, 0, 10));
+        panel.setBackground(new Color(255, 245, 230));
+        panel.setBorder(BorderFactory.createTitledBorder("플레이어 정보"));
+
+        // 턴 화살표 이미지 로드
+        ImageIcon turnArrowIcon = new ImageIcon(getClass().getResource("/view/images/턴화살표.png"));
+        // 이미지 크기 조정
+        Image img = turnArrowIcon.getImage();
+        Image resizedImg = img.getScaledInstance(30, 30, Image.SCALE_SMOOTH);
+        turnArrowIcon = new ImageIcon(resizedImg);
+
+        // 각 플레이어 정보 행 패널 생성
+        for (int i = 0; i < playerCount; i++) {
+            final int playerId = i + 1;
+
+            // 플레이어 패널 (전체)
+            JPanel playerPanel = new JPanel();
+            playerPanel.setLayout(new BoxLayout(playerPanel, BoxLayout.Y_AXIS));
+            playerPanel.setBackground(new Color(255, 245, 230));
+
+            // 플레이어 정보 행 (이름과 화살표)
+            JPanel playerInfoRow = new JPanel();
+            playerInfoRow.setLayout(new BoxLayout(playerInfoRow, BoxLayout.X_AXIS));
+            playerInfoRow.setBackground(new Color(255, 245, 230));
+            playerInfoRow.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+
+            // 현재 턴 표시 화살표 (첫 번째 플레이어에게만 표시)
+            JLabel arrowLabel = new JLabel(i == 0 ? turnArrowIcon : new ImageIcon());
+            arrowLabel.setPreferredSize(new Dimension(30, 30));
+            playerInfoRow.add(arrowLabel);
+            playerInfoRow.add(Box.createRigidArea(new Dimension(10, 0)));
+
+            if (i == 0) {
+                turnArrowLabel = arrowLabel; // 화살표 라벨 저장 (나중에 위치 업데이트 위해)
+            }
+
+            // 플레이어 이름
+            JLabel nameLabel = new JLabel("PLAYER" + playerId);
+            nameLabel.setFont(new Font("SansSerif", Font.BOLD, 18));
+            nameLabel.setPreferredSize(new Dimension(100, 30));
+            playerInfoRow.add(nameLabel);
+            playerInfoRow.add(Box.createHorizontalGlue()); // 여백 추가
+
+            // 플레이어 말 아이콘 로드
+            ImageIcon pieceIcon = new ImageIcon(getClass().getResource("/view/images/플레이어" + playerId + "말.png"));
+
+            // 말 아이콘 크기 조정
+            Image pieceImg = pieceIcon.getImage();
+            Image resizedPieceImg = pieceImg.getScaledInstance(40, 40, Image.SCALE_SMOOTH);
+            pieceIcon = new ImageIcon(resizedPieceImg);
+
+            playerIcons.add(pieceIcon);
+
+            // 말 아이콘 표시
+            JLabel pieceLabel = new JLabel(pieceIcon);
+            pieceLabel.setPreferredSize(new Dimension(40, 40));
+            pieceLabels.add(pieceLabel);
+            playerInfoRow.add(pieceLabel);
+
+            // 플레이어 패널에 정보 행 추가
+            playerPanel.add(playerInfoRow);
+
+            // 말 행 패널 (말들과 꺼내기 버튼)
+            JPanel piecesRow = new JPanel();
+            piecesRow.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 0));
+            piecesRow.setBackground(new Color(255, 245, 230));
+
+            // 각 플레이어의 말을 패널에 추가
+            for (int j = 0; j < pieceCount; j++) {
+                final int pieceId = j;
+
+                // 말 이미지 생성
+                JLabel pieceImageLabel = new JLabel(pieceIcon);
+                pieceImageLabel.setName("piece_" + playerId + "_" + pieceId);
+                pieceImageLabel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+
+                // 말 이미지를 패널에 추가
+                piecesRow.add(pieceImageLabel);
+
+                // 말 라벨 저장 (나중에 참조하기 위해)
+                playerPiecesMap.put(playerId + "_" + pieceId, pieceImageLabel);
+            }
+
+            // 말 꺼내기 버튼
+            JButton takeOutButton = new JButton("말 꺼내기");
+            takeOutButton.setFont(new Font("SansSerif", Font.BOLD, 12));
+            takeOutButton.setBackground(new Color(200, 200, 255));
+
+            piecesRow.add(takeOutButton);
+
+            // 플레이어 패널에 말 행 추가
+            playerPanel.add(piecesRow);
+
+            // 전체 패널에 플레이어 패널 추가
+            panel.add(playerPanel);
         }
 
-
-        for(int j = 0; j < playerCount; j++) {
-            playerIcons.add(new ImageIcon(getClass().getResource("/view/images/" + "플레이어" + String.valueOf(j+1) + "말" + ".png")));
-        } //플레이어 수에 맞게 ICON ArrayList를 미리 생성 이후 piece 수에 맞게 화면에 초기화
-        //이후 piece 객체를 받아와 그 정보만큼 해당 ICON을 배치 -> 화면 갱신하는 renewal 매서드 필요
-
-        //ICON 배치 테스트
-        ImageIcon piece1Icon = new ImageIcon(getClass().getResource("/view/images/" + "플레이어1말" + ".png"));
-        JLabel piece1Label = new JLabel(piece1Icon);
-
-        piece1Label.setBounds(950,40,100,128);
-        add(piece1Label);
-
-        //턴 정보 초기화
-        ImageIcon turnDirectionIcon = new ImageIcon(getClass().getResource("/view/images/" + "턴화살표" + ".png"));
-        JLabel turnDirectionLabel = new JLabel(turnDirectionIcon);
-        turnDirectionLabel.setBounds(785,80,50,50); //Y좌표 140씩 추가하면 다음 플레이어에게 배치
-        add(turnDirectionLabel);
-
-        setResizable(false);
-        setLocationRelativeTo(null);
-        setVisible(true);
-
+        return panel;
     }
-    
+
+    // 윷 결과 표시 패널 생성
+    private JPanel createYutResultPanel() {
+        JPanel panel = new JPanel(new BorderLayout(10, 10));
+        panel.setBackground(new Color(255, 245, 230));
+        panel.setBorder(BorderFactory.createTitledBorder("윷 결과"));
+        panel.setPreferredSize(new Dimension(300, 150)); // 크기 지정
+
+        // 최근 윷 결과 표시 영역 (왼쪽)
+        JPanel currentResultPanel = new JPanel();
+        currentResultPanel.setLayout(new BoxLayout(currentResultPanel, BoxLayout.Y_AXIS));
+        currentResultPanel.setBackground(new Color(255, 245, 230));
+        currentResultPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        currentResultPanel.setPreferredSize(new Dimension(120, 120)); // 크기 지정
+
+        yutResultLabel = new JLabel("윷 결과: ");
+        yutResultLabel.setFont(new Font("SansSerif", Font.BOLD, 16));
+        yutResultLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        currentResultPanel.add(yutResultLabel);
+
+        // 이미지와 라벨 사이 간격 추가
+        currentResultPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+
+        // 이미지 라벨 생성 및 중앙 정렬
+        yutImageLabel = new JLabel();
+        yutImageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        currentResultPanel.add(yutImageLabel);
+
+        panel.add(currentResultPanel, BorderLayout.WEST);
+
+        // 윷 결과 리스트 표시 영역 (오른쪽)
+        JPanel resultsListPanel = new JPanel(new BorderLayout());
+        resultsListPanel.setBackground(new Color(255, 245, 230));
+        resultsListPanel.setBorder(BorderFactory.createTitledBorder("가능한 이동"));
+        resultsListPanel.setPreferredSize(new Dimension(150, 120)); // 크기 지정
+
+        // 결과 리스트를 스크롤 패널에 추가
+        yutResultsPanel = new JPanel();
+        yutResultsPanel.setLayout(new BoxLayout(yutResultsPanel, BoxLayout.Y_AXIS));
+        yutResultsPanel.setBackground(new Color(255, 245, 230));
+
+        JScrollPane scrollPane = new JScrollPane(yutResultsPanel);
+        scrollPane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+
+        resultsListPanel.add(scrollPane, BorderLayout.CENTER);
+
+        panel.add(resultsListPanel, BorderLayout.CENTER);
+
+        return panel;
+    }
+
     //지정 윷을 정하는 화면 표시하는 메서드
-    private int displayResultSelect() {
-    	int result = 0;
-    	
-    	new SelectYutResultScreen();
-    	
-    	return result;
+    private void displayResultSelect() {
+        // 윷 선택 리스너 생성
+        SelectYutResultScreen.YutSelectListener listener = result -> {
+            if (fixedYutButtonListener != null) {
+                // 선택된 윷 결과를 컨트롤러에 전달
+                YutResult yutResult = fixedYutButtonListener.onFixedYutSelected(result);
+                // 던진 윷 결과 화면에 표시
+                displaySingleYutResult(yutResult);
+            }
+        };
+
+        // 선택 화면 생성 및 리스너 전달
+        new SelectYutResultScreen(listener);
     }
 
-    // 윷 결과를 화면에 표시하는 메서드
-    private void displayYutResult(int result) {
-        String resultText;
+    // 단일 윷 결과를 표시 (팝업용)
+    private void displaySingleYutResult(YutResult result) {
+        String resultText = result.name();
         String imageName = "";
 
-        switch (result) {
+        switch (result.getMove()) {
             case -1:
-                resultText = "백도";
                 imageName = "빽도";
                 break;
             case 1:
-                resultText = "도";
                 imageName = "도";
                 break;
             case 2:
-                resultText = "개";
                 imageName = "개";
                 break;
             case 3:
-                resultText = "걸";
                 imageName = "걸";
                 break;
             case 4:
-                resultText = "윷";
                 imageName = "윷";
                 break;
             case 5:
-                resultText = "모";
-                resultText = "모";
+                imageName = "모";
                 break;
             default:
-                resultText = "알 수 없음";
                 imageName = null;
                 break;
         }
 
         yutResultLabel.setText("윷 결과: " + resultText);
 
-        // 팝업 창에 이미지 표시
+        // 윷 이미지 표시
         if (imageName != null) {
-            // 새 팝업 창 생성
+            ImageIcon yutIcon = new ImageIcon(getClass().getResource("/view/images/" + imageName + ".png"));
+
+            // 이미지 크기 조정
+            Image img = yutIcon.getImage();
+            Image resizedImg = img.getScaledInstance(100, 100, Image.SCALE_SMOOTH);
+            yutIcon = new ImageIcon(resizedImg);
+
+            yutImageLabel.setIcon(yutIcon);
+
+            // 팝업 창에 이미지 표시
             JDialog resultDialog = new JDialog(this, "윷 결과: " + resultText, true);
             resultDialog.setLayout(new BorderLayout());
 
+            ImageIcon popupYutIcon = new ImageIcon(getClass().getResource("/view/images/" + imageName + ".png"));
+            Image popupImg = popupYutIcon.getImage();
+            Image resizedPopupImg = popupImg.getScaledInstance(300, 300, Image.SCALE_SMOOTH);
+            popupYutIcon = new ImageIcon(resizedPopupImg);
 
-            ImageIcon yutIcon = new ImageIcon(getClass().getResource("/view/images/" + imageName + ".png"));
-
-            Image img = yutIcon.getImage();
-            Image resizedImg = img.getScaledInstance(300, 300, Image.SCALE_SMOOTH);
-            yutIcon = new ImageIcon(resizedImg);
-
-            JLabel imageLabel = new JLabel(yutIcon);
+            JLabel imageLabel = new JLabel(popupYutIcon);
             imageLabel.setHorizontalAlignment(JLabel.CENTER);
             resultDialog.add(imageLabel, BorderLayout.CENTER);
-
 
             JButton confirmButton = new JButton("확인");
             confirmButton.addActionListener(e -> resultDialog.dispose());
             JPanel buttonPanel = new JPanel();
             buttonPanel.add(confirmButton);
             resultDialog.add(buttonPanel, BorderLayout.SOUTH);
-
 
             resultDialog.setSize(400, 450);
             resultDialog.setLocationRelativeTo(this);
@@ -231,19 +475,236 @@ public class SwingPlayScreen extends JFrame implements GamePlayView{
             timer.setRepeats(false);
             timer.start();
 
-
             resultDialog.setVisible(true);
         }
     }
-    public void renewalFrame() {
-        //정보 받아와 갱신하는 작업
-        revalidate();
+
+    // 윷 결과 리스트를 화면에 표시하는 메서드 구현
+    @Override
+    public void displayYutResultList(List<YutResult> results) {
+        // 기존 결과 라벨들 모두 제거
+        yutResultsPanel.removeAll();
+        yutResultLabels.clear();
+
+        if (results.isEmpty()) {
+            JLabel emptyLabel = new JLabel("던진 윷 없음");
+            emptyLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+            yutResultsPanel.add(emptyLabel);
+            yutResultLabels.add(emptyLabel);
+        } else {
+            // 각 윷 결과마다 라벨 생성하여 패널에 추가
+            for (YutResult result : results) {
+                String resultText = result.name() + " (" + result.getMove() + "칸)";
+                JLabel resultLabel = new JLabel(resultText);
+                resultLabel.setFont(new Font("SansSerif", Font.PLAIN, 14));
+                resultLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+                resultLabel.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+
+                yutResultsPanel.add(resultLabel);
+                yutResultLabels.add(resultLabel);
+
+                // 구분선 추가 (마지막 항목 제외)
+                if (results.indexOf(result) < results.size() - 1) {
+                    yutResultsPanel.add(new JSeparator());
+                }
+            }
+        }
+
+        // 패널 갱신
+        yutResultsPanel.revalidate();
+        yutResultsPanel.repaint();
+    }
+
+    // 현재 플레이어 업데이트
+    @Override
+    public void updateCurrentPlayer(int playerNumber) {
+        currentPlayerLabel.setText("현재 플레이어: " + playerNumber);
+        currentPlayerIndex = playerNumber - 1;
+
+        // 모든 화살표 제거
+        for (int i = 0; i < playerCount; i++) {
+            JPanel playerRow = (JPanel) pieceLabels.get(i).getParent();
+            Component[] components = playerRow.getComponents();
+            for (Component comp : components) {
+                if (comp instanceof JLabel && comp != pieceLabels.get(i) && ((JLabel) comp).getIcon() != null) {
+                    ((JLabel) comp).setIcon(null);
+                }
+            }
+        }
+
+        // 현재 플레이어에 화살표 표시
+        ImageIcon turnArrowIcon = new ImageIcon(getClass().getResource("/view/images/턴화살표.png"));
+        Image img = turnArrowIcon.getImage();
+        Image resizedImg = img.getScaledInstance(30, 30, Image.SCALE_SMOOTH);
+        turnArrowIcon = new ImageIcon(resizedImg);
+
+        // 플레이어 인덱스는 0부터, 플레이어 번호는 1부터 시작
+        JPanel playerRow = (JPanel) pieceLabels.get(playerNumber-1).getParent();
+        Component[] components = playerRow.getComponents();
+        for (Component comp : components) {
+            if (comp instanceof JLabel && comp != pieceLabels.get(playerNumber-1)) {
+                // 화살표 위치의 라벨 찾기 (첫 번째 컴포넌트)
+                if (playerRow.getComponentZOrder(comp) == 0) {
+                    ((JLabel) comp).setIcon(turnArrowIcon);
+                    break;
+                }
+            }
+        }
+
         repaint();
     }
 
+    @Override
+    public void showGameEndDialog(int winnerPlayer) {
+       // 게임 종료 다이얼로그 생성
+        JDialog endDialog = new JDialog(this, "게임 종료", true);
+        endDialog.setLayout(new BorderLayout());
+        endDialog.setSize(450, 300);
+        endDialog.setLocationRelativeTo(this);
+
+        // 승리 메시지 패널
+        JPanel messagePanel = new JPanel();
+        messagePanel.setLayout(new BoxLayout(messagePanel, BoxLayout.Y_AXIS));
+        messagePanel.setBackground(new Color(255, 245, 230));
+        messagePanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+
+        // 승리자 라벨 생성
+        JLabel winnerLabel = new JLabel("플레이어 " + winnerPlayer + " 승리!");
+        winnerLabel.setFont(new Font("SansSerif", Font.BOLD, 24));
+        winnerLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        // 축하 메시지
+        JLabel congratsLabel = new JLabel("축하합니다!");
+        congratsLabel.setFont(new Font("SansSerif", Font.PLAIN, 18));
+        congratsLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        messagePanel.add(winnerLabel);
+        messagePanel.add(Box.createRigidArea(new Dimension(0, 20)));
+        messagePanel.add(congratsLabel);
+
+        // 버튼 패널 - 주요 변경: 축소된 BorderLayout 사용
+        JPanel buttonPanel = new JPanel(new BorderLayout(10, 10));
+        buttonPanel.setBackground(new Color(255, 245, 230));
+        buttonPanel.setBorder(BorderFactory.createEmptyBorder(5, 10, 15, 10));
+
+        // 왼쪽과 오른쪽 버튼을 위한 패널
+        JPanel leftRightPanel = new JPanel(new GridLayout(1, 2, 10, 0));
+        leftRightPanel.setBackground(new Color(255, 245, 230));
+
+        // 새 설정으로 게임 시작 버튼
+        JButton newSetupButton = new JButton("새 설정으로 게임 시작");
+        newSetupButton.setFont(new Font("SansSerif", Font.BOLD, 14));
+        newSetupButton.setBackground(new Color(100, 180, 220));
+        newSetupButton.setForeground(Color.WHITE);
+        newSetupButton.setFocusPainted(false);
+        newSetupButton.addActionListener(e -> {
+            if (gameEndListener != null) {
+                gameEndListener.onNewGameSetup();
+            }
+            endDialog.dispose();
+        });
+
+        // 같은 설정으로 재시작 버튼
+        JButton restartButton = new JButton("같은 설정으로 재시작");
+        restartButton.setFont(new Font("SansSerif", Font.BOLD, 14));
+        restartButton.setBackground(new Color(120, 200, 120));
+        restartButton.setForeground(Color.WHITE);
+        restartButton.setFocusPainted(false);
+        restartButton.addActionListener(e -> {
+            if (gameEndListener != null) {
+                gameEndListener.onRestartGame();
+            }
+            endDialog.dispose();
+        });
+
+        // 왼쪽 오른쪽 패널에 버튼 추가
+        leftRightPanel.add(newSetupButton);
+        leftRightPanel.add(restartButton);
+
+        // 종료 버튼 - 위치 변경됨
+        JButton exitButton = new JButton("종료");
+        exitButton.setFont(new Font("SansSerif", Font.BOLD, 14));
+        exitButton.setBackground(new Color(200, 100, 100));
+        exitButton.setForeground(Color.WHITE);
+        exitButton.setFocusPainted(false);
+        exitButton.addActionListener(e -> {
+            if (gameEndListener != null) {
+                gameEndListener.onExitGame();
+            }
+            endDialog.dispose();
+        });
+
+        // 종료 버튼을 별도의 패널에 배치
+        JPanel exitPanel = new JPanel();
+        exitPanel.setBackground(new Color(255, 245, 230));
+        exitPanel.add(exitButton);
+
+        // 버튼 패널에 종료 버튼을 위쪽에, 나머지 버튼들을 아래쪽에 배치
+        buttonPanel.add(exitPanel, BorderLayout.NORTH);
+        buttonPanel.add(leftRightPanel, BorderLayout.CENTER);
+
+        endDialog.add(messagePanel, BorderLayout.CENTER);
+        endDialog.add(buttonPanel, BorderLayout.SOUTH);
+
+        // 다이얼로그 표시
+        endDialog.setVisible(true);
+    }
+
+    // 윷 이미지 초기화 메서드
+    public void clearYutImage() {
+        yutResultLabel.setText("윷 결과: ");
+        yutImageLabel.setIcon(null);
+    }
+
+    // 현재 플레이어 인덱스 설정
+    public void setCurrentPlayerIndex(int index) {
+        this.currentPlayerIndex = index;
+    }
+
+    // 게임 보드 패널 가져오기
+    private JPanel getBoardPanel() {
+        return (JPanel) ((BorderLayout)getContentPane().getLayout()).getLayoutComponent(BorderLayout.WEST);
+    }
 
     @Override
     public void setThrowButtonListener(ThrowButtonListener throwButtonListener) {
         this.throwButtonListener = throwButtonListener;
+    }
+
+    @Override
+    public void setFixedYutButtonListener(FixedYutButtonListener listener) {
+        this.fixedYutButtonListener = listener;
+    }
+
+    @Override
+    public void setGameEndListener(GameEndListener listener) {
+        this.gameEndListener = listener;
+    }
+
+    @Override
+    public void setThrowButtonEnabled(boolean enabled) {
+        rollButton.setEnabled(enabled);
+        testRollButton.setEnabled(enabled);
+
+        // 버튼 색상 변경 (비활성화 상태 시각화)
+        if (enabled) {
+            rollButton.setBackground(new Color(120, 200, 120));
+            testRollButton.setBackground(new Color(120, 200, 120));
+        } else {
+            rollButton.setBackground(new Color(200, 200, 200));
+            testRollButton.setBackground(new Color(200, 200, 200));
+        }
+    }
+
+    @Override
+    public void setStatusMessage(String message) {
+        statusMessageLabel.setText(message);
+    }
+
+    /**
+     * 화면을 닫는 메서드
+     */
+    public void dispose() {
+        super.dispose();
     }
 }

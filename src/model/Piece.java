@@ -23,6 +23,8 @@ public class Piece {
         this.finished = finished;
     }
 
+    public boolean getFinished() { return finished; }
+
     public void setPriorCell(Cell priorCell) { this.priorCell = priorCell; }
 
     public Cell getPriorCell() { return priorCell; }
