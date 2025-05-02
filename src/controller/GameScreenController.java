@@ -7,7 +7,6 @@ import model.YutResult;
 import view.GamePlayView;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class GameScreenController {
     private GamePlayView gameView;
@@ -34,18 +33,58 @@ public class GameScreenController {
     }
 
     // 랜덤 윷 던지는 버튼을 눌렀을 때
-    public YutResult RandomYutThrow(){
-        // View로 부터 정보를 어떻게 받아오겠죠?
+    public ArrayList RandomYutThrow(){
         YutResult yutResult = gameManager.throwYut();
-        // 이거 받아올 때 extratrun 값도 받아와서 true면 주사위 굴리게 해야함.
-        return yutResult;
+        gameManager.setExtraTurn(yutResult.canRollAgain());
+        if (gameManager.getExtraTurn()){
+            // 윷버튼 활성화
+        }
+        else {
+            // 윷버튼 비활성화
+        }
+        return gameManager.getYutResults();
     }
 
     // 지정 윷 던지는 버튼을 눌렀을 때
-    public YutResult FixedYutThrow(String getresult){
+    public ArrayList FixedYutThrow(String getresult){
         // View로 부터 정보를 어떻게 받아오겠죠?
         YutResult yutResult = gameManager.throwFixedYut(getresult);
-        return yutResult;
+        gameManager.setExtraTurn(yutResult.canRollAgain());
+        if (gameManager.getExtraTurn()){
+            // 윷버튼 활성화
+        }
+        else {
+            // 윷버튼 비활성화
+        }
+        return gameManager.getYutResults();
+    }
+
+    // 말을 선택했을 때
+    public int[] PieceSelect(int selectpiece){
+        return gameManager.findMovableCells(selectpiece);
+        // 지금 생각해야 할게 selectpiece를 gameManager가 저장하고 있어야 하는 거 아닌가?
+
+    }
+
+    // 좌표 선택했을 때
+    public void selectCoordinate(int coordinate){
+        // 모델에서는 선택된 말이 무엇인지를 알고 있어야함.
+
+        // 좌표값을 움직이는 칸수로 변환해야함. (현재 model에서 구현된 방식)
+        // 잡혔을 때 extraturn이 바뀌어 있는지 확인해야함.
+
+        if (gameManager.getExtraTurn()){
+            // 윷버튼 활성화
+        }
+        else {
+            if (gameManager.isYutResultsEmpty()) {
+                // 턴넘기기
+            }
+            else {
+                // 일단 전체 상태를 넘겨주고
+                // 말을 선택할 수 있는 상태로 가야 하는데
+            }
+        }
 
     }
 
@@ -56,17 +95,6 @@ public class GameScreenController {
         return status;
     }
 
-    // 말을 선택했을 때
-    public void PieceSelect(int selectpiece){
-        // 선택된 말이 갈 수 있는 곳을 표현해주는 메서드 구현
-        // 모델로 부터 받아올 값은 좌표 값들 (ex. 7,9,12..) view로 넘겨주면 됨.
 
-    }
-
-    // 좌표 선택했을 때
-    public void playercontrolresult(String selectedyut){
-        // 모델에서는 선택된 말이 무엇인지를 알고 있어야함.
-        // 모델에서 그 선택된 좌표 계산해서 옮기고 전체상태 넘겨주면됨. (여기서 만약 추가 턴 여부 발생시 윷굴리는 과정 시작)
-    }
 
 }

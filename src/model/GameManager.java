@@ -18,6 +18,22 @@ public class GameManager {
         this.yut = new Yut();
     }
 
+    public void setExtraTurn(boolean extraTurn) {
+        this.extraTurn = extraTurn;
+    }
+
+    public Boolean getExtraTurn(){
+        return extraTurn;
+    }
+
+    public Boolean isYutResultsEmpty() {
+        return yutResults.isEmpty();
+    }
+
+    public void addYutResult(YutResult yutResult) {
+        yutResults.add(yutResult);
+    }
+
     public void initGM(StartInfo startInfo) {
         setStartInfo(startInfo);
 
@@ -106,8 +122,6 @@ public class GameManager {
         return currentPlayer;
     }
 
-    // 윷 결과가 남아있는지 판단
-
     // 랜덤 윷 던지기
     public YutResult throwYut() {
         YutResult result = yut.yutThrowRandom();
@@ -182,11 +196,6 @@ public class GameManager {
     // 윷 결과 리스트 반환
     public ArrayList<YutResult> getYutResults() {
         return yutResults;
-    }
-
-    // 추가 기회 여부 반환
-    public Boolean getExtraTurn(){
-        return extraTurn;
     }
 
     // 승리 판단 - 0이면 계속 진행, 유효한 플레이어 인덱스면 게임 종료

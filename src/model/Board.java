@@ -185,7 +185,6 @@ public class Board {
         return movableCellsId;
     }
 
-
     public boolean movePiecePositive(Piece piece, int move) {
         Cell current = piece.getStartCell();
         Cell startAt = piece.getStartCell();
@@ -287,7 +286,6 @@ public class Board {
 
         return updatePieceLocation(current, startAt, piece);
     }
-
 
     public Cell getCell(int i) {
         return cells.get(i);
