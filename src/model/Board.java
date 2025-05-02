@@ -223,6 +223,9 @@ public class Board {
 
             //완주 처리
             if(current.getType().equals("도착")){
+                if(startAt.getPieces().isEmpty()){
+                    startAt.addPiece(piece);
+                }
 
                 for(Piece p : startAt.getPieces()) {
                     p.setFinished(true);
@@ -273,7 +276,7 @@ public class Board {
 
         //test 코드 psy
         for(Piece p : startAt.getPieces()) {
-            System.out.println("1."+p.getId());
+            //System.out.println("1."+p.getId());
             //p.setPriorCell(priorCell);
 
             p.setStartCell(current);

@@ -4,25 +4,26 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class BoardTest {
     private Board board;
+    private Player player1;
+    private Player player2;
 
     @BeforeEach
     void setUp() {
-        /*gameManager = new GameManager();
-        StartInfo startInfo = new StartInfo(4, 3, BoardType.HEXAGON);
-        gameManager.initGM(startInfo);*/
-        Player player1 = new Player(1,4);
-        Player player2 = new Player(2,4);
+        player1 = new Player(1,4);
+        player2 = new Player(2,4);
         ArrayList<Player> players = new ArrayList<>();
         players.add(player1);
         players.add(player2);
 
         board = new Board(players, BoardType.HEXAGON);
     }
+
     @Test
     void getMovableCells() {
         int[] movableCells = new int[4];
@@ -45,6 +46,65 @@ class BoardTest {
 
     @Test
     void movePiecePositive() {
+        //출발점 이동
+        int move = 5;
+        Piece piece = player1.getPieces(1);
+        board.movePiecePositive(piece, move);
+
+        Cell cell = board.getCell(move);
+        assertEquals(cell.getId(), piece.getStartCell().getId());
+
+
+    }
+
+    @Test
+    void movePiecePositive2() {
+        //잡기
+        int move = 5;
+        Piece piece1 = player1.getPieces(1);
+        Piece piece2 = player2.getPieces(1);
+
+        board.movePiecePositive(piece1, move);
+        boolean test = board.movePiecePositive(piece2, move);
+        boolean expected = true;
+
+        assertEquals(expected, test);
+    }
+
+    @Test
+    void movePiecePositive3() {
+        //완주
+        int move = 31;
+        Piece piece1 = player1.getPieces(1);
+
+        board.movePiecePositive(piece1, move);
+
+        boolean test = piece1.getFinished();
+        boolean expected = true;
+
+        assertEquals(expected, test);
+    }
+
+    @Test
+    void movePiecePositive4() {
+        //업기
+        int move = 4;
+        Piece piece1 = player1.getPieces(1);
+        Piece piece2 = player1.getPieces(2);
+
+        board.movePiecePositive(piece1, move);
+        board.movePiecePositive(piece2, move);
+
+        List<Piece> pieces = board.getCell(move).getPieces();
+        int[] test = new int[2];
+        int i = 0;
+        for(Piece p : pieces) {
+            test[i++] = p.getId();
+        }
+
+        int[] expected = { 1,2 };
+
+        assertArrayEquals(expected, test);
     }
 
     @Test
