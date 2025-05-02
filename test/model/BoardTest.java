@@ -109,5 +109,54 @@ class BoardTest {
 
     @Test
     void movePieceNegative() {
+        //단순 이동
+        int move = 5;
+        Piece piece = player1.getPieces(1);
+        board.movePiecePositive(piece, move);
+
+        board.movePieceNegative(piece);
+
+        Cell cell = board.getCell(move-1);
+        assertEquals(cell.getId(), piece.getStartCell().getId());
+    }
+
+    @Test
+    void movePieceNegative2() {
+        //잡기
+        int move = 4;
+        Piece piece1 = player1.getPieces(1);
+        Piece piece2 = player2.getPieces(1);
+
+        board.movePiecePositive(piece1, move);
+        board.movePiecePositive(piece2, move+1);
+
+        boolean test = board.movePieceNegative(piece2);
+        boolean expected = true;
+
+        assertEquals(expected, test);
+    }
+
+    @Test
+    void movePieceNegative3() {
+        //업기
+        int move = 4;
+        Piece piece1 = player1.getPieces(1);
+        Piece piece2 = player1.getPieces(2);
+
+        board.movePiecePositive(piece1, move);
+        board.movePiecePositive(piece2, move+1);
+
+        board.movePieceNegative(piece2);
+
+        List<Piece> pieces = board.getCell(move).getPieces();
+        int[] test = new int[2];
+        int i = 0;
+        for(Piece p : pieces) {
+            test[i++] = p.getId();
+        }
+
+        int[] expected = { 1,2 };
+
+        assertArrayEquals(expected, test);
     }
 }
