@@ -71,9 +71,9 @@ class GameManagerTest {
     @Test
     void findMovableCells(){
         // 윷 세팅
-        gameManager.throwFixedYut("도");
-        gameManager.throwFixedYut("도");
         gameManager.throwFixedYut("개");
+        gameManager.throwFixedYut("도");
+        gameManager.throwFixedYut("도");
         gameManager.throwFixedYut("걸");
         gameManager.throwFixedYut("윷");
         gameManager.throwFixedYut("모");
@@ -82,7 +82,8 @@ class GameManagerTest {
         System.out.println(gameManager.getYutResults());
 
         // 이동 가능 지점 확인
-        System.out.println(Arrays.toString(gameManager.findMovableCells(5)));
+        Map<Integer, Integer> movableMap = gameManager.findMovableCells(5);
+        System.out.println(movableMap);
 
     }
 }

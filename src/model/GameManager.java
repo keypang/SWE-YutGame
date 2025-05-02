@@ -215,7 +215,7 @@ public class GameManager {
     }
 
     // Cell id 넘겨받아서 이동 가능한 Cell 리스트 반환
-    public int[] findMovableCells(int cellId){
+    public Map<Integer, Integer> findMovableCells(int cellId){
         // 현재 위치한 Cell
         Cell currentCell =  board.getCell(cellId);
 
@@ -231,9 +231,22 @@ public class GameManager {
 
         int[] movableCellIdArray = new int[movableNumArray.length];
 
-        movableCellIdArray = board.getMovableCells(currentCell, movableNumArray);
+        movableCellIdArray = board.getMovableCells(currentCell, movableNumArray); // 이동 가능 cell id list
 
-        return movableCellIdArray;
+        // ('이동 가능 cell id', '해당 cell로 가기 위해 이동해야 하는 칸 수')를 map 구조로 저장
+        Map<Integer, Integer> movableMap = new HashMap<>();
+
+        for(int i=0; i<movableCellIdArray.length; i++){
+            movableMap.put(movableCellIdArray[i], movableNumArray[i]);
+        }
+
+        // 중간 과정 디버깅용 출력
+        System.out.println("윷 리스트: " + yutResults.toString());
+        System.out.println("이동 가능 칸 수: " + movableNumList);
+        System.out.println("이동 가능 칸 수(중복 제거): " + Arrays.toString(movableNumArray));
+        System.out.println("이동 가능 지점 리스트: " + Arrays.toString(movableCellIdArray));
+
+        return movableMap;
     }
 
     // 승리 판단 - 0이면 계속 진행, 유효한 플레이어 인덱스면 게임 종료
