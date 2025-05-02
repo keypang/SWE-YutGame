@@ -17,33 +17,27 @@ public class SwingPlayScreen extends JFrame implements GamePlayView {
     private int playerCount;
     private int pieceCount;
     private BoardType boardType;
-    private JButton rollButton;
-    private JButton testRollButton;
     private ArrayList<ImageIcon> playerIcons = new ArrayList<>();
 
-    private JLabel yutImageLabel;
-    private JLabel yutResultLabel;
-
-    // 윷 결과 리스트를 표시할 패널 추가
-    private JPanel yutResultsPanel;
-    private List<JLabel> yutResultLabels = new ArrayList<>();
-
-    // 현재 플레이어 표시 라벨
-    private JLabel currentPlayerLabel;
-
-    // 게임 상태 메시지 라벨
-    private JLabel statusMessageLabel;
-
-    // 말 아이콘 라벨들
-    private ArrayList<JLabel> pieceLabels = new ArrayList<>();
-
-    // 턴 화살표 라벨
-    private JLabel turnArrowLabel;
+    // 버튼
+    private JButton rollButton;
+    private JButton testRollButton;
 
     // 필드 추가
     private FixedYutButtonListener fixedYutButtonListener;
     private ThrowButtonListener throwButtonListener;
     private GameEndListener gameEndListener;
+
+    // 라벨
+    private JLabel yutImageLabel;
+    private JLabel yutResultLabel;
+    private JLabel currentPlayerLabel; // 현재 플레이어 표시 라벨
+    private JLabel statusMessageLabel; // 게임 상태 메시지 라벨
+    private List<JLabel> yutResultLabels = new ArrayList<>();
+    private ArrayList<JLabel> pieceLabels = new ArrayList<>(); // 말 아이콘 라벨들
+    private JLabel turnArrowLabel; // 턴 화살표 라벨
+
+    private JPanel yutResultsPanel;// 윷 결과 리스트를 표시할 패널 추가
 
     private int currentPlayerIndex = 0; // 현재 플레이어 인덱스
 
