@@ -24,7 +24,6 @@ public class GameScreenController {
         initController();
     }
 
-
     // 컨트롤러 초기화
     private void initController() {
         // 랜덤 윷 던지기 리스너 설정
@@ -98,25 +97,6 @@ public class GameScreenController {
         return yutResult;
     }
 
-    // 윷 던진 후 게임 상태 업데이트
-    private void updateGameStateAfterYutThrow(YutResult yutResult) {
-        // 윷이나 모가 나온 경우 (추가 턴)
-        if (yutResult.canRollAgain()) {
-            gameView.setThrowButtonEnabled(true);
-            gameView.setStatusMessage(yutResult.name() + "가 나왔습니다! 한 번 더 던지세요.");
-        } else {
-            // 추가 턴이 없는 경우
-            gameView.setThrowButtonEnabled(false);
-            gameView.setStatusMessage(yutResult.name() + "가 나왔습니다. 말을 선택하여 이동하세요.");
-        }
-    }
-
-    // 윷 결과 리스트를 뷰에 표시
-    private void updateYutResultsInView() {
-        // GameManager에서 현재 가지고 있는 윷 결과 리스트 가져오기
-        gameView.displayYutResultList(gameManager.getYutResults());
-    }
-
     // 지정 윷 던지는 버튼을 눌렀을 때
     public YutResult FixedYutThrow(String getresult){
         // 지정된 윷 결과 얻기 (enum 값으로 변환)
@@ -143,56 +123,29 @@ public class GameScreenController {
         return yutResult;
     }
 
+    // 윷 던진 후 게임 상태 업데이트
+    private void updateGameStateAfterYutThrow(YutResult yutResult) {
+        // 윷이나 모가 나온 경우 (추가 턴)
+        if (yutResult.canRollAgain()) {
+            gameView.setThrowButtonEnabled(true);
+            gameView.setStatusMessage(yutResult.name() + "가 나왔습니다! 한 번 더 던지세요.");
+        } else {
+            // 추가 턴이 없는 경우
+            gameView.setThrowButtonEnabled(false);
+            gameView.setStatusMessage(yutResult.name() + "가 나왔습니다. 말을 선택하여 이동하세요.");
+        }
+    }
+
+    // 윷 결과 리스트를 뷰에 표시
+    private void updateYutResultsInView() {
+        // GameManager에서 현재 가지고 있는 윷 결과 리스트 가져오기
+        gameView.displayYutResultList(gameManager.getYutResults());
+    }
+
     // 윷 결과 리스트 가져오기
     public List<YutResult> getYutResults() {
         return gameManager.getYutResults();
     }
-
-    // 게임 재시작
-    private void restartGame() {
-        // 게임 매니저 초기화
-        gameManager.initGM(gameManager.getStartInfo());
-
-        // 뷰 초기화
-        gameView.updateCurrentPlayer(1);
-
-        // 윷 결과 리스트 초기화
-        updateYutResultsInView();
-
-        // 윷 이미지 초기화
-        if (gameView instanceof SwingPlayScreen) {
-            ((SwingPlayScreen) gameView).clearYutImage();
-        }
-
-        // 버튼 상태 초기화
-        gameView.setThrowButtonEnabled(true);
-
-        // 상태 메시지 초기화
-        gameView.setStatusMessage("게임이 다시 시작되었습니다! 윷을 던져주세요.");
-    }
-
-
-
-
-
-    // 새 설정으로 게임 시작
-    private void newGameSetup() {
-        // 현재 게임 화면 닫기
-        if (gameView instanceof JFrame) {
-            ((JFrame) gameView).dispose();
-        }
-
-        // 설정 화면 생성 및 표시
-        GameConfigView configView = new SwingConfigScreen();
-
-        // 새 게임 관리자 생성
-        GameManager newGameManager = new GameManager();
-
-        // 설정 화면 컨트롤러 생성
-        StartScreenController startController = new StartScreenController(configView, newGameManager);
-    }
-
-    // 윷 굴리기 이전 초기상태 설정 (턴 넘어 갔을 때)
 
     // 말을 선택했을 때
     public int[] PieceSelect(int selectpiece){
@@ -222,6 +175,47 @@ public class GameScreenController {
         }
 
     }
+
+    // 게임 재시작
+    private void restartGame() {
+        // 게임 매니저 초기화
+        gameManager.initGM(gameManager.getStartInfo());
+
+        // 뷰 초기화
+        gameView.updateCurrentPlayer(1);
+
+        // 윷 결과 리스트 초기화
+        updateYutResultsInView();
+
+        // 윷 이미지 초기화
+        if (gameView instanceof SwingPlayScreen) {
+            ((SwingPlayScreen) gameView).clearYutImage();
+        }
+
+        // 버튼 상태 초기화
+        gameView.setThrowButtonEnabled(true);
+
+        // 상태 메시지 초기화
+        gameView.setStatusMessage("게임이 다시 시작되었습니다! 윷을 던져주세요.");
+    }
+
+    // 새 설정으로 게임 시작
+    private void newGameSetup() {
+        // 현재 게임 화면 닫기
+        if (gameView instanceof JFrame) {
+            ((JFrame) gameView).dispose();
+        }
+
+        // 설정 화면 생성 및 표시
+        GameConfigView configView = new SwingConfigScreen();
+
+        // 새 게임 관리자 생성
+        GameManager newGameManager = new GameManager();
+
+        // 설정 화면 컨트롤러 생성
+        StartScreenController startController = new StartScreenController(configView, newGameManager);
+    }
+
     // 게임 종료
     private void exitGame() {
         System.exit(0);
