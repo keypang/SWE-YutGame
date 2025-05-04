@@ -267,8 +267,6 @@ public class GameManager {
                 winnerIndex = player.getId();
             }
         }
-
         return winnerIndex;
     }
-
 }

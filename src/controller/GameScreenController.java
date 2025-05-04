@@ -11,6 +11,7 @@ import view.SwingPlayScreen;
 
 import javax.swing.*;
 import java.util.List;
+import java.util.Map;
 
 public class GameScreenController {
     private GamePlayView gameView;
@@ -148,16 +149,17 @@ public class GameScreenController {
     }
 
     // 말을 선택했을 때
-    public int[] PieceSelect(int selectpiece){
-        return gameManager.findMovableCells(selectpiece);
-        // 지금 생각해야 할게 selectpiece를 gameManager가 저장하고 있어야 하는 거 아닌가?
+    public Map<Integer, Integer> PieceSelect(int selectpiece){
 
+        Map<Integer, Integer> movable = gameManager.findMovableCells(selectpiece);
+        // 지금 생각해야 할게 selectpiece를 gameManager가 저장하고 있어야 하는 거 아닌가?
+        return movable;
     }
 
     // 좌표 선택했을 때
-    public void selectCoordinate(int coordinate){
+    public void selectCoordinate(Map<Integer, Integer> movable){
         // 모델에서는 선택된 말이 무엇인지를 알고 있어야함.
-
+        // 골라서 넘겨준 해시맵을 리스트에서 제거해야함.
         // 좌표값을 움직이는 칸수로 변환해야함. (현재 model에서 구현된 방식)
         // 잡혔을 때 extraturn이 바뀌어 있는지 확인해야함.
 
