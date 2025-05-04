@@ -43,6 +43,13 @@ public class GameScreenController {
             }
         });
 
+        // 말 꺼내기 리스너 설정
+        gameView.setTakeOutButtonListener(new GamePlayView.TakeOutButtonListener(){
+            public List<PositionDTO> onTakeOutButtonClicked() {
+                return gameManager.getAllPiecePos();
+            }
+        });
+
         // 게임 종료 리스너 설정
         gameView.setGameEndListener(new GamePlayView.GameEndListener() {
             @Override
@@ -98,6 +105,25 @@ public class GameScreenController {
         return yutResult;
     }
 
+    // 윷 던진 후 게임 상태 업데이트
+    private void updateGameStateAfterYutThrow(YutResult yutResult) {
+        // 윷이나 모가 나온 경우 (추가 턴)
+        if (yutResult.canRollAgain()) {
+            gameView.setThrowButtonEnabled(true);
+            gameView.setStatusMessage(yutResult.name() + "가 나왔습니다! 한 번 더 던지세요.");
+        } else {
+            // 추가 턴이 없는 경우
+            gameView.setThrowButtonEnabled(false);
+            gameView.setStatusMessage(yutResult.name() + "가 나왔습니다. 말을 선택하여 이동하세요.");
+        }
+    }
+
+    // 윷 결과 리스트를 뷰에 표시
+    private void updateYutResultsInView() {
+        // GameManager에서 현재 가지고 있는 윷 결과 리스트 가져오기
+        gameView.displayYutResultList(gameManager.getYutResults());
+    }
+
     // 지정 윷 던지는 버튼을 눌렀을 때
     public YutResult FixedYutThrow(String getresult){
         // 지정된 윷 결과 얻기 (enum 값으로 변환)
@@ -114,7 +140,7 @@ public class GameScreenController {
             return yutResult;
         }
 
-        // 현재 턴 플레이어 확인g하고 업데이트
+        // 현재 턴 플레이어 확인하고 업데이트
         int currentPlayer = gameManager.checkPlayer();
         gameView.updateCurrentPlayer(currentPlayer);
 
@@ -218,6 +244,26 @@ public class GameScreenController {
         StartScreenController startController = new StartScreenController(configView, newGameManager);
     }
 
+    // 윷 굴리기 이전 초기상태 설정 (턴 넘어 갔을 때)
+
+    // 모든 말의 위치정보 가져오기
+    private List<PositionDTO> takeOutPiece(){
+        return gameManager.getAllPiecePos();
+    }
+
+    // 말을 선택했을 때
+    public void PieceSelect(int selectPiece) {
+        // 선택된 말이 갈 수 있는 곳을 표현해주는 메서드 구현
+        // 모델로 부터 받아올 값은 좌표 값들 (ex. 7,9,12..) view로 넘겨주면 됨.
+
+    }
+
+    // 좌표 선택했을 때
+    public void playerControlResult(String selectedYut) {
+        // 모델에서는 선택된 말이 무엇인지를 알고 있어야함.
+        // 모델에서 그 선택된 좌표 계산해서 옮기고 전체상태 넘겨주면됨. (여기서 만약 추가 턴 여부 발생시 윷굴리는 과정 시작)
+
+    }
     // 게임 종료
     private void exitGame() {
         System.exit(0);

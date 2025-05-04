@@ -8,7 +8,7 @@ public class PositionDTO {
     public PositionDTO(int pieceId, int playerId) {
         this.pieceId = pieceId;
         this.playerId = playerId;
-        cellId = 0; // 최초 시작 시 항상 0번 Cell로 초기화 되기 때문에 직접 설정
+        cellId = -1; // 최초 시작 시 항상 0번 Cell로 초기화 되기 때문에 직접 설정
     }
 
     public int getPieceId() {
