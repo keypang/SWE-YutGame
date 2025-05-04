@@ -1,6 +1,7 @@
 package controller;
 
 import model.GameManager;
+import model.PositionDTO;
 import model.Yut;
 import model.YutResult;
 import view.GameConfigView;
@@ -38,6 +39,13 @@ public class GameScreenController {
             @Override
             public YutResult onFixedYutSelected(String yutType) {
                 return FixedYutThrow(yutType);
+            }
+        });
+        
+        // 말 꺼내기 리스너 설정
+        gameView.setTakeOutButtonListener(new GamePlayView.TakeOutButtonListener(){
+            public List<PositionDTO> onTakeOutButtonClicked() {
+                return gameManager.getAllPiecePos();
             }
         });
 
@@ -131,7 +139,7 @@ public class GameScreenController {
             return yutResult;
         }
 
-        // 현재 턴 플레이어 확인g하고 업데이트
+        // 현재 턴 플레이어 확인하고 업데이트
         int currentPlayer = gameManager.checkPlayer();
         gameView.updateCurrentPlayer(currentPlayer);
 
@@ -169,10 +177,6 @@ public class GameScreenController {
         gameView.setStatusMessage("게임이 다시 시작되었습니다! 윷을 던져주세요.");
     }
 
-
-
-
-
     // 새 설정으로 게임 시작
     private void newGameSetup() {
         // 현재 게임 화면 닫기
@@ -191,6 +195,11 @@ public class GameScreenController {
     }
 
     // 윷 굴리기 이전 초기상태 설정 (턴 넘어 갔을 때)
+
+    // 모든 말의 위치정보 가져오기
+    private List<PositionDTO> takeOutPiece(){
+        return gameManager.getAllPiecePos();
+    }
 
     // 말을 선택했을 때
     public void PieceSelect(int selectPiece) {

@@ -1,6 +1,7 @@
 package view;
 
 import model.YutResult;
+import model.PositionDTO;
 import java.util.List;
 
 public interface GamePlayView {
@@ -17,8 +18,25 @@ public interface GamePlayView {
     // 게임 종료 시 동작 리스너
     interface GameEndListener {
         void onRestartGame(); // 같은 설정으로 재시작
+
         void onNewGameSetup(); // 새 설정으로 게임 시작
+
         void onExitGame(); // 게임 종료
+    }
+
+    // 말 꺼내기 시 동작 리스너
+    interface TakeOutButtonListener{
+        List<PositionDTO> onTakeOutButtonClicked();
+    }
+    
+    // 말 선택 시 정보 전달 리스너
+    interface PieceSelectionListener {
+        void onPieceSelected(int pieceId);
+    }
+
+    // 이동할 셀 선택 시 정보 전달 리스너
+    interface CellSelectionListener {
+        void onCellSelected(int cellId);
     }
 
     void setThrowButtonListener(ThrowButtonListener throwButtonListener);
@@ -26,11 +44,19 @@ public interface GamePlayView {
     // 지정 윷 리스너 설정 메서드 추가
     void setFixedYutButtonListener(FixedYutButtonListener listener);
 
+    // 말 선택 리스너 설정 메서드 추가
+    void setPieceSelectionListener(PieceSelectionListener listener);
+
+    void setCellSelectionListener(CellSelectionListener listener);
+
     // 게임 종료 리스너 설정
     void setGameEndListener(GameEndListener listener);
 
     // 윷 결과 리스트를 표시하는 메서드 추가
     void displayYutResultList(List<YutResult> results);
+
+    // 새로운 말 꺼내기
+    void setTakeOutButtonListener(TakeOutButtonListener takeOutButtonListener);
 
     // 현재 턴 플레이어를 표시하는 메서드 추가
     void updateCurrentPlayer(int playerNumber);
@@ -43,4 +69,5 @@ public interface GamePlayView {
 
     // 게임 종료 화면 표시
     void showGameEndDialog(int winnerPlayer);
+
 }
