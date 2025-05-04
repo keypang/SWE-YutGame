@@ -5,9 +5,9 @@ import java.awt.*;
 import java.awt.event.*;
 import model.BoardType;
 import model.YutResult;
+import model.PositionDTO;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +19,11 @@ public class SwingPlayScreen extends JFrame implements GamePlayView {
     private BoardType boardType;
     private ArrayList<ImageIcon> playerIcons = new ArrayList<>();
 
+    //좌표와 Cell 매핑 (키 : cell_numer_point(X,Y))
+    private Map<Integer, Point> squarePositionMap = new HashMap<>();
+    private Map<Integer, Point> pentagonPositionMap = new HashMap<>();
+    private Map<Integer, Point> hexagonPositionMap = new HashMap<>();
+
     // 버튼
     private JButton rollButton;
     private JButton testRollButton;
@@ -27,6 +32,9 @@ public class SwingPlayScreen extends JFrame implements GamePlayView {
     private FixedYutButtonListener fixedYutButtonListener;
     private ThrowButtonListener throwButtonListener;
     private GameEndListener gameEndListener;
+    private TakeOutButtonListener takeOutButtonListener;
+    private PieceSelectionListener pieceSelectionListener;
+    private CellSelectionListener cellSelectionListener;
 
     // 라벨
     private JLabel yutImageLabel;
@@ -36,13 +44,19 @@ public class SwingPlayScreen extends JFrame implements GamePlayView {
     private List<JLabel> yutResultLabels = new ArrayList<>();
     private ArrayList<JLabel> pieceLabels = new ArrayList<>(); // 말 아이콘 라벨들
     private JLabel turnArrowLabel; // 턴 화살표 라벨
+    private List<JLabel> movablePoints = new ArrayList<>();
 
     private JPanel yutResultsPanel;// 윷 결과 리스트를 표시할 패널 추가
 
     private int currentPlayerIndex = 0; // 현재 플레이어 인덱스
+    private int selectedPieceIndex = 0;
 
     // 플레이어 패널에 있는 말 이미지 (키: playerID_pieceID)
     private Map<String, JLabel> playerPiecesMap = new HashMap<>();
+
+    // 말 선택 가능 여부 변수
+    //for test true로 변경 후 테스트
+    private boolean waitingPieceSelection = false;
 
     public SwingPlayScreen(int playerCount, int pieceCount, BoardType boardType) {
         super("게임 화면");
@@ -72,6 +86,20 @@ public class SwingPlayScreen extends JFrame implements GamePlayView {
 
         // 메인 패널을 프레임에 추가
         setContentPane(mainPanel);
+
+        //클릭 시 좌표 출력
+        /*
+        getContentPane().addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int x = e.getX();
+                int y = e.getY();
+                System.out.println("클릭한 위치: (" + x + ", " + y + ")");
+            }
+        });*/
+
+        //좌표 Hash map 초기화
+        initializeSquarePositions();
 
         setLocationRelativeTo(null);
         setVisible(true);
@@ -315,6 +343,30 @@ public class SwingPlayScreen extends JFrame implements GamePlayView {
                 JLabel pieceImageLabel = new JLabel(pieceIcon);
                 pieceImageLabel.setName("piece_" + playerId + "_" + pieceId);
                 pieceImageLabel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+                pieceImageLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+                pieceImageLabel.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        if(!waitingPieceSelection){
+                            JOptionPane.showMessageDialog(SwingPlayScreen.this, "윷을 던져주세요!");
+                            return;
+                        }
+                        //for test
+                        setCurrentPlayerIndex(2);
+                        if(playerId != currentPlayerIndex + 1){
+                            JOptionPane.showMessageDialog(SwingPlayScreen.this, "플레이어의 말이 아닙니다!");
+                            return;
+                        }
+
+                        waitingPieceSelection = false;
+                        //for test
+                        //System.out.println("선택된 말: playerId=" + playerId + ", pieceId=" + pieceId);
+
+                        onPieceSelected(pieceId);
+
+                    }
+                });
 
                 // 말 이미지를 패널에 추가
                 piecesRow.add(pieceImageLabel);
@@ -329,6 +381,15 @@ public class SwingPlayScreen extends JFrame implements GamePlayView {
             takeOutButton.setBackground(new Color(200, 200, 255));
 
             piecesRow.add(takeOutButton);
+
+            takeOutButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    if(takeOutButtonListener != null){
+                        List<PositionDTO> currentPositions = takeOutButtonListener.onTakeOutButtonClicked();
+                        takeOutPiece(playerId, currentPositions);
+                    }
+                }
+            });
 
             // 플레이어 패널에 말 행 추가
             playerPanel.add(piecesRow);
@@ -476,6 +537,139 @@ public class SwingPlayScreen extends JFrame implements GamePlayView {
             timer.start();
 
             resultDialog.setVisible(true);
+        }
+    }
+
+    // 말 선택 시 처리 메서드
+    private void onPieceSelected(int pieceId) {
+        //for test == null로 변경 후 test
+        if (pieceSelectionListener != null) {
+            selectedPieceIndex = pieceId;
+
+            System.out.println("전달될 piece ID :" + pieceId);
+            //controller에게 pieceId 전달
+            pieceSelectionListener.onPieceSelected(pieceId);
+
+            JLabel selectedPiece = playerPiecesMap.get(currentPlayerIndex + 1 + "_" + pieceId);
+            if (selectedPiece != null) {
+                selectedPiece.setBorder(BorderFactory.createLineBorder(Color.BLUE, 2));
+            }
+        }
+
+        //controller test
+        /*
+        Map<Integer, Integer> availableCells = new HashMap<>();
+        availableCells.put(3, 0);
+        availableCells.put(1,0);
+        showMovablePoints(availableCells);*/
+
+    }
+
+    // 말 옮기는 지점 표시 메서드
+    public void showMovablePoints(Map<Integer, Integer> availableCells) {
+        if(availableCells == null || availableCells.isEmpty()){
+            JOptionPane.showMessageDialog(this, "리스트 전달 오류");
+            return;
+        }
+
+        for(Map.Entry<Integer, Integer> entry : availableCells.entrySet()){
+            int cellId = entry.getKey();
+            Point target = squarePositionMap.get(cellId);
+            if(target == null){
+                JOptionPane.showMessageDialog(this, "셀 아이디 오류!");
+                continue;
+            }
+
+            ImageIcon movePointIcon = new ImageIcon(getClass().getResource("/view/images/이동가능점.png"));
+            JLabel movablePoint = new JLabel(movePointIcon);
+            movablePoint.setBounds(target.x-2, target.y-25, 30, 30);
+            movablePoint.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+            movablePoints.add(movablePoint);
+
+            movablePoint.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    System.out.println("전달될 cell ID :" + cellId);
+                    //선택된 cellID controller에게 전달
+                    if(cellSelectionListener != null){
+                        cellSelectionListener.onCellSelected(cellId);
+                    }
+
+                    JLabel pieceLabel = playerPiecesMap.get(currentPlayerIndex + 1 + "_" + selectedPieceIndex);
+                    if(pieceLabel != null){
+                        pieceLabel.setBounds(target.x - 5, target.y - 35, 40, 40);
+                        getBoardPanel().add(pieceLabel);
+                        getBoardPanel().setComponentZOrder(pieceLabel, 0);
+                        getBoardPanel().repaint();
+                    }
+
+                    JPanel boardPanel = getBoardPanel();
+                    for(JLabel targetLabel : movablePoints){
+                        boardPanel.remove(targetLabel);
+                    }
+                    movablePoints.clear();
+                    boardPanel.repaint();
+                }
+            });
+
+            getBoardPanel().add(movablePoint);
+            getBoardPanel().setComponentZOrder(movablePoint, 0);
+            getBoardPanel().repaint();
+        }
+    }
+
+    // 말 꺼내기 시 메서드
+    public void takeOutPiece(int playerId, List<PositionDTO> currentPositions) {
+        boolean ownAlreadyStart = false;
+        boolean canTakeOut = false;
+        int pieceIdToTakeOut = -1;
+
+        //현재 Position에서 꺼낼 수 있는 Piece가 있는지 확인(controller code)
+        //=============================================================================
+        for (PositionDTO dto : currentPositions) {
+            if (dto.getPlayerId() == playerId && dto.getCellId() == 0) {
+                ownAlreadyStart = true;
+                break;
+            }
+        }
+
+        if (ownAlreadyStart) {
+            JOptionPane.showMessageDialog(this, "시작 지점에 이미 말이 있습니다!");
+            return;
+        }
+
+        for (PositionDTO dto : currentPositions) {
+            if (dto.getPlayerId() == playerId && dto.getCellId() == -1) {
+                canTakeOut = true;
+                pieceIdToTakeOut = dto.getPieceId();
+                dto.setCellId(0);  // 말이 꺼내질 때 시작 셀로 설정
+                break;
+            }
+        }
+
+        if (!canTakeOut) {
+            JOptionPane.showMessageDialog(this, "꺼낼 수 있는 말이 없습니다!");
+            return;
+        }
+
+        //위치 테스트용 코드
+        for (PositionDTO dto : currentPositions) {
+            System.out.println(dto);
+        }
+
+        //이상부분 컨트롤러로 이전 필요======================================================================
+
+        //View에서 위치 업데이트
+        JLabel pieceLabel = playerPiecesMap.get(playerId + "_" + pieceIdToTakeOut);
+        if(pieceLabel != null){
+            Point pos = squarePositionMap.get(0);
+            if(pos != null){
+                pieceLabel.setBounds(pos.x-5, pos.y-35, 40, 40);
+                getBoardPanel().add(pieceLabel);
+                getBoardPanel().setComponentZOrder(pieceLabel, 0);
+                getBoardPanel().repaint();
+            }
         }
     }
 
@@ -663,7 +857,7 @@ public class SwingPlayScreen extends JFrame implements GamePlayView {
 
     // 게임 보드 패널 가져오기
     private JPanel getBoardPanel() {
-        return (JPanel) ((BorderLayout)getContentPane().getLayout()).getLayoutComponent(BorderLayout.WEST);
+        return (JPanel) ((BorderLayout) getContentPane().getLayout()).getLayoutComponent(BorderLayout.WEST);
     }
 
     @Override
@@ -674,6 +868,21 @@ public class SwingPlayScreen extends JFrame implements GamePlayView {
     @Override
     public void setFixedYutButtonListener(FixedYutButtonListener listener) {
         this.fixedYutButtonListener = listener;
+    }
+
+    @Override
+    public void setTakeOutButtonListener(TakeOutButtonListener listener){
+        this.takeOutButtonListener = listener;
+    }
+
+    @Override
+    public void setPieceSelectionListener(PieceSelectionListener listener){
+        this.pieceSelectionListener = listener;
+    }
+
+    @Override
+    public void setCellSelectionListener(CellSelectionListener listener){
+        this.cellSelectionListener = listener;
     }
 
     @Override
@@ -694,6 +903,60 @@ public class SwingPlayScreen extends JFrame implements GamePlayView {
             rollButton.setBackground(new Color(200, 200, 200));
             testRollButton.setBackground(new Color(200, 200, 200));
         }
+    }
+
+    // 말 선택 단계 판정(페이즈 전환)
+    public void enableWaitingPieceSelection() {
+        JOptionPane.showMessageDialog(this, "이동할 말을 선택하세요!");
+        this.waitingPieceSelection = true;
+    }
+
+    public void disablePieceSelection() {
+        JOptionPane.showMessageDialog(this, "윷을 던져주세요!");
+        for (Map.Entry<String, JLabel> entry : playerPiecesMap.entrySet()) {
+            JLabel pieceLabel = entry.getValue();
+            pieceLabel.setBorder(null);
+            pieceLabel.repaint();
+        }
+        this.waitingPieceSelection = false;
+    }
+
+    //좌표 초기화
+    private void initializeSquarePositions(){
+        squarePositionMap.put(0, new Point(568,604));
+        squarePositionMap.put(1, new Point(574,494));
+        squarePositionMap.put(2, new Point(574,405));
+        squarePositionMap.put(3, new Point(574,320));
+        squarePositionMap.put(4, new Point(574,234));
+        squarePositionMap.put(5, new Point(574,131));
+
+        squarePositionMap.put(6, new Point(465,127));
+        squarePositionMap.put(7, new Point(379,127));
+        squarePositionMap.put(8, new Point(293,127));
+        squarePositionMap.put(9, new Point(208,127));
+        squarePositionMap.put(10, new Point(91,131));
+
+        squarePositionMap.put(11, new Point(99,234));
+        squarePositionMap.put(12, new Point(99,320));
+        squarePositionMap.put(13, new Point(99,405));
+        squarePositionMap.put(14, new Point(99,494));
+        squarePositionMap.put(15, new Point(90,604));
+
+        squarePositionMap.put(16, new Point(208,602));
+        squarePositionMap.put(17, new Point(293,602));
+        squarePositionMap.put(18, new Point(379,602));
+        squarePositionMap.put(19, new Point(465,602));
+        squarePositionMap.put(20, new Point(568,602));
+
+        squarePositionMap.put(50, new Point(488,212));
+        squarePositionMap.put(55, new Point(423,277));
+        squarePositionMap.put(100, new Point(185,213));
+        squarePositionMap.put(110, new Point(250,277));
+        squarePositionMap.put(150, new Point(185,515));
+        squarePositionMap.put(165, new Point(250,450));
+        squarePositionMap.put(200, new Point(488,516));
+        squarePositionMap.put(220, new Point(423,450));
+        squarePositionMap.put(1000, new Point(330,370));
     }
 
     @Override
