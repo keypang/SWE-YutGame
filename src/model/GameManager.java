@@ -8,6 +8,7 @@ public class GameManager {
     private Board board;
     private Yut yut;
     private int currentPlayer = 1;
+    private int selectedpiece = 1;
     private boolean extraTurn = false;
     ArrayList<Player> players = new ArrayList<>();
     ArrayList<YutResult> yutResults = new ArrayList<>();
@@ -16,6 +17,16 @@ public class GameManager {
     // 기본 생성자
     public GameManager() {
         this.yut = new Yut();
+    }
+
+    public int getCurrentPlayer() { return currentPlayer; }
+
+    public int getSelectedpiece() {
+        return selectedpiece;
+    }
+
+    public void setSelectedpiece(int selectedpiece) {
+        this.selectedpiece = selectedpiece;
     }
 
     public void setExtraTurn(boolean extraTurn) {
@@ -32,6 +43,10 @@ public class GameManager {
 
     public void addYutResult(YutResult yutResult) {
         yutResults.add(yutResult);
+    }
+
+    public void removeYutResult(int target) {
+        yutResults.removeIf(yutResult -> yutResult.getMove() == target);
     }
 
     public void initGM(StartInfo startInfo) {
@@ -124,6 +139,7 @@ public class GameManager {
         System.out.println("Board: " + startInfo.getBoardType());
     }
 
+    // 턴 넘기는 메소드
     public int checkPlayer() {
         // 윷 리스트에 값이 들어있는지 + 추가 턴 여부 확인
         // 있으면 currentplayer값 변경 x
@@ -162,18 +178,17 @@ public class GameManager {
         return result;
     }
 
-    public void processYutResult(int pieceNum, String getResult){
-        // 여기에 current플레이어 이용
-        // 들어온 값을 찾아서 리스트에서 없애야지
-        for (YutResult result : yutResults) {
-            if (result.name().equals(getResult)) {
-                if (result.getMove() == -1){
-                    board.movePieceNegative(players.get(currentPlayer).getPieces(pieceNum));
-                }
-                else {
-                    board.movePiecePositive(players.get(currentPlayer).getPieces(pieceNum), result.getMove());
-                }
-            }
+    public void processYutResult(int move){
+        System.out.println("현재 선택된 플레이어:"+currentPlayer+"// 현재 선택된 말:"+selectedpiece);
+        if (move == -1){
+            boolean checkextra = board.movePieceNegative(players.get(currentPlayer).getPieces(selectedpiece));
+            if (checkextra) { extraTurn = true; }
+            else { extraTurn = false;}
+        }
+        else {
+            boolean checkextra = board.movePiecePositive(players.get(currentPlayer).getPieces(selectedpiece), move);
+            if (checkextra) { extraTurn = true; }
+            else { extraTurn = false;}
         }
     }
 
@@ -269,4 +284,6 @@ public class GameManager {
         }
         return winnerIndex;
     }
+
+
 }

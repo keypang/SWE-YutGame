@@ -358,7 +358,6 @@ public class SwingPlayScreen extends JFrame implements GamePlayView {
                             JOptionPane.showMessageDialog(SwingPlayScreen.this, "플레이어의 말이 아닙니다!");
                             return;
                         }
-
                         waitingPieceSelection = false;
                         //for test
                         //System.out.println("선택된 말: playerId=" + playerId + ", pieceId=" + pieceId);
