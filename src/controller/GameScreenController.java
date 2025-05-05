@@ -136,6 +136,7 @@ public class GameScreenController {
             gameManager.setExtraTurn(false);
             gameView.setThrowButtonEnabled(false);
             gameView.setStatusMessage(yutResult.name() + "가 나왔습니다. 말을 선택하여 이동하세요.");
+            gameView.updateCurrentPlayer(gameManager.getCurrentPlayer());
             gameView.enableWaitingPieceSelection();
         }
     }
@@ -178,6 +179,7 @@ public class GameScreenController {
                 // 현재 턴 플레이어 확인 및 업데이트
                 int currentPlayer = gameManager.checkPlayer();
                 gameView.updateCurrentPlayer(currentPlayer);
+                // 전체 상태 넘겨줘야함.
             }
             else {
                 // 일단 전체 상태를 넘겨주고
