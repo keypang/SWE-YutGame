@@ -172,6 +172,9 @@ public class Board {
             Cell testCell = cell;
             if(moves[i]>0){
                 for(int j = 0; j<moves[i]; j++) {
+                    if (testCell.getType().equals("대기")) {
+                        testCell = getCell(0);
+                    }
                     List<Cell> nextList = testCell.getNextCells();
                     if (testCell.getType().equals("도착")) {
                         movableCellsId[i] = -1;
@@ -220,6 +223,7 @@ public class Board {
         Cell current = piece.getStartCell();
         Cell startAt = piece.getStartCell();
         //Cell priorCell = piece.getStartCell();
+
 
         //꺼내는 경우 처리
         if(current.getType().equals("대기")){

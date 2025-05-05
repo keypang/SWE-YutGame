@@ -7,7 +7,7 @@ public class GameManager {
     private StartInfo startInfo;
     private Board board;
     private Yut yut;
-    private int currentPlayer = 1;
+    private int currentPlayer = 0;
     private int selectedpiece = 1;
     private boolean extraTurn = false;
     ArrayList<Player> players = new ArrayList<>();
@@ -86,6 +86,11 @@ public class GameManager {
 
         // 디버깅 용
         System.out.println("윷 결과 개수: " + yutResults.size() + ", 추가 턴 여부: " + extraTurn);
+    }
+
+    // 현재 선택되어 있는 말이 있는 셀 위치 정보
+    public int getselectedsellid(){
+        return players.get(currentPlayer-1).getPieces(selectedpiece).getStartCell().getId();
     }
 
     // 사용자 입력 정보 저장(윷놀이 판 생성)
@@ -188,15 +193,16 @@ public class GameManager {
     public void processYutResult(int move){
         System.out.println("현재 선택된 플레이어:"+currentPlayer+"// 현재 선택된 말:"+selectedpiece);
         if (move == -1){
-            boolean checkextra = board.movePieceNegative(players.get(currentPlayer).getPieces(selectedpiece));
+            boolean checkextra = board.movePieceNegative(players.get(currentPlayer-1).getPieces(selectedpiece));
             if (checkextra) { extraTurn = true; }
             else { extraTurn = false;}
         }
         else {
-            boolean checkextra = board.movePiecePositive(players.get(currentPlayer).getPieces(selectedpiece), move);
+            boolean checkextra = board.movePiecePositive(players.get(currentPlayer-1).getPieces(selectedpiece), move);
             if (checkextra) { extraTurn = true; }
             else { extraTurn = false;}
         }
+        System.out.println(getAllPiecePos());
         System.out.println("말 옮기고 나서 선택된 플레이어:"+currentPlayer+"// 현재 선택된 말:"+selectedpiece);
     }
 
@@ -214,7 +220,7 @@ public class GameManager {
 
                 // 플레이어 id와 말 id 일치하는 DTO 객체 받아와서 데이터 담기
                 for(PositionDTO positionDTO : posInfo) {
-                    PositionDTO dto = positionDTO.getCorrectDTO(playerId, pieceId);
+                    PositionDTO dto = positionDTO.getCorrectDTO(pieceId, playerId);
                     if (dto != null) {
                         dto.setCellId(cellId);
                     }

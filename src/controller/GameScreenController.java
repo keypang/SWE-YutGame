@@ -16,7 +16,6 @@ import java.util.Map;
 public class GameScreenController {
     private GamePlayView gameView;
     private GameManager gameManager;
-    private Yut yut;
 
     public GameScreenController(GamePlayView gameView, GameManager model){
         this.gameView = gameView;
@@ -163,6 +162,7 @@ public class GameScreenController {
             gameView.updateCurrentPlayer(gameManager.getCurrentPlayer());
             gameView.enableWaitingPieceSelection();
         }
+        System.out.println("!!!!!현재 플레이어는" + gameManager.getCurrentPlayer());
     }
 
     // 윷 결과 리스트를 뷰에 표시
@@ -180,7 +180,7 @@ public class GameScreenController {
     public Map<Integer, Integer> PieceSelect(int selectpiece){
 
         gameManager.setSelectedpiece(selectpiece);
-        Map<Integer, Integer> movable = gameManager.findMovableCells(selectpiece);
+        Map<Integer, Integer> movable = gameManager.findMovableCells(gameManager.getselectedsellid());
         return movable;
     }
 
@@ -195,8 +195,6 @@ public class GameScreenController {
         gameManager.removeYutResult(value);
         // 선택한 좌표로 말 이동
         gameManager.processYutResult(value);
-
-        System.out.println(takeOutPiece());
 
         if (gameManager.getExtraTurn()){
             // 윷버튼 활성화
@@ -230,7 +228,7 @@ public class GameScreenController {
         gameManager.initGM(gameManager.getStartInfo());
 
         // 뷰 초기화
-        gameView.updateCurrentPlayer(1);
+        gameView.updateCurrentPlayer(0);
 
         // 윷 결과 리스트 초기화
         updateYutResultsInView();

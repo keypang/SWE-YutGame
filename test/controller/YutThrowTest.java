@@ -25,7 +25,7 @@ public class YutThrowTest {
 
 
         // 2~3번 과정
-        gameScreenController.FixedYutThrow("걸");
+        gameScreenController.FixedYutThrow("도");
         List<YutResult> list1 =  gameScreenController.getYutResults();
         System.out.println(list1);
 
