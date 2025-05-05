@@ -330,7 +330,8 @@
     
                 // 플레이어 패널에 정보 행 추가
                 playerPanel.add(playerInfoRow);
-    
+
+
                 // 말 행 패널 (말들과 꺼내기 버튼)
                 JPanel piecesRow = new JPanel();
                 piecesRow.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 0));
@@ -355,7 +356,7 @@
                             }
                             //for test
                             //setCurrentPlayerIndex(2);
-                            System.out.println(currentPlayerIndex);
+
                             if(playerId != currentPlayerIndex + 1){
                                 JOptionPane.showMessageDialog(SwingPlayScreen.this, "플레이어의 말이 아닙니다!");
                                 return;
@@ -363,7 +364,6 @@
                             waitingPieceSelection = false;
                             //for test
                             //System.out.println("선택된 말: playerId=" + playerId + ", pieceId=" + pieceId);
-    
                             onPieceSelected(pieceId);
     
                         }
@@ -375,13 +375,15 @@
                     // 말 라벨 저장 (나중에 참조하기 위해)
                     playerPiecesMap.put(playerId + "_" + pieceId, pieceImageLabel);
                 }
-    
+
+                /*
                 // 말 꺼내기 버튼
                 JButton takeOutButton = new JButton("말 꺼내기");
                 takeOutButton.setFont(new Font("SansSerif", Font.BOLD, 12));
                 takeOutButton.setBackground(new Color(200, 200, 255));
     
                 piecesRow.add(takeOutButton);
+
     
                 takeOutButton.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
@@ -391,6 +393,7 @@
                         }
                     }
                 });
+                */
     
                 // 플레이어 패널에 말 행 추가
                 playerPanel.add(piecesRow);
@@ -557,7 +560,7 @@
                     selectedPiece.setBorder(BorderFactory.createLineBorder(Color.BLUE, 2));
                 }
             }
-
+            repaintAllPieces();
             showMovablePoints(availableCells);
 
         }
@@ -592,14 +595,16 @@
                         if(cellSelectionListener != null){
                             cellSelectionListener.onCellSelected(cellId);
                         }
-    
+
+                        //말을 각각 갱신하는 방식의 코드(비활성화)
+                        /*
                         JLabel pieceLabel = playerPiecesMap.get(currentPlayerIndex + 1 + "_" + selectedPieceIndex);
                         if(pieceLabel != null){
                             pieceLabel.setBounds(target.x - 5, target.y - 35, 40, 40);
                             getBoardPanel().add(pieceLabel);
                             getBoardPanel().setComponentZOrder(pieceLabel, 0);
                             getBoardPanel().repaint();
-                        }
+                        }*/
     
                         JPanel boardPanel = getBoardPanel();
                         for(JLabel targetLabel : movablePoints){
@@ -839,6 +844,38 @@
     
             // 다이얼로그 표시
             endDialog.setVisible(true);
+        }
+        
+        // 말 전체 다시 그리기 메서드
+        public void repaintAllPieces(){
+            if(takeOutButtonListener == null) return;
+
+            List<PositionDTO> currentPositions = takeOutButtonListener.onTakeOutButtonClicked();
+            JPanel boardPanel = getBoardPanel();
+
+            for (PositionDTO dto : currentPositions) {
+                //for test
+                /*
+                if (dto.getPlayerId() == 2 && dto.getPieceId() == 0) {
+                    dto.setCellId(5);
+                }*/
+
+                int cellId = dto.getCellId();
+
+                if (cellId == -1) continue;
+
+                JLabel pieceLabel = playerPiecesMap.get(dto.getPlayerId() + "_" + dto.getPieceId());
+                Point pos = squarePositionMap.get(cellId);
+
+                if (pieceLabel != null && pos != null) {
+                    System.out.println("여기호출");
+                    pieceLabel.setBounds(pos.x - 5, pos.y - 35, 40, 40);
+                    boardPanel.add(pieceLabel);
+                    boardPanel.setComponentZOrder(pieceLabel, 0);
+                    boardPanel.repaint();
+                }
+            }
+
         }
     
         // 윷 이미지 초기화 메서드
