@@ -101,12 +101,16 @@ public class Board {
             cells.get(out*10).addPreviousCell(cells.get(out*11));
             cells.get(out*11).addPreviousCell(cells.get(1000));
         }
+
+        //대기 셀 -> -1
+        cell = new Cell(-1,"대기",-1);
+        cells.put(-1,cell);
     }
 
     private void initBoard(ArrayList<Player> players) {
         for(Player player : players) {
             for(int i = 0; i<player.getPieceNum(); i++) {
-                player.getPieces(i).setStartCell(cells.get(0));
+                player.getPieces(i).setStartCell(cells.get(-1));
             }
         }
     }
@@ -119,7 +123,7 @@ public class Board {
         if(current.checkCatchPiece(piece)) {
             System.out.println("잡았다");
             for (Piece p : current.getPieces()) {
-                p.setStartCell(getCell(0));
+                p.setStartCell(getCell(-1));
                 p.clearPriorCell();
             }
 
@@ -217,7 +221,13 @@ public class Board {
         Cell startAt = piece.getStartCell();
         //Cell priorCell = piece.getStartCell();
 
+        //꺼내는 경우 처리
+        if(current.getType().equals("대기")){
+            current = getCell(0);
+        }
+
         for(int i = 0; i < move; i++) {
+
 
 
             //완주 처리
