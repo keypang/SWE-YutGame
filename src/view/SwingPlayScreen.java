@@ -354,7 +354,8 @@
                                 return;
                             }
                             //for test
-                            setCurrentPlayerIndex(2);
+                            //setCurrentPlayerIndex(2);
+                            System.out.println(currentPlayerIndex);
                             if(playerId != currentPlayerIndex + 1){
                                 JOptionPane.showMessageDialog(SwingPlayScreen.this, "플레이어의 말이 아닙니다!");
                                 return;

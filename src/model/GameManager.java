@@ -14,6 +14,9 @@ public class GameManager {
     ArrayList<YutResult> yutResults = new ArrayList<>();
     ArrayList<PositionDTO> posInfo = new ArrayList<>();
 
+    // ('이동 가능 cell id', '해당 cell로 가기 위해 이동해야 하는 칸 수')를 map 구조로 저장
+    Map<Integer, Integer> movableMap = new HashMap<>();
+
     // 기본 생성자
     public GameManager() {
         this.yut = new Yut();
@@ -35,6 +38,10 @@ public class GameManager {
 
     public Boolean getExtraTurn(){
         return extraTurn;
+    }
+
+    public Map<Integer, Integer> getMovableMap() {
+        return movableMap;
     }
 
     public Boolean isYutResultsEmpty() {
@@ -231,6 +238,10 @@ public class GameManager {
 
     // Cell id 넘겨받아서 이동 가능한 Cell 리스트 반환
     public Map<Integer, Integer> findMovableCells(int cellId){
+
+        // moveableMap 초기화
+        movableMap.clear();
+
         // 현재 위치한 Cell
         Cell currentCell =  board.getCell(cellId);
 
@@ -243,13 +254,10 @@ public class GameManager {
 
         // 중복 제거하고 int 배열로 변환
         int[] movableNumArray = movableNumList.stream().distinct().mapToInt(Integer::intValue).toArray();
-
         int[] movableCellIdArray = new int[movableNumArray.length];
 
         movableCellIdArray = board.getMovableCells(currentCell, movableNumArray); // 이동 가능 cell id list
 
-        // ('이동 가능 cell id', '해당 cell로 가기 위해 이동해야 하는 칸 수')를 map 구조로 저장
-        Map<Integer, Integer> movableMap = new HashMap<>();
 
         for(int i=0; i<movableCellIdArray.length; i++){
             movableMap.put(movableCellIdArray[i], movableNumArray[i]);
