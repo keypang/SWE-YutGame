@@ -66,6 +66,14 @@ public class GameScreenController {
             }
         });
 
+        // 전체상태 넘기기
+        gameView.setTakeOutButtonListener(new GamePlayView.TakeOutButtonListener() {
+            @Override
+            public List<PositionDTO> onTakeOutButtonClicked() {
+                return takeOutPiece();
+            }
+        });
+
         // 게임 종료 리스너 설정
         gameView.setGameEndListener(new GamePlayView.GameEndListener() {
             @Override
@@ -182,10 +190,13 @@ public class GameScreenController {
         // 해시맵에서 선택했던 값만 추출
 
         Integer value = gameManager.getMovableMap().get(cellId);
+
         // 윷리스트에서 선택했던 값 삭제
         gameManager.removeYutResult(value);
         // 선택한 좌표로 말 이동
         gameManager.processYutResult(value);
+
+        System.out.println(takeOutPiece());
 
         if (gameManager.getExtraTurn()){
             // 윷버튼 활성화
@@ -194,6 +205,7 @@ public class GameScreenController {
         else {
             if (gameManager.isYutResultsEmpty()) {
                 // 전체 상태 넘겨줘야함.
+                gameView.repaintAllPieces();
 
                 // 현재 턴 플레이어 확인 및 업데이트
                 int currentPlayer = gameManager.checkPlayer();
@@ -204,6 +216,8 @@ public class GameScreenController {
             }
             else {
                 // 일단 전체 상태를 넘겨주고
+                gameView.repaintAllPieces();
+                // 말선택 페이즈로 이동
                 gameView.enableWaitingPieceSelection();
             }
         }

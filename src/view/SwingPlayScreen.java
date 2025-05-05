@@ -849,6 +849,7 @@
         public void repaintAllPieces(){
             if(takeOutButtonListener == null) return;
 
+
             List<PositionDTO> currentPositions = takeOutButtonListener.onTakeOutButtonClicked();
             JPanel boardPanel = getBoardPanel();
 

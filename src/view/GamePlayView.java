@@ -73,6 +73,9 @@ public interface GamePlayView {
     // 현재 게임 상태 메시지 표시 메서드 추가
     void setStatusMessage(String message);
 
+    // 말 전체 다시 그리기 메서드
+    void repaintAllPieces();
+
     // 게임 종료 화면 표시
     void showGameEndDialog(int winnerPlayer);
 

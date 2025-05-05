@@ -34,53 +34,15 @@ public class YutThrowTest {
         System.out.println(list2);
 
 
-        Integer value = list2.values().iterator().next();
-        System.out.println(value);
-        gameScreenController.selectCoordinate(list2);
+        Integer key1 = list2.keySet().iterator().next();
+        System.out.println(key1);
+        gameScreenController.selectCoordinate(key1);
 
         List<PositionDTO> pieces = gameScreenController.takeOutPiece();
         for (PositionDTO piece : pieces) {
             System.out.println(piece);
         }
 
-
-        /////////////////////
-        // 다시 동일과정 진행 //
-        gameScreenController.FixedYutThrow("걸");
-        List<YutResult> list3 =  gameScreenController.getYutResults();
-        System.out.println(list3);
-
-        Map<Integer, Integer> list4 = gameScreenController.PieceSelect(2);
-        System.out.println(list4);
-
-
-        Integer value2 = list2.values().iterator().next();
-        System.out.println(value2);
-        gameScreenController.selectCoordinate(list4);
-
-        List<PositionDTO> pieces2 = gameScreenController.takeOutPiece();
-        for (PositionDTO piece : pieces2) {
-            System.out.println(piece);
-        }
-
-        /////////////////////
-        // 다시 동일과정 진행 //
-        gameScreenController.FixedYutThrow("걸");
-        List<YutResult> list5 =  gameScreenController.getYutResults();
-        System.out.println(list5);
-
-        Map<Integer, Integer> list6 = gameScreenController.PieceSelect(3);
-        System.out.println(list6);
-
-
-        Integer value3 = list6.values().iterator().next();
-        System.out.println(value3);
-        gameScreenController.selectCoordinate(list6);
-
-        List<PositionDTO> pieces3 = gameScreenController.takeOutPiece();
-        for (PositionDTO piece : pieces3) {
-            System.out.println(piece);
-        }
 
     }
 }
