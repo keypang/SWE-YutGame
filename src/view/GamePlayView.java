@@ -2,6 +2,8 @@ package view;
 
 import model.YutResult;
 import model.PositionDTO;
+
+import java.util.Map;
 import java.util.List;
 
 public interface GamePlayView {
@@ -31,7 +33,7 @@ public interface GamePlayView {
     
     // 말 선택 시 정보 전달 리스너
     interface PieceSelectionListener {
-        void onPieceSelected(int pieceId);
+        Map<Integer, Integer> onPieceSelected(int pieceId);
     }
 
     // 이동할 셀 선택 시 정보 전달 리스너
