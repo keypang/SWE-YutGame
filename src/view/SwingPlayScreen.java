@@ -265,6 +265,7 @@ public class SwingPlayScreen extends JFrame implements GamePlayView {
 
         return panel;
     }
+
     // 플레이어 정보 패널 생성
     private JPanel createPlayerInfoPanel() {
         JPanel panel = new JPanel();

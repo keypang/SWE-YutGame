@@ -50,6 +50,10 @@ public class GameScreenController {
             }
         });
 
+        // 말 선택 리스너 설정
+
+        // 셀 선택 리스너 설정
+
         // 게임 종료 리스너 설정
         gameView.setGameEndListener(new GamePlayView.GameEndListener() {
             @Override
@@ -183,7 +187,7 @@ public class GameScreenController {
             }
             else {
                 // 일단 전체 상태를 넘겨주고
-                // 말을 선택할 수 있는 상태로 가야 하는데
+                gameView.enableWaitingPieceSelection();
             }
         }
 
