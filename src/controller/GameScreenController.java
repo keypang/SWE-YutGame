@@ -51,8 +51,20 @@ public class GameScreenController {
         });
 
         // 말 선택 리스너 설정
+        gameView.setPieceSelectionListener(new GamePlayView.PieceSelectionListener() {
+            @Override
+            public Map<Integer, Integer> onPieceSelected(int pieceId) {
+                return PieceSelect(pieceId);
+            }
+        });
 
         // 셀 선택 리스너 설정
+        gameView.setCellSelectionListener(new GamePlayView.CellSelectionListener() {
+            @Override
+            public void onCellSelected(int cellId) {
+                selectCoordinate(cellId);
+            }
+        });
 
         // 게임 종료 리스너 설정
         gameView.setGameEndListener(new GamePlayView.GameEndListener() {
@@ -165,10 +177,11 @@ public class GameScreenController {
     }
 
     // 좌표 선택했을 때
-    public void selectCoordinate(Map<Integer, Integer> movable){
+    public void selectCoordinate(int cellId){
         // 골라서 넘겨준 해시맵을 리스트에서 제거해야함. + 잡혔을 때 extraturn이 바뀌어 있는지 확인해야함.
         // 해시맵에서 선택했던 값만 추출
-        Integer value = movable.values().iterator().next();
+
+        Integer value = gameManager.getMovableMap().get(cellId);
         // 윷리스트에서 선택했던 값 삭제
         gameManager.removeYutResult(value);
         // 선택한 좌표로 말 이동
@@ -184,6 +197,8 @@ public class GameScreenController {
                 int currentPlayer = gameManager.checkPlayer();
                 gameView.updateCurrentPlayer(currentPlayer);
                 // 전체 상태 넘겨줘야함.
+                // 윷버튼 활성화
+                gameView.setThrowButtonEnabled(true);
             }
             else {
                 // 일단 전체 상태를 넘겨주고
