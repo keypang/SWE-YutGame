@@ -8,6 +8,7 @@ public class GameManager {
     private Board board;
     private Yut yut;
     private int currentPlayer = 1;
+    private int selectedpiece = 1;
     private boolean extraTurn = false;
     ArrayList<Player> players = new ArrayList<>();
     ArrayList<YutResult> yutResults = new ArrayList<>();
@@ -16,6 +17,36 @@ public class GameManager {
     // 기본 생성자
     public GameManager() {
         this.yut = new Yut();
+    }
+
+    public int getCurrentPlayer() { return currentPlayer; }
+
+    public int getSelectedpiece() {
+        return selectedpiece;
+    }
+
+    public void setSelectedpiece(int selectedpiece) {
+        this.selectedpiece = selectedpiece;
+    }
+
+    public void setExtraTurn(boolean extraTurn) {
+        this.extraTurn = extraTurn;
+    }
+
+    public Boolean getExtraTurn(){
+        return extraTurn;
+    }
+
+    public Boolean isYutResultsEmpty() {
+        return yutResults.isEmpty();
+    }
+
+    public void addYutResult(YutResult yutResult) {
+        yutResults.add(yutResult);
+    }
+
+    public void removeYutResult(int target) {
+        yutResults.removeIf(yutResult -> yutResult.getMove() == target);
     }
 
     public void initGM(StartInfo startInfo) {
@@ -108,6 +139,7 @@ public class GameManager {
         System.out.println("Board: " + startInfo.getBoardType());
     }
 
+    // 턴 넘기는 메소드
     public int checkPlayer() {
         // 윷 리스트에 값이 들어있는지 + 추가 턴 여부 확인
         // 있으면 currentplayer값 변경 x
@@ -121,8 +153,6 @@ public class GameManager {
 
         return currentPlayer;
     }
-
-    // 윷 결과가 남아있는지 판단
 
     // 랜덤 윷 던지기
     public YutResult throwYut() {
@@ -148,19 +178,17 @@ public class GameManager {
         return result;
     }
 
-    public void calculatePlayerResult(String selectedYut){
-
-    }
-
-    public void processYutResult(int pieceNum, String getResult){
-        // 여기에 current플레이어 이용
-        // 들어온 값을 찾아서 리스트에서 없애야지
-        for (YutResult result : yutResults) {
-            if (result.name().equals(getResult)) {
-                board.movePiecePositive(players.get(currentPlayer).getPieces(pieceNum), result.getMove());
-                // 여기서 잡혔는지 안잡혔는지 판단해야함. 만약에 잡혔으면 extraTurn은 true로 바꿔줘야함.
-                yutResults.remove(result);
-            }
+    public void processYutResult(int move){
+        System.out.println("현재 선택된 플레이어:"+currentPlayer+"// 현재 선택된 말:"+selectedpiece);
+        if (move == -1){
+            boolean checkextra = board.movePieceNegative(players.get(currentPlayer).getPieces(selectedpiece));
+            if (checkextra) { extraTurn = true; }
+            else { extraTurn = false;}
+        }
+        else {
+            boolean checkextra = board.movePiecePositive(players.get(currentPlayer).getPieces(selectedpiece), move);
+            if (checkextra) { extraTurn = true; }
+            else { extraTurn = false;}
         }
     }
 
@@ -188,7 +216,7 @@ public class GameManager {
     }
 
     // 전체 말 위치 리턴
-    public List<PositionDTO> getAllPiecePos() {
+    public ArrayList<PositionDTO> getAllPiecePos() {
         // 위치 정보 업데이트
         setPosInfo();
 
@@ -199,33 +227,6 @@ public class GameManager {
     // 윷 결과 리스트 반환
     public ArrayList<YutResult> getYutResults() {
         return yutResults;
-    }
-
-    // 추가 기회 여부 반환
-    public Boolean getExtraTurn(){
-        return extraTurn;
-    }
-
-    // 승리 판단 - 0이면 계속 진행, 유효한 플레이어 인덱스면 게임 종료
-    public int checkWin(){
-        int winnerIndex = 0;
-        for (Player player : players) {
-            boolean allFinished = true;
-
-            for (Piece piece : player.getALlPieces()) {
-                if (!piece.isFinished()){
-                    // 말이 남아있으면 다음 플레이어 판단으로 넘어감
-                    allFinished = false;
-                    break;
-                }
-            }
-
-            if(allFinished){
-                winnerIndex = player.getId();
-            }
-        }
-
-        return winnerIndex;
     }
 
     // Cell id 넘겨받아서 이동 가능한 Cell 리스트 반환
@@ -262,4 +263,27 @@ public class GameManager {
 
         return movableMap;
     }
+
+    // 승리 판단 - 0이면 계속 진행, 유효한 플레이어 인덱스면 게임 종료
+    public int checkWin(){
+        int winnerIndex = 0;
+        for (Player player : players) {
+            boolean allFinished = true;
+
+            for (Piece piece : player.getALlPieces()) {
+                if (!piece.isFinished()){
+                    // 말이 남아있으면 다음 플레이어 판단으로 넘어감
+                    allFinished = false;
+                    break;
+                }
+            }
+
+            if(allFinished){
+                winnerIndex = player.getId();
+            }
+        }
+        return winnerIndex;
+    }
+
+
 }

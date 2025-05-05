@@ -64,6 +64,10 @@ public interface GamePlayView {
     // 윷 던지기 버튼 활성화/비활성화 설정 메서드 추가
     void setThrowButtonEnabled(boolean enabled);
 
+    void enableWaitingPieceSelection();
+
+    void disablePieceSelection();
+
     // 현재 게임 상태 메시지 표시 메서드 추가
     void setStatusMessage(String message);
 

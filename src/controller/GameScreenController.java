@@ -11,6 +11,7 @@ import view.SwingPlayScreen;
 
 import javax.swing.*;
 import java.util.List;
+import java.util.Map;
 
 public class GameScreenController {
     private GamePlayView gameView;
@@ -41,13 +42,17 @@ public class GameScreenController {
                 return FixedYutThrow(yutType);
             }
         });
-        
+
         // 말 꺼내기 리스너 설정
         gameView.setTakeOutButtonListener(new GamePlayView.TakeOutButtonListener(){
             public List<PositionDTO> onTakeOutButtonClicked() {
                 return gameManager.getAllPiecePos();
             }
         });
+
+        // 말 선택 리스너 설정
+
+        // 셀 선택 리스너 설정
 
         // 게임 종료 리스너 설정
         gameView.setGameEndListener(new GamePlayView.GameEndListener() {
@@ -86,6 +91,7 @@ public class GameScreenController {
         // 결과에 따라 버튼 상태 및 메시지 업데이트
         updateGameStateAfterYutThrow(yutResult);
 
+        //////////////// 여기 부터 x
         // 승리 여부 확인
         int winner = gameManager.checkWin();
         if (winner > 0) {
@@ -94,33 +100,10 @@ public class GameScreenController {
             return yutResult;
         }
 
-        // 현재 턴 플레이어 확인 및 업데이트
-        int currentPlayer = gameManager.checkPlayer();
-        gameView.updateCurrentPlayer(currentPlayer);
-
         // 윷 결과 리스트 업데이트
         updateYutResultsInView();
 
         return yutResult;
-    }
-
-    // 윷 던진 후 게임 상태 업데이트
-    private void updateGameStateAfterYutThrow(YutResult yutResult) {
-        // 윷이나 모가 나온 경우 (추가 턴)
-        if (yutResult.canRollAgain()) {
-            gameView.setThrowButtonEnabled(true);
-            gameView.setStatusMessage(yutResult.name() + "가 나왔습니다! 한 번 더 던지세요.");
-        } else {
-            // 추가 턴이 없는 경우
-            gameView.setThrowButtonEnabled(false);
-            gameView.setStatusMessage(yutResult.name() + "가 나왔습니다. 말을 선택하여 이동하세요.");
-        }
-    }
-
-    // 윷 결과 리스트를 뷰에 표시
-    private void updateYutResultsInView() {
-        // GameManager에서 현재 가지고 있는 윷 결과 리스트 가져오기
-        gameView.displayYutResultList(gameManager.getYutResults());
     }
 
     // 지정 윷 던지는 버튼을 눌렀을 때
@@ -139,19 +122,75 @@ public class GameScreenController {
             return yutResult;
         }
 
-        // 현재 턴 플레이어 확인하고 업데이트
-        int currentPlayer = gameManager.checkPlayer();
-        gameView.updateCurrentPlayer(currentPlayer);
-
         // 윷 결과 리스트 업데이트
         updateYutResultsInView();
 
         return yutResult;
     }
 
+    // 윷 던진 후 게임 상태 업데이트
+    private void updateGameStateAfterYutThrow(YutResult yutResult) {
+        // 윷이나 모가 나온 경우 (추가 턴)
+        if (yutResult.canRollAgain()) {
+            gameManager.setExtraTurn(true);
+            gameView.setThrowButtonEnabled(true);
+            gameView.setStatusMessage(yutResult.name() + "가 나왔습니다! 한 번 더 던지세요.");
+        } else {
+            // 추가 턴이 없는 경우
+            gameManager.setExtraTurn(false);
+            gameView.setThrowButtonEnabled(false);
+            gameView.setStatusMessage(yutResult.name() + "가 나왔습니다. 말을 선택하여 이동하세요.");
+            gameView.updateCurrentPlayer(gameManager.getCurrentPlayer());
+            gameView.enableWaitingPieceSelection();
+        }
+    }
+
+    // 윷 결과 리스트를 뷰에 표시
+    private void updateYutResultsInView() {
+        // GameManager에서 현재 가지고 있는 윷 결과 리스트 가져오기
+        gameView.displayYutResultList(gameManager.getYutResults());
+    }
+
     // 윷 결과 리스트 가져오기
     public List<YutResult> getYutResults() {
         return gameManager.getYutResults();
+    }
+
+    // 말을 선택했을 때
+    public Map<Integer, Integer> PieceSelect(int selectpiece){
+
+        gameManager.setSelectedpiece(selectpiece);
+        Map<Integer, Integer> movable = gameManager.findMovableCells(selectpiece);
+        return movable;
+    }
+
+    // 좌표 선택했을 때
+    public void selectCoordinate(Map<Integer, Integer> movable){
+        // 골라서 넘겨준 해시맵을 리스트에서 제거해야함. + 잡혔을 때 extraturn이 바뀌어 있는지 확인해야함.
+        // 해시맵에서 선택했던 값만 추출
+        Integer value = movable.values().iterator().next();
+        // 윷리스트에서 선택했던 값 삭제
+        gameManager.removeYutResult(value);
+        // 선택한 좌표로 말 이동
+        gameManager.processYutResult(value);
+
+        if (gameManager.getExtraTurn()){
+            // 윷버튼 활성화
+            gameView.setThrowButtonEnabled(true);
+        }
+        else {
+            if (gameManager.isYutResultsEmpty()) {
+                // 현재 턴 플레이어 확인 및 업데이트
+                int currentPlayer = gameManager.checkPlayer();
+                gameView.updateCurrentPlayer(currentPlayer);
+                // 전체 상태 넘겨줘야함.
+            }
+            else {
+                // 일단 전체 상태를 넘겨주고
+                gameView.enableWaitingPieceSelection();
+            }
+        }
+
     }
 
     // 게임 재시작
@@ -194,26 +233,11 @@ public class GameScreenController {
         StartScreenController startController = new StartScreenController(configView, newGameManager);
     }
 
-    // 윷 굴리기 이전 초기상태 설정 (턴 넘어 갔을 때)
-
     // 모든 말의 위치정보 가져오기
-    private List<PositionDTO> takeOutPiece(){
+    public List<PositionDTO> takeOutPiece(){
         return gameManager.getAllPiecePos();
     }
 
-    // 말을 선택했을 때
-    public void PieceSelect(int selectPiece) {
-        // 선택된 말이 갈 수 있는 곳을 표현해주는 메서드 구현
-        // 모델로 부터 받아올 값은 좌표 값들 (ex. 7,9,12..) view로 넘겨주면 됨.
-
-    }
-
-    // 좌표 선택했을 때
-    public void playerControlResult(String selectedYut) {
-        // 모델에서는 선택된 말이 무엇인지를 알고 있어야함.
-        // 모델에서 그 선택된 좌표 계산해서 옮기고 전체상태 넘겨주면됨. (여기서 만약 추가 턴 여부 발생시 윷굴리는 과정 시작)
-
-    }
     // 게임 종료
     private void exitGame() {
         System.exit(0);

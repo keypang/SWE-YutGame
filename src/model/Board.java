@@ -216,7 +216,6 @@ public class Board {
         return movableCellsId;
     }
 
-
     public boolean movePiecePositive(Piece piece, int move) {
         Cell current = piece.getStartCell();
         Cell startAt = piece.getStartCell();
@@ -328,6 +327,7 @@ public class Board {
             }
         }
         else {
+            System.out.println("백도 불가");
             // 백도 불가
         }
         System.out.println(current.getType()+"/"+current.getId());
@@ -336,7 +336,6 @@ public class Board {
 
         return updatePieceLocation(current, startAt, piece);
     }
-
 
     public Cell getCell(int i) {
         return cells.get(i);

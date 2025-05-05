@@ -265,6 +265,7 @@ public class SwingPlayScreen extends JFrame implements GamePlayView {
 
         return panel;
     }
+
     // 플레이어 정보 패널 생성
     private JPanel createPlayerInfoPanel() {
         JPanel panel = new JPanel();
@@ -358,7 +359,6 @@ public class SwingPlayScreen extends JFrame implements GamePlayView {
                             JOptionPane.showMessageDialog(SwingPlayScreen.this, "플레이어의 말이 아닙니다!");
                             return;
                         }
-
                         waitingPieceSelection = false;
                         //for test
                         //System.out.println("선택된 말: playerId=" + playerId + ", pieceId=" + pieceId);
