@@ -193,10 +193,12 @@ public class GameScreenController {
         }
         else {
             if (gameManager.isYutResultsEmpty()) {
+                // 전체 상태 넘겨줘야함.
+
                 // 현재 턴 플레이어 확인 및 업데이트
                 int currentPlayer = gameManager.checkPlayer();
                 gameView.updateCurrentPlayer(currentPlayer);
-                // 전체 상태 넘겨줘야함.
+
                 // 윷버튼 활성화
                 gameView.setThrowButtonEnabled(true);
             }

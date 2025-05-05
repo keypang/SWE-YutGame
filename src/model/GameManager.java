@@ -197,6 +197,7 @@ public class GameManager {
             if (checkextra) { extraTurn = true; }
             else { extraTurn = false;}
         }
+        System.out.println("말 옮기고 나서 선택된 플레이어:"+currentPlayer+"// 현재 선택된 말:"+selectedpiece);
     }
 
     // 전체 말 위치 세팅
