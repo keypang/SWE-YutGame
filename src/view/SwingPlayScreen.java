@@ -1100,6 +1100,58 @@
             squarePositionMap.put(220, new Point(423,450));
             squarePositionMap.put(1000, new Point(330,370));
         }
+
+
+        private void initializePentagonPositions(){
+
+            pentagonPositionMap.put(0, new Point(491,588));
+            pentagonPositionMap.put(1, new Point(527,520));
+            pentagonPositionMap.put(2, new Point(541,469));
+            pentagonPositionMap.put(3, new Point(558,419));
+            pentagonPositionMap.put(4, new Point(575,367));
+
+            pentagonPositionMap.put(5, new Point(582,296));
+            pentagonPositionMap.put(6, new Point(530,240));
+            pentagonPositionMap.put(7, new Point(490,210));
+            pentagonPositionMap.put(8, new Point(450,184));
+            pentagonPositionMap.put(9, new Point(408, 155));
+
+            pentagonPositionMap.put(10, new Point(350,130));
+            pentagonPositionMap.put(11, new Point(287,157));
+            pentagonPositionMap.put(12, new Point(248,184));
+            pentagonPositionMap.put(13, new Point(208,212));
+            pentagonPositionMap.put(14, new Point(170,240));
+
+            pentagonPositionMap.put(15, new Point(115,292));
+            pentagonPositionMap.put(16, new Point(123,366));
+            pentagonPositionMap.put(17, new Point(139,417));
+            pentagonPositionMap.put(18, new Point(155,470));
+            pentagonPositionMap.put(19, new Point(171,522));
+
+            pentagonPositionMap.put(20, new Point(202,594));
+            pentagonPositionMap.put(21, new Point(275,598));
+            pentagonPositionMap.put(22, new Point(324,596));
+            pentagonPositionMap.put(23, new Point(375,595));
+            pentagonPositionMap.put(24, new Point(425,597));
+
+            pentagonPositionMap.put(25, new Point(491,588)); // 도착점
+
+            pentagonPositionMap.put(50, new Point(503,320));
+            pentagonPositionMap.put(55, new Point(430,345));
+            pentagonPositionMap.put(100, new Point(347,212));
+            pentagonPositionMap.put(110, new Point(349,285));
+            pentagonPositionMap.put(150, new Point(195,318));
+            pentagonPositionMap.put(165, new Point(268,344));
+            pentagonPositionMap.put(200, new Point(250,517));
+            pentagonPositionMap.put(220, new Point(300,450));
+            pentagonPositionMap.put(250, new Point(441,520));
+            pentagonPositionMap.put(275, new Point(395,446));
+
+            pentagonPositionMap.put(1000, new Point(350,375));
+
+        }
+
+
     
         @Override
         public void setStatusMessage(String message) {
