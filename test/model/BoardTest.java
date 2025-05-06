@@ -21,7 +21,7 @@ class BoardTest {
         players.add(player1);
         players.add(player2);
 
-        board = new Board(players, BoardType.HEXAGON);
+        board = new Board(players, BoardType.SQUARE);
     }
 
     @Test
@@ -50,8 +50,10 @@ class BoardTest {
         int move = 5;
         Piece piece = player1.getPieces(1);
         board.movePiecePositive(piece, move);
+        move = 3;
         board.movePiecePositive(piece, move);
-
+        move = 1;
+        board.movePiecePositive(piece, move);
         Cell cell = board.getCell(move);
         //assertEquals(cell.getId(), piece.getStartCell().getId());
 
