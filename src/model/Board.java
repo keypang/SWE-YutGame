@@ -231,8 +231,6 @@ public class Board {
     public boolean movePiecePositive(Piece piece, int move) {
         Cell current = piece.getStartCell();
         Cell startAt = piece.getStartCell();
-        //Cell priorCell = piece.getStartCell();
-
 
         //꺼내는 경우 처리
         if(current.getType().equals("대기")){
@@ -242,10 +240,7 @@ public class Board {
         for(int i = 0; i < move; i++) {
             List<Cell> nextList = current.getNextCells();
 
-            //priorCell = current;
-
             if (nextList.isEmpty()) break;
-            //없어도 될 듯 한데 일단 대기
 
             if(current.getType().equals("갈림길")) {
                 if(current == startAt) {
@@ -271,19 +266,32 @@ public class Board {
             System.out.println(current.getType()+"/"+current.getId());
 
             //완주 처리
-            if(current.getType().equals("완주")){
-                if(startAt.getPieces().isEmpty()){
-                    startAt.addPiece(piece);
-                }
+            if(current.getType().equals("완주") || current.getType().equals("도착")){
+                System.out.println("도착점 도달!");
 
+                // 모든 업힌 말들 완주 처리
                 for(Piece p : startAt.getPieces()) {
                     p.setFinished(true);
-                    current.addPiece(p);
+                    System.out.println("완주 처리된 말: " + p.getId() + ", 플레이어: " + p.getPlayer().getId());
                 }
-                startAt.clearPieces();
 
+                startAt.clearPieces();
                 return false;
             }
+        }
+
+        // 루프를 벗어난 후 한번 더 도착 검사
+        if(current.getType().equals("완주") || current.getType().equals("도착")){
+            System.out.println("도착점 도달!");
+
+            // 모든 업힌 말들 완주 처리
+            for(Piece p : startAt.getPieces()) {
+                p.setFinished(true);
+                System.out.println("완주 처리된 말: " + p.getId() + ", 플레이어: " + p.getPlayer().getId());
+            }
+
+            startAt.clearPieces();
+            return false;
         }
 
         boolean checkCol = updatePieceLocation(current, startAt, piece);
