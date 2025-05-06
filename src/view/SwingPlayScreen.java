@@ -60,6 +60,7 @@
 
 
         private Map<Integer, JPanel> playerPiecePanels = new HashMap<>();
+        private List<JLabel> stackCountLabels = new ArrayList<>();
 
 
 
@@ -849,13 +850,13 @@
         }
         
         // 말 전체 다시 그리기 메서드
-        public void repaintAllPieces(){
+        public void repaintAllPieces() {
             if(takeOutButtonListener == null) return;
 
             List<PositionDTO> currentPositions = takeOutButtonListener.onTakeOutButtonClicked();
             JPanel boardPanel = getBoardPanel();
 
-            // 윷 판에서 말 다 제거
+            // 보드에서 모든 말 제거
             for (Map.Entry<String, JLabel> entry : playerPiecesMap.entrySet()) {
                 JLabel pieceLabel = entry.getValue();
                 if (pieceLabel.getParent() == boardPanel) {
@@ -863,50 +864,118 @@
                 }
             }
 
-            // DTO 에서 위치 가져오기
+            // 이전에 생성된 업힌 말 표시 라벨들 모두 제거
+            for (JLabel label : stackCountLabels) {
+                if (label.getParent() != null) {
+                    label.getParent().remove(label);
+                }
+            }
+            stackCountLabels.clear();
+
+            // 먼저 대기 상태(-1)인 말들 처리 - 플레이어 패널로 돌려보내기
             for (PositionDTO dto : currentPositions) {
-                int playerId = dto.getPlayerId();
-                int pieceId = dto.getPieceId();
-                int cellId = dto.getCellId();
+                if (dto.getCellId() == -1) {
+                    int playerId = dto.getPlayerId();
+                    int pieceId = dto.getPieceId();
 
-                JLabel pieceLabel = playerPiecesMap.get(playerId + "_" + pieceId);
+                    JLabel pieceLabel = playerPiecesMap.get(playerId + "_" + pieceId);
+                    if (pieceLabel != null) {
+                        // 기존 부모에서 제거
+                        if (pieceLabel.getParent() != null) {
+                            pieceLabel.getParent().remove(pieceLabel);
+                        }
 
-                if (pieceLabel != null) {
-
-                    if (pieceLabel.getParent() != null) {
-                        pieceLabel.getParent().remove(pieceLabel);
-                    }
-
-                    if (cellId == -1) {
-
+                        // 플레이어 패널에 추가
                         JPanel piecePanel = playerPiecePanels.get(playerId);
                         if (piecePanel != null) {
                             piecePanel.add(pieceLabel);
-                        }
-                    } else {
-
-                        Point pos = squarePositionMap.get(cellId);
-                        if (pos != null) {
-                            pieceLabel.setBounds(pos.x - 5, pos.y - 35, 40, 40);
-                            boardPanel.add(pieceLabel);
-                            boardPanel.setComponentZOrder(pieceLabel, 0);
+                            piecePanel.revalidate();
+                            piecePanel.repaint();
                         }
                     }
                 }
             }
 
-
-            boardPanel.revalidate();
-            boardPanel.repaint();
-
-            for (JPanel panel : playerPiecePanels.values()) {
-                panel.revalidate();
-                panel.repaint();
+            // 이제 보드 위에 있는 말들 처리
+            // 각 셀별로 말 개수 카운트
+            Map<Integer, List<PositionDTO>> cellPieces = new HashMap<>();
+            for (PositionDTO dto : currentPositions) {
+                int cellId = dto.getCellId();
+                if (cellId != -1) { // -1은 대기 상태이므로 제외
+                    if (!cellPieces.containsKey(cellId)) {
+                        cellPieces.put(cellId, new ArrayList<>());
+                    }
+                    cellPieces.get(cellId).add(dto);
+                }
             }
 
+            // 보드에 말 배치 (동일 셀에 여러 말이 있을 경우 겹쳐 표시)
+            for (Map.Entry<Integer, List<PositionDTO>> entry : cellPieces.entrySet()) {
+                int cellId = entry.getKey();
+                List<PositionDTO> piecesAtCell = entry.getValue();
+                Point pos = squarePositionMap.get(cellId);
+
+                if (pos == null) continue;
+
+                // 말이 1개일 경우 일반 표시
+                if (piecesAtCell.size() == 1) {
+                    PositionDTO dto = piecesAtCell.get(0);
+                    JLabel pieceLabel = playerPiecesMap.get(dto.getPlayerId() + "_" + dto.getPieceId());
+
+                    if (pieceLabel != null) {
+                        pieceLabel.setBounds(pos.x - 5, pos.y - 35, 40, 40);
+                        boardPanel.add(pieceLabel);
+                        boardPanel.setComponentZOrder(pieceLabel, 0);
+                    }
+                }
+                // 말이 여러 개일 경우 (업혀있는 경우)
+                else if (piecesAtCell.size() > 1) {
+                    // 메인 말 위치 (첫 번째 말)
+                    PositionDTO mainDto = piecesAtCell.get(0);
+                    JLabel mainPieceLabel = playerPiecesMap.get(mainDto.getPlayerId() + "_" + mainDto.getPieceId());
+
+                    if (mainPieceLabel != null) {
+                        mainPieceLabel.setBounds(pos.x - 5, pos.y - 35, 40, 40);
+                        boardPanel.add(mainPieceLabel);
+                        boardPanel.setComponentZOrder(mainPieceLabel, 0);
+
+                        // 업힌 말 수 표시 라벨 생성
+                        JLabel stackCountLabel = new JLabel("+" + (piecesAtCell.size() - 1));
+                        stackCountLabel.setFont(new Font("SansSerif", Font.BOLD, 14));
+                        stackCountLabel.setForeground(Color.RED);
+                        stackCountLabel.setBackground(Color.WHITE);
+                        stackCountLabel.setOpaque(true);
+                        stackCountLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+                        stackCountLabel.setBounds(pos.x + 15, pos.y - 35, 25, 20);
+                        boardPanel.add(stackCountLabel);
+                        boardPanel.setComponentZOrder(stackCountLabel, 0);
+
+                        // 생성한 라벨을 리스트에 추가하여 추적
+                        stackCountLabels.add(stackCountLabel);
+
+                        // 나머지 말들은 살짝 겹쳐서 표시 (시각적 효과)
+                        for (int i = 1; i < piecesAtCell.size() && i < 4; i++) { // 최대 3개까지만 표시
+                            PositionDTO dto = piecesAtCell.get(i);
+                            JLabel pieceLabel = playerPiecesMap.get(dto.getPlayerId() + "_" + dto.getPieceId());
+
+                            if (pieceLabel != null) {
+                                // 약간씩 오프셋 주기
+                                pieceLabel.setBounds(pos.x - 5 + (i * 5), pos.y - 35 - (i * 5), 40, 40);
+                                boardPanel.add(pieceLabel);
+                                boardPanel.setComponentZOrder(pieceLabel, i);
+                            }
+                        }
+                    }
+                }
+            }
+
+            // 화면 갱신
+            boardPanel.revalidate();
+            boardPanel.repaint();
         }
     
         // 윷 이미지 초기화 메서드
+        @Override
         public void clearYutImage() {
             yutResultLabel.setText("윷 결과: ");
             yutImageLabel.setIcon(null);
@@ -1025,7 +1094,18 @@
         public void setStatusMessage(String message) {
             statusMessageLabel.setText(message);
         }
-    
+
+        @Override
+        public void clearPieceSelection() {
+            // 모든 말의 테두리 제거
+            for (Map.Entry<String, JLabel> entry : playerPiecesMap.entrySet()) {
+                JLabel pieceLabel = entry.getValue();
+                pieceLabel.setBorder(null);
+            }
+            // 선택된 말 인덱스 초기화 (필요시)
+            this.selectedPieceIndex = -1;
+        }
+
         /**
          * 화면을 닫는 메서드
          */
