@@ -108,6 +108,27 @@ class BoardTest {
     }
 
     @Test
+    void movePiecePositive5() {
+        //업고 완주
+        int move1 = 1;
+        int move2 = 30;
+        Piece piece1 = player1.getPieces(1);
+        Piece piece2 = player1.getPieces(2);
+
+        board.movePiecePositive(piece1, move1);
+        board.movePiecePositive(piece2, move1);
+
+        board.movePiecePositive(piece1, move2);
+
+        System.out.println(piece1.isFinished()+"/"+piece2.isFinished());
+
+        boolean test = piece1.getFinished();
+        boolean expected = true;
+
+        assertEquals(expected, test);
+    }
+
+    @Test
     void movePieceNegative() {
         //단순 이동
         int move = 5;
