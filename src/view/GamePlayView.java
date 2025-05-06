@@ -79,4 +79,11 @@ public interface GamePlayView {
     // 게임 종료 화면 표시
     void showGameEndDialog(int winnerPlayer);
 
+
+    // 말이 윷판에 놓였을때 테두리 쳐지는 문제 해결
+    void clearPieceSelection();
+
+    // 윷 이미지 초기화
+    void clearYutImage();
+
 }
