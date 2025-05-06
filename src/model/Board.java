@@ -232,14 +232,56 @@ public class Board {
         Cell current = piece.getStartCell();
         Cell startAt = piece.getStartCell();
 
-        //꺼내는 경우 처리
+        // 꺼내는 경우 처리
         if(current.getType().equals("대기")){
             current = getCell(0);
         }
 
+        // 도착점까지 남은 칸 수 계산
+        int stepsToFinish = 0;
+        Cell tempCell = current;
+        while (true) {
+            List<Cell> nextList = tempCell.getNextCells();
+            if (nextList.isEmpty()) break;
+
+            Cell next;
+            if(tempCell.getType().equals("갈림길")) {
+                if(tempCell == current) {
+                    // 지름길로 이동
+                    next = null;
+                    for (Cell cell : nextList) {
+                        if (cell.getType().equals("지름길")) {
+                            next = cell;
+                            break;
+                        }
+                    }
+                    if (next == null) next = nextList.getFirst();
+                } else {
+                    // 일반 길로 이동
+                    next = null;
+                    for (Cell cell : nextList) {
+                        if (cell.getType().equals("일반")) {
+                            next = cell;
+                            break;
+                        }
+                    }
+                    if (next == null) next = nextList.getFirst();
+                }
+            } else {
+                next = nextList.getFirst();
+            }
+
+            tempCell = next;
+            stepsToFinish++;
+
+            if(tempCell.getType().equals("도착") || tempCell.getType().equals("완주")) {
+                break;
+            }
+        }
+
+        // 이동 실행
         for(int i = 0; i < move; i++) {
             List<Cell> nextList = current.getNextCells();
-
             if (nextList.isEmpty()) break;
 
             if(current.getType().equals("갈림길")) {
@@ -250,8 +292,7 @@ public class Board {
                             break;
                         }
                     }
-                }
-                else {
+                } else {
                     for (Cell cell : nextList) {
                         if (cell.getType().equals("일반")) {
                             current = cell;
@@ -259,32 +300,17 @@ public class Board {
                         }
                     }
                 }
-            }
-            else {
+            } else {
                 current = nextList.getFirst();
             }
             System.out.println(current.getType()+"/"+current.getId());
-
-            //완주 처리
-            if(current.getType().equals("완주") || current.getType().equals("도착")){
-                System.out.println("도착점 도달!");
-
-                // 모든 업힌 말들 완주 처리
-                for(Piece p : startAt.getPieces()) {
-                    p.setFinished(true);
-                    System.out.println("완주 처리된 말: " + p.getId() + ", 플레이어: " + p.getPlayer().getId());
-                }
-
-                startAt.clearPieces();
-                return false;
-            }
         }
 
-        // 루프를 벗어난 후 한번 더 도착 검사
-        if(current.getType().equals("완주") || current.getType().equals("도착")){
-            System.out.println("도착점 도달!");
+        // 완주 조건 확인: 도착점을 지나치는 경우에만 완주 처리
+        if (move > stepsToFinish) {
+            System.out.println("완주");
 
-            // 모든 업힌 말들 완주 처리
+            // 모든 업힌 말 완주 처리
             for(Piece p : startAt.getPieces()) {
                 p.setFinished(true);
                 System.out.println("완주 처리된 말: " + p.getId() + ", 플레이어: " + p.getPlayer().getId());
@@ -294,6 +320,7 @@ public class Board {
             return false;
         }
 
+        // 도착점에 정확히 도달하거나 도착 전인 경우 - 일반 이동 처리
         boolean checkCol = updatePieceLocation(current, startAt, piece);
         piece.setStartCell(current);
         for(Piece p : startAt.getPieces()) {
@@ -306,6 +333,13 @@ public class Board {
     public boolean movePieceNegative(Piece piece) {
         Cell current = piece.getStartCell();
         Cell startAt = piece.getStartCell();
+
+        // 대기상태인 말들은 빽도 불가능하게 설정
+        if(current.getType().equals("대기")){
+            System.out.println("윷판에 놓여있지 않은 말은 백도를 할 수 없습니다.");
+            return false;
+        }
+
 
         System.out.println(piece.getPriorCell().getId());
 
