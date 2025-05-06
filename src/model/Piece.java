@@ -3,7 +3,6 @@ package model;
 public class Piece {
     private int id;
     private Cell startCell;
-    private Cell priorCell;
     private boolean finished;
     private Player player;
 
@@ -11,8 +10,6 @@ public class Piece {
         this.id = id;
         this.finished = finished;
         this.player = player;
-
-        this.priorCell = new Cell(-1,"임시", -1);
     }
 
     public void setStartCell(Cell startCell) {
@@ -24,14 +21,6 @@ public class Piece {
     }
 
     public boolean getFinished() { return finished; }
-
-    public void setPriorCell(Cell priorCell) { this.priorCell = priorCell; }
-
-    public Cell getPriorCell() { return priorCell; }
-
-    public void clearPriorCell() {
-        this.priorCell = null;
-    }
 
     public Cell getStartCell() {
         return startCell;
