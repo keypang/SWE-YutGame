@@ -202,8 +202,11 @@ public class GameScreenController {
         // 말 이동 후 extraTurn 상태가 true로 바뀌었다면 말을 잡았다는 의미
         boolean captureOccurred = !wasExtraTurn && gameManager.getExtraTurn();
 
-        // 업데이트된 말 위치를 화면에 반영 (캡처 포함)
+        // 업데이트된 말 위치 화면 표시
         gameView.repaintAllPieces();
+
+        // 말이 이동했으므로 파란색 테두리로 표시 제거 
+        gameView.clearPieceSelection();
 
         // 캡처 발생 시 메시지 표시
         if (captureOccurred) {
@@ -242,9 +245,7 @@ public class GameScreenController {
         updateYutResultsInView();
 
         // 윷 이미지 초기화
-        if (gameView instanceof SwingPlayScreen) {
-            ((SwingPlayScreen) gameView).clearYutImage();
-        }
+        gameView.clearYutImage();
 
         // 버튼 상태 초기화
         gameView.setThrowButtonEnabled(true);
