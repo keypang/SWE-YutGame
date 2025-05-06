@@ -205,12 +205,20 @@ public class GameScreenController {
         // 업데이트된 말 위치 화면 표시
         gameView.repaintAllPieces();
 
-        // 말이 이동했으므로 파란색 테두리로 표시 제거 
+        // 말이 이동했으므로 파란색 테두리로 표시 제거
         gameView.clearPieceSelection();
 
         // 캡처 발생 시 메시지 표시
         if (captureOccurred) {
             gameView.setStatusMessage("말을 잡았습니다! 한 번 더 던지세요.");
+        }
+
+        // 승리 여부 확인 - 이 부분 추가
+        int winner = gameManager.checkWin();
+        if (winner > 0) {
+            // 승리자가 있는 경우 게임 종료 다이얼로그 표시
+            gameView.showGameEndDialog(winner);
+            return;
         }
 
         if (gameManager.getExtraTurn()){

@@ -221,8 +221,15 @@ public class GameManager {
 
             for (Piece piece : pieces) {
                 // 말 id랑 현재 위치 cell id 받아오기
-                int pieceId =  piece.getId();
-                int cellId = piece.getStartCell().getId();
+                int pieceId = piece.getId();
+                int cellId;
+
+                // 완주한 말은 21번 셀(완주 셀)로 설정
+                if (piece.isFinished()) {
+                    cellId = 21; // 완주 셀 ID 지정
+                } else {
+                    cellId = piece.getStartCell().getId();
+                }
 
                 // 플레이어 id와 말 id 일치하는 DTO 객체 받아와서 데이터 담기
                 for(PositionDTO positionDTO : posInfo) {

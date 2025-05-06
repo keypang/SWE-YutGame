@@ -587,9 +587,18 @@
 
             for(Map.Entry<Integer, Integer> entry : availableCells.entrySet()){
                 int cellId = entry.getKey();
-                Point target = squarePositionMap.get(cellId);
+                Point target;
+
+                // 완주 처리를 위한 특수 케이스 처리
+                if(cellId == -1) {
+                    // 도착 셀(20번) 위치 사용
+                    target = squarePositionMap.get(20);
+                } else {
+                    target = squarePositionMap.get(cellId);
+                }
+
                 if(target == null){
-                    JOptionPane.showMessageDialog(this, "셀 아이디 오류!");
+                    System.out.println("알 수 없는 셀 ID: " + cellId);
                     continue;
                 }
 
@@ -600,13 +609,14 @@
 
                 movablePoints.add(movablePoint);
 
+                final int finalCellId = cellId; // 클로저에서 사용하기 위해 final 변수로 캡처
                 movablePoint.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
-                        System.out.println("말 옮기기 전 전달될 cell ID :" + cellId);
+                        System.out.println("말 옮기기 전 전달될 cell ID :" + finalCellId);
                         //선택된 cellID controller에게 전달
                         if(cellSelectionListener != null){
-                            cellSelectionListener.onCellSelected(cellId);
+                            cellSelectionListener.onCellSelected(finalCellId);
                         }
 
                         JPanel boardPanel = getBoardPanel();
@@ -901,7 +911,8 @@
             Map<Integer, List<PositionDTO>> cellPieces = new HashMap<>();
             for (PositionDTO dto : currentPositions) {
                 int cellId = dto.getCellId();
-                if (cellId != -1) { // -1은 대기 상태이므로 제외
+                // 완주한 말(21번 셀)과 대기 상태(-1번 셀)는 보드에 표시하지 않음
+                if (cellId != -1 && cellId != 21) {
                     if (!cellPieces.containsKey(cellId)) {
                         cellPieces.put(cellId, new ArrayList<>());
                     }
