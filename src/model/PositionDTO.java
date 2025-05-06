@@ -41,6 +41,6 @@ public class PositionDTO {
     @Override
     public String toString() {
         // 테스트용 정보 출력
-        return playerId+"번 플레이어의 "+pieceId+"번 말은 "+cellId+"번 지점에 있습니다";
+        return playerId+"번 플레이어의 "+pieceId+"번 말은 "+cellId+"번 지점에 있습니다\n";
     }
 }
