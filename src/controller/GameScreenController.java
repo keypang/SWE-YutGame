@@ -188,13 +188,27 @@ public class GameScreenController {
     public void selectCoordinate(int cellId){
         // 골라서 넘겨준 해시맵을 리스트에서 제거해야함. + 잡혔을 때 extraturn이 바뀌어 있는지 확인해야함.
         // 해시맵에서 선택했던 값만 추출
-
         Integer value = gameManager.getMovableMap().get(cellId);
 
         // 윷리스트에서 선택했던 값 삭제
         gameManager.removeYutResult(value);
+
+        // 현재 extraTurn 상태 저장 (말을 잡았는지 확인용)
+        boolean wasExtraTurn = gameManager.getExtraTurn();
+
         // 선택한 좌표로 말 이동
         gameManager.processYutResult(value);
+
+        // 말 이동 후 extraTurn 상태가 true로 바뀌었다면 말을 잡았다는 의미
+        boolean captureOccurred = !wasExtraTurn && gameManager.getExtraTurn();
+
+        // 업데이트된 말 위치를 화면에 반영 (캡처 포함)
+        gameView.repaintAllPieces();
+
+        // 캡처 발생 시 메시지 표시
+        if (captureOccurred) {
+            gameView.setStatusMessage("말을 잡았습니다! 한 번 더 던지세요.");
+        }
 
         if (gameManager.getExtraTurn()){
             // 윷버튼 활성화
@@ -202,9 +216,6 @@ public class GameScreenController {
         }
         else {
             if (gameManager.isYutResultsEmpty()) {
-                // 전체 상태 넘겨줘야함.
-                gameView.repaintAllPieces();
-
                 // 현재 턴 플레이어 확인 및 업데이트
                 int currentPlayer = gameManager.checkPlayer();
                 gameView.updateCurrentPlayer(currentPlayer);
@@ -213,13 +224,10 @@ public class GameScreenController {
                 gameView.setThrowButtonEnabled(true);
             }
             else {
-                // 일단 전체 상태를 넘겨주고
-                gameView.repaintAllPieces();
                 // 말선택 페이즈로 이동
                 gameView.enableWaitingPieceSelection();
             }
         }
-
     }
 
     // 게임 재시작
