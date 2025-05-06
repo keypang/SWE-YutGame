@@ -4,15 +4,19 @@ import java.util.*;
 
 public class Board {
     private Map<Integer, Cell> cells = new HashMap<>();
+    private int shape;
 
     public Board(ArrayList<Player> players, BoardType boardType) {
         if(boardType == BoardType.SQUARE){
+            this.shape = 4;
             generateBoard(4);
         }
         else if(boardType == BoardType.PENTAGON){
+            this.shape = 5;
             generateBoard(5);
         }
         else if(boardType == BoardType.HEXAGON){
+            this.shape = 6;
             generateBoard(6);
         }
         initBoard(players);
@@ -51,7 +55,7 @@ public class Board {
         cells.put(0,cell);
 
         //도착 셀
-        cell = new Cell(shape*5, "도착",0);
+        cell = new Cell(shape*5, "도착",shape);
         cells.put(shape*5,cell);
 
         //완주 셀
@@ -74,7 +78,7 @@ public class Board {
         }
 
         //교차로 셀
-        cell = new Cell(1000, "갈림길", 100);
+        cell = new Cell(1000, "교차로", 0);
         cells.put(1000,cell);
 
         //지름길
@@ -173,6 +177,7 @@ public class Board {
     public int[] getMovableCells(Cell cell, int[] moves) {
         int[] movableCellsId = new int[moves.length];
 
+        int cellLine = cell.getLineNum();
 
         for(int i = 0; i<moves.length; i++) {
             Cell testCell = cell;
@@ -200,7 +205,36 @@ public class Board {
                             }
                         }
                     }
-                    else {
+                    else if(testCell.getType().equals("교차로")) {
+                        if(testCell == cell) {
+                            for (Cell celln : nextList) {
+                                System.out.println("1. "+ celln.getId() +":"+celln.getLineNum());
+                                if(celln.getLineNum() == shape) {
+                                    testCell = celln;
+                                    break;
+                                }
+                            }
+                        } else {
+                            if(cellLine == shape-2) {
+                                for (Cell celln : nextList) {
+                                    System.out.println("2. "+ celln.getId() +":"+celln.getLineNum());
+                                    if(celln.getLineNum() == shape) {
+                                        testCell = celln;
+                                        break;
+                                    }
+                                }
+                            } else {
+                                for (Cell celln : nextList) {
+                                    System.out.println("3. "+ celln.getId() +":"+celln.getLineNum());
+                                    if(celln.getLineNum() == shape-1) {
+                                        testCell = celln;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+
+                    } else {
                         testCell = nextList.getFirst();
                     }
 
@@ -231,55 +265,22 @@ public class Board {
         Cell current = piece.getStartCell();
         Cell startAt = piece.getStartCell();
 
+        piece.setPreviousLine(startAt.getLineNum());
+
         // 꺼내는 경우 처리
         if(current.getType().equals("대기")){
             current = getCell(0);
         }
 
-        // 도착점까지 남은 칸 수 계산
-        int stepsToFinish = 0;
-        Cell tempCell = current;
-        while (true) {
-            List<Cell> nextList = tempCell.getNextCells();
-            if (nextList.isEmpty()) break;
-
-            Cell next;
-            if(tempCell.getType().equals("갈림길")) {
-                if(tempCell == current) {
-                    // 지름길로 이동
-                    next = null;
-                    for (Cell cell : nextList) {
-                        if (cell.getType().equals("지름길")) {
-                            next = cell;
-                            break;
-                        }
-                    }
-                    if (next == null) next = nextList.getFirst();
-                } else {
-                    // 일반 길로 이동
-                    next = null;
-                    for (Cell cell : nextList) {
-                        if (cell.getType().equals("일반")) {
-                            next = cell;
-                            break;
-                        }
-                    }
-                    if (next == null) next = nextList.getFirst();
-                }
-            } else {
-                next = nextList.getFirst();
-            }
-
-            tempCell = next;
-            stepsToFinish++;
-
-            if(tempCell.getType().equals("도착") || tempCell.getType().equals("완주")) {
-                break;
-            }
-        }
-
         // 이동 실행
         for(int i = 0; i < move; i++) {
+            if (current.getType().equals("완주")) {
+                for(Piece p : startAt.getPieces()) {
+                    p.setFinished(true);
+                }
+                startAt.clearPieces();
+                return false;
+            }
             List<Cell> nextList = current.getNextCells();
             if (nextList.isEmpty()) break;
 
@@ -299,24 +300,38 @@ public class Board {
                         }
                     }
                 }
+            }
+            else if(current.getType().equals("교차로")) {
+                if(current == startAt) {
+                    for (Cell cell : nextList) {
+                        System.out.println(cell.getLineNum()+" : "+shape);
+                        if (cell.getLineNum() == shape) {
+                            System.out.println(cell.getId());
+                            current = cell;
+                            break;
+                        }
+                    }
+                } else {
+                    if(piece.getPreviousLine() == shape-2) {
+                        for (Cell cell : nextList) {
+                            if (cell.getLineNum() == shape) {
+                                current = cell;
+                                break;
+                            }
+                        }
+                    } else {
+                        for (Cell cell : nextList) {
+                            if (cell.getLineNum() == shape-1) {
+                                current = cell;
+                                break;
+                            }
+                        }
+                    }
+                }
             } else {
                 current = nextList.getFirst();
             }
             System.out.println(current.getType()+"/"+current.getId());
-        }
-
-        // 완주 조건 확인: 도착점을 지나치는 경우에만 완주 처리
-        if (move > stepsToFinish) {
-            System.out.println("완주");
-
-            // 모든 업힌 말 완주 처리
-            for(Piece p : startAt.getPieces()) {
-                p.setFinished(true);
-                System.out.println("완주 처리된 말: " + p.getId() + ", 플레이어: " + p.getPlayer().getId());
-            }
-
-            startAt.clearPieces();
-            return false;
         }
 
         // 도착점에 정확히 도달하거나 도착 전인 경우 - 일반 이동 처리

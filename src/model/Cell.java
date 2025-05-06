@@ -75,4 +75,6 @@ public class Cell {
             return !pieces.getFirst().getPlayer().equals(piece.getPlayer());
         }
     }
+
+    public int getLineNum() { return lineNum; }
 }
