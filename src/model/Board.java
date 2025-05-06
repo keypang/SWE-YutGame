@@ -310,7 +310,10 @@ public class Board {
         System.out.println(piece.getPriorCell().getId());
 
         if(current.getPreviousCells().size() == 1) {
-             current = current.getPreviousCells().getFirst();
+            current = current.getPreviousCells().getFirst();
+            piece.setStartCell(current);
+
+            return updatePieceLocation(current, startAt, piece);
         }
         else if(current.getPreviousCells().size() >= 2) {
             for(Cell cell : current.getPreviousCells()) {
@@ -325,16 +328,15 @@ public class Board {
                     break;
                 }
             }
+            piece.setStartCell(current);
+
+            return updatePieceLocation(current, startAt, piece);
         }
         else {
-            System.out.println("백도 불가");
+            return false;
             // 백도 불가
         }
-        System.out.println(current.getType()+"/"+current.getId());
-
-        piece.setStartCell(current);
-
-        return updatePieceLocation(current, startAt, piece);
+        //System.out.println(current.getType()+"/"+current.getId());
     }
 
     public Cell getCell(int i) {
