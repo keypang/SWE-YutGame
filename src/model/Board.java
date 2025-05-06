@@ -177,6 +177,8 @@ public class Board {
     public int[] getMovableCells(Cell cell, int[] moves) {
         int[] movableCellsId = new int[moves.length];
 
+        int cellLine = cell.getLineNum();
+
         for(int i = 0; i<moves.length; i++) {
             Cell testCell = cell;
             if(moves[i]>0){
@@ -206,14 +208,16 @@ public class Board {
                     else if(testCell.getType().equals("교차로")) {
                         if(testCell == cell) {
                             for (Cell celln : nextList) {
+                                System.out.println("1. "+ celln.getId() +":"+celln.getLineNum());
                                 if(celln.getLineNum() == shape) {
                                     testCell = celln;
                                     break;
                                 }
                             }
                         } else {
-                            if(testCell.getLineNum() == shape-2) {
+                            if(cellLine == shape-2) {
                                 for (Cell celln : nextList) {
+                                    System.out.println("2. "+ celln.getId() +":"+celln.getLineNum());
                                     if(celln.getLineNum() == shape) {
                                         testCell = celln;
                                         break;
@@ -221,6 +225,7 @@ public class Board {
                                 }
                             } else {
                                 for (Cell celln : nextList) {
+                                    System.out.println("3. "+ celln.getId() +":"+celln.getLineNum());
                                     if(celln.getLineNum() == shape-1) {
                                         testCell = celln;
                                         break;

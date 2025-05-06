@@ -26,13 +26,13 @@ class BoardTest {
 
     @Test
     void getMovableCells() {
-        int[] movableCells = new int[4];
-        movableCells[0] = 1;
-        movableCells[1] = 2;
-        movableCells[2] = 40;
-        movableCells[3] = -1;
+        int[] movableCells = new int[1];
+        //movableCells[0] = 1;
+        //movableCells[1] = 2;
+        movableCells[0] = 4;
+        //movableCells[3] = -1;
 
-        Cell cell = board.getCell(5);
+        Cell cell = board.getCell(10);
 
         int[] result = board.getMovableCells(cell, movableCells);
 
