@@ -54,6 +54,13 @@ public class Board {
         cell = new Cell(shape*5, "도착",0);
         cells.put(shape*5,cell);
 
+        //완주 셀
+        cell = new Cell(shape*5+1, "완주",0);
+        cells.put(shape*5+1,cell);
+
+        //완주 셀 연결
+        cells.get(shape*5).addNextCell(cells.get(shape*5+1));
+
         //시작 셀 연결
         cells.get(0).addNextCell(cells.get(1));
 
@@ -176,11 +183,7 @@ public class Board {
                         testCell = getCell(0);
                     }
                     List<Cell> nextList = testCell.getNextCells();
-                    if (testCell.getType().equals("도착")) {
-                        movableCellsId[i] = -1;
-                        break;
-                    }
-                    else if(testCell.getType().equals("갈림길")) {
+                    if(testCell.getType().equals("갈림길")) {
                         if(testCell == cell) {
                             for (Cell celln : nextList) {
                                 if (celln.getType().equals("지름길")) {
@@ -201,6 +204,12 @@ public class Board {
                     else {
                         testCell = nextList.getFirst();
                     }
+
+                    if (testCell.getType().equals("완주")) {
+                        movableCellsId[i] = -1;
+                        break;
+                    }
+
                     movableCellsId[i] = testCell.getId();
                 }
 
@@ -231,24 +240,6 @@ public class Board {
         }
 
         for(int i = 0; i < move; i++) {
-
-
-
-            //완주 처리
-            if(current.getType().equals("도착")){
-                if(startAt.getPieces().isEmpty()){
-                    startAt.addPiece(piece);
-                }
-
-                for(Piece p : startAt.getPieces()) {
-                    p.setFinished(true);
-                    System.out.println("끝"+p.getFinished());
-                }
-                startAt.clearPieces();
-
-                return false;
-            }
-
             List<Cell> nextList = current.getNextCells();
 
             //priorCell = current;
@@ -278,32 +269,29 @@ public class Board {
                 current = nextList.getFirst();
             }
             System.out.println(current.getType()+"/"+current.getId());
+
+            //완주 처리
+            if(current.getType().equals("완주")){
+                if(startAt.getPieces().isEmpty()){
+                    startAt.addPiece(piece);
+                }
+
+                for(Piece p : startAt.getPieces()) {
+                    p.setFinished(true);
+                    current.addPiece(p);
+                }
+                startAt.clearPieces();
+
+                return false;
+            }
         }
 
         boolean checkCol = updatePieceLocation(current, startAt, piece);
-
-        //piece.setPriorCell(priorCell);
-
         piece.setStartCell(current);
-        System.out.println("startCell."+piece.getStartCell().getId());
-
-        //test 코드 psy
         for(Piece p : startAt.getPieces()) {
-            //System.out.println("1."+p.getId());
-            //p.setPriorCell(priorCell);
-
             p.setStartCell(current);
         }
-
         startAt.clearPieces();
-        for(Piece p : startAt.getPieces()) {
-            System.out.println("startAt "+p.getId());
-        }
-
-        for(Piece p : current.getPieces()) {
-            System.out.println("current "+p.getId());
-        }
-
         return checkCol;
     }
 

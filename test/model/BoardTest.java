@@ -29,14 +29,14 @@ class BoardTest {
         int[] movableCells = new int[4];
         movableCells[0] = 1;
         movableCells[1] = 2;
-        movableCells[2] = 3;
+        movableCells[2] = 40;
         movableCells[3] = -1;
 
         Cell cell = board.getCell(5);
 
         int[] result = board.getMovableCells(cell, movableCells);
 
-        int[] expected = { 50, 55, 1000, 4 };
+        int[] expected = { 50, 55, -1, 4 };
 
         //assertArrayEquals(expected, result);
         for(int i: result) {
@@ -105,6 +105,27 @@ class BoardTest {
         int[] expected = { 1,2 };
 
         assertArrayEquals(expected, test);
+    }
+
+    @Test
+    void movePiecePositive5() {
+        //업고 완주
+        int move1 = 1;
+        int move2 = 35;
+        Piece piece1 = player1.getPieces(1);
+        Piece piece2 = player1.getPieces(2);
+
+        board.movePiecePositive(piece1, move1);
+        board.movePiecePositive(piece2, move1);
+
+        board.movePiecePositive(piece1, move2);
+
+        System.out.println(piece1.isFinished()+"/"+piece2.isFinished());
+
+        boolean test = piece1.getFinished();
+        boolean expected = true;
+
+        assertEquals(expected, test);
     }
 
     @Test
