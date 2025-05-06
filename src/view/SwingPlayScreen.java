@@ -551,7 +551,7 @@
             if (pieceSelectionListener != null) {
                 selectedPieceIndex = pieceId;
 
-                System.out.println("전달될 piece ID :" + pieceId);
+                System.out.println("말 선택한 후 전달될 piece ID :" + pieceId);
                 //controller에게 pieceId 전달
                 availableCells = pieceSelectionListener.onPieceSelected(pieceId);
 
@@ -562,7 +562,6 @@
             }
             repaintAllPieces();
             showMovablePoints(availableCells);
-
         }
     
         // 말 옮기는 지점 표시 메서드
@@ -590,7 +589,7 @@
                 movablePoint.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
-                        System.out.println("전달될 cell ID :" + cellId);
+                        System.out.println("말 옮기기 전 전달될 cell ID :" + cellId);
                         //선택된 cellID controller에게 전달
                         if(cellSelectionListener != null){
                             cellSelectionListener.onCellSelected(cellId);
@@ -849,6 +848,7 @@
         // 말 전체 다시 그리기 메서드
         public void repaintAllPieces(){
             if(takeOutButtonListener == null) return;
+
 
             List<PositionDTO> currentPositions = takeOutButtonListener.onTakeOutButtonClicked();
             JPanel boardPanel = getBoardPanel();
