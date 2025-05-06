@@ -183,11 +183,7 @@ public class Board {
                         testCell = getCell(0);
                     }
                     List<Cell> nextList = testCell.getNextCells();
-                    if (testCell.getType().equals("도착")) {
-                        movableCellsId[i] = -1;
-                        break;
-                    }
-                    else if(testCell.getType().equals("갈림길")) {
+                    if(testCell.getType().equals("갈림길")) {
                         if(testCell == cell) {
                             for (Cell celln : nextList) {
                                 if (celln.getType().equals("지름길")) {
@@ -208,6 +204,12 @@ public class Board {
                     else {
                         testCell = nextList.getFirst();
                     }
+
+                    if (testCell.getType().equals("완주")) {
+                        movableCellsId[i] = -1;
+                        break;
+                    }
+
                     movableCellsId[i] = testCell.getId();
                 }
 
