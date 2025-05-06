@@ -57,7 +57,12 @@
         // 말 선택 가능 여부 변수
         //for test true로 변경 후 테스트
         private boolean waitingPieceSelection = false;
-    
+
+
+        private Map<Integer, JPanel> playerPiecePanels = new HashMap<>();
+
+
+
         public SwingPlayScreen(int playerCount, int pieceCount, BoardType boardType) {
             super("게임 화면");
             this.playerCount = playerCount;
@@ -374,6 +379,8 @@
     
                     // 말 라벨 저장 (나중에 참조하기 위해)
                     playerPiecesMap.put(playerId + "_" + pieceId, pieceImageLabel);
+
+                    playerPiecePanels.put(playerId, piecesRow);
                 }
 
                 /*
@@ -566,11 +573,17 @@
     
         // 말 옮기는 지점 표시 메서드
         public void showMovablePoints(Map<Integer, Integer> availableCells) {
+            JPanel boardPanel = getBoardPanel();
+            for(JLabel label : movablePoints) {
+                boardPanel.remove(label);
+            }
+            movablePoints.clear();
+
             if(availableCells == null || availableCells.isEmpty()){
-                JOptionPane.showMessageDialog(this, "리스트 전달 오류");
+                JOptionPane.showMessageDialog(this, "이동 가능한 위치가 없습니다.");
                 return;
             }
-    
+
             for(Map.Entry<Integer, Integer> entry : availableCells.entrySet()){
                 int cellId = entry.getKey();
                 Point target = squarePositionMap.get(cellId);
@@ -578,14 +591,14 @@
                     JOptionPane.showMessageDialog(this, "셀 아이디 오류!");
                     continue;
                 }
-    
+
                 ImageIcon movePointIcon = new ImageIcon(getClass().getResource("/view/images/이동가능점.png"));
                 JLabel movablePoint = new JLabel(movePointIcon);
                 movablePoint.setBounds(target.x-2, target.y-25, 30, 30);
                 movablePoint.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-    
+
                 movablePoints.add(movablePoint);
-    
+
                 movablePoint.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
@@ -595,16 +608,6 @@
                             cellSelectionListener.onCellSelected(cellId);
                         }
 
-                        //말을 각각 갱신하는 방식의 코드(비활성화)
-                        /*
-                        JLabel pieceLabel = playerPiecesMap.get(currentPlayerIndex + 1 + "_" + selectedPieceIndex);
-                        if(pieceLabel != null){
-                            pieceLabel.setBounds(target.x - 5, target.y - 35, 40, 40);
-                            getBoardPanel().add(pieceLabel);
-                            getBoardPanel().setComponentZOrder(pieceLabel, 0);
-                            getBoardPanel().repaint();
-                        }*/
-    
                         JPanel boardPanel = getBoardPanel();
                         for(JLabel targetLabel : movablePoints){
                             boardPanel.remove(targetLabel);
@@ -613,10 +616,10 @@
                         boardPanel.repaint();
                     }
                 });
-    
-                getBoardPanel().add(movablePoint);
-                getBoardPanel().setComponentZOrder(movablePoint, 0);
-                getBoardPanel().repaint();
+
+                boardPanel.add(movablePoint);
+                boardPanel.setComponentZOrder(movablePoint, 0);
+                boardPanel.repaint();
             }
         }
     
@@ -849,31 +852,56 @@
         public void repaintAllPieces(){
             if(takeOutButtonListener == null) return;
 
-
             List<PositionDTO> currentPositions = takeOutButtonListener.onTakeOutButtonClicked();
             JPanel boardPanel = getBoardPanel();
 
-            for (PositionDTO dto : currentPositions) {
-                //for test
-                /*
-                if (dto.getPlayerId() == 2 && dto.getPieceId() == 0) {
-                    dto.setCellId(5);
-                }*/
+            // 윷 판에서 말 다 제거
+            for (Map.Entry<String, JLabel> entry : playerPiecesMap.entrySet()) {
+                JLabel pieceLabel = entry.getValue();
+                if (pieceLabel.getParent() == boardPanel) {
+                    boardPanel.remove(pieceLabel);
+                }
+            }
 
+            // DTO 에서 위치 가져오기
+            for (PositionDTO dto : currentPositions) {
+                int playerId = dto.getPlayerId();
+                int pieceId = dto.getPieceId();
                 int cellId = dto.getCellId();
 
-                if (cellId == -1) continue;
+                JLabel pieceLabel = playerPiecesMap.get(playerId + "_" + pieceId);
 
-                JLabel pieceLabel = playerPiecesMap.get(dto.getPlayerId() + "_" + dto.getPieceId());
-                Point pos = squarePositionMap.get(cellId);
+                if (pieceLabel != null) {
 
-                if (pieceLabel != null && pos != null) {
-                    System.out.println("여기호출");
-                    pieceLabel.setBounds(pos.x - 5, pos.y - 35, 40, 40);
-                    boardPanel.add(pieceLabel);
-                    boardPanel.setComponentZOrder(pieceLabel, 0);
-                    boardPanel.repaint();
+                    if (pieceLabel.getParent() != null) {
+                        pieceLabel.getParent().remove(pieceLabel);
+                    }
+
+                    if (cellId == -1) {
+
+                        JPanel piecePanel = playerPiecePanels.get(playerId);
+                        if (piecePanel != null) {
+                            piecePanel.add(pieceLabel);
+                        }
+                    } else {
+
+                        Point pos = squarePositionMap.get(cellId);
+                        if (pos != null) {
+                            pieceLabel.setBounds(pos.x - 5, pos.y - 35, 40, 40);
+                            boardPanel.add(pieceLabel);
+                            boardPanel.setComponentZOrder(pieceLabel, 0);
+                        }
+                    }
                 }
+            }
+
+
+            boardPanel.revalidate();
+            boardPanel.repaint();
+
+            for (JPanel panel : playerPiecePanels.values()) {
+                panel.revalidate();
+                panel.repaint();
             }
 
         }
