@@ -4,15 +4,19 @@ import java.util.*;
 
 public class Board {
     private Map<Integer, Cell> cells = new HashMap<>();
+    private int shape;
 
     public Board(ArrayList<Player> players, BoardType boardType) {
         if(boardType == BoardType.SQUARE){
+            this.shape = 4;
             generateBoard(4);
         }
         else if(boardType == BoardType.PENTAGON){
+            this.shape = 5;
             generateBoard(5);
         }
         else if(boardType == BoardType.HEXAGON){
+            this.shape = 6;
             generateBoard(6);
         }
         initBoard(players);
@@ -51,7 +55,7 @@ public class Board {
         cells.put(0,cell);
 
         //도착 셀
-        cell = new Cell(shape*5, "도착",0);
+        cell = new Cell(shape*5, "도착",shape);
         cells.put(shape*5,cell);
 
         //완주 셀
@@ -74,7 +78,7 @@ public class Board {
         }
 
         //교차로 셀
-        cell = new Cell(1000, "갈림길", 100);
+        cell = new Cell(1000, "교차로", 0);
         cells.put(1000,cell);
 
         //지름길
@@ -231,6 +235,8 @@ public class Board {
         Cell current = piece.getStartCell();
         Cell startAt = piece.getStartCell();
 
+        piece.setPreviousLine(startAt.getLineNum());
+
         // 꺼내는 경우 처리
         if(current.getType().equals("대기")){
             current = getCell(0);
@@ -266,7 +272,36 @@ public class Board {
                     }
                     if (next == null) next = nextList.getFirst();
                 }
-            } else {
+            }
+            else if(tempCell.getType().equals("교차로")) {
+                if(tempCell == startAt) {
+                    next = null;
+                    for (Cell cell : nextList) {
+                        if (cell.getLineNum() == shape) {
+                            next = cell;
+                            break;
+                        }
+                    }
+                } else {
+                    next = null;
+                    if(piece.getPreviousLine() == shape-2) {
+                        for (Cell cell : nextList) {
+                            if (cell.getLineNum() == shape) {
+                                next = cell;
+                                break;
+                            }
+                        }
+                    } else {
+                        for (Cell cell : nextList) {
+                            if (cell.getLineNum() == shape-1) {
+                                next = cell;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            else {
                 next = nextList.getFirst();
             }
 

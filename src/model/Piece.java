@@ -5,11 +5,13 @@ public class Piece {
     private Cell startCell;
     private boolean finished;
     private Player player;
+    private int previousLine;
 
     public Piece(int id, boolean finished, Player player) {
         this.id = id;
         this.finished = finished;
         this.player = player;
+        this.previousLine = 0;
     }
 
     public void setStartCell(Cell startCell) {
@@ -37,4 +39,8 @@ public class Piece {
     public Player getPlayer() {
         return player;
     }
+
+    public int getPreviousLine() { return previousLine; }
+
+    public void setPreviousLine(int previousLine) { this.previousLine = previousLine; }
 }
