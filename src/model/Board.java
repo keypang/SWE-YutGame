@@ -131,7 +131,6 @@ public class Board {
             System.out.println("잡았다");
             for (Piece p : current.getPieces()) {
                 p.setStartCell(getCell(-1));
-                p.clearPriorCell();
             }
 
             current.clearPieces();
@@ -340,9 +339,6 @@ public class Board {
             return false;
         }
 
-
-        System.out.println(piece.getPriorCell().getId());
-
         if(current.getPreviousCells().size() == 1) {
             current = current.getPreviousCells().getFirst();
             piece.setStartCell(current);
@@ -350,18 +346,7 @@ public class Board {
             return updatePieceLocation(current, startAt, piece);
         }
         else if(current.getPreviousCells().size() >= 2) {
-            for(Cell cell : current.getPreviousCells()) {
-
-                //
-                if(cell.getId() == piece.getPriorCell().getId()) {
-                    current = cell;
-                    break;
-                }
-                else {
-                    current = current.getPreviousCellWithMinId();
-                    break;
-                }
-            }
+            current = current.getPreviousCellWithMinId();
             piece.setStartCell(current);
 
             return updatePieceLocation(current, startAt, piece);
