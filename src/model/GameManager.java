@@ -53,7 +53,13 @@ public class GameManager {
     }
 
     public void removeYutResult(int target) {
-        yutResults.removeIf(yutResult -> yutResult.getMove() == target);
+        Iterator<YutResult> iterator = yutResults.iterator();
+        while (iterator.hasNext()) {
+            if (iterator.next().getMove() == target) {
+                iterator.remove(); // 일치하는 첫 번째 항목 제거
+                break;             // 더 이상 반복할 필요 없음
+            }
+        }
     }
 
     public void initGM(StartInfo startInfo) {
