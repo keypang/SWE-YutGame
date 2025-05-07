@@ -274,13 +274,6 @@ public class Board {
 
         // 이동 실행
         for(int i = 0; i < move; i++) {
-            if (current.getType().equals("완주")) {
-                for(Piece p : startAt.getPieces()) {
-                    p.setFinished(true);
-                }
-                startAt.clearPieces();
-                return false;
-            }
             List<Cell> nextList = current.getNextCells();
             if (nextList.isEmpty()) break;
 
@@ -332,6 +325,14 @@ public class Board {
                 current = nextList.getFirst();
             }
             System.out.println(current.getType()+"/"+current.getId());
+            if (current.getType().equals("완주")) {
+                for(Piece p : startAt.getPieces()) {
+                    p.setFinished(true);
+                }
+                startAt.clearPieces();
+                return false;
+            }
+
         }
 
         // 도착점에 정확히 도달하거나 도착 전인 경우 - 일반 이동 처리
