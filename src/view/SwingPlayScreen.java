@@ -1101,7 +1101,6 @@
             squarePositionMap.put(1000, new Point(330,370));
         }
 
-
         private void initializePentagonPositions(){
 
             pentagonPositionMap.put(0, new Point(491,588));
@@ -1151,8 +1150,6 @@
 
         }
 
-
-    
         @Override
         public void setStatusMessage(String message) {
             statusMessageLabel.setText(message);
