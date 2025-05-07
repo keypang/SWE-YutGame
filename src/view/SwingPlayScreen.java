@@ -94,7 +94,7 @@
             setContentPane(mainPanel);
     
             //클릭 시 좌표 출력
-            /*
+
             getContentPane().addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
@@ -102,10 +102,12 @@
                     int y = e.getY();
                     System.out.println("클릭한 위치: (" + x + ", " + y + ")");
                 }
-            });*/
+            });
     
             //좌표 Hash map 초기화
-            initializeSquarePositions();
+            if(boardType == BoardType.SQUARE) initializeSquarePositions();
+            else if(boardType == BoardType.PENTAGON) initializePentagonPositions();
+            else initializeHexagonPositions();
     
             setLocationRelativeTo(null);
             setVisible(true);
@@ -590,11 +592,29 @@
                 Point target;
 
                 // 완주 처리를 위한 특수 케이스 처리
-                if(cellId == -1) {
-                    // 도착 셀(20번) 위치 사용
-                    target = squarePositionMap.get(20);
-                } else {
-                    target = squarePositionMap.get(cellId);
+                if(boardType == BoardType.SQUARE){
+                    if(cellId == -1) {
+                        // 도착 셀(20번) 위치 사용
+                        target = squarePositionMap.get(20);
+                    } else {
+                        target = squarePositionMap.get(cellId);
+                    }
+                }
+                else if(boardType == BoardType.PENTAGON){
+                    if(cellId == -1) {
+                        // 도착 셀(20번) 위치 사용
+                        target = pentagonPositionMap.get(25);
+                    } else {
+                        target = pentagonPositionMap.get(cellId);
+                    }
+                }
+                else{
+                    if(cellId == -1) {
+                        // 도착 셀(20번) 위치 사용
+                        target = hexagonPositionMap.get(30);
+                    } else {
+                        target = hexagonPositionMap.get(cellId);
+                    }
                 }
 
                 if(target == null){
@@ -604,7 +624,23 @@
 
                 ImageIcon movePointIcon = new ImageIcon(getClass().getResource("/view/images/이동가능점.png"));
                 JLabel movablePoint = new JLabel(movePointIcon);
-                movablePoint.setBounds(target.x-2, target.y-25, 30, 30);
+
+                if(boardType == BoardType.SQUARE){
+                    movePointIcon = new ImageIcon(getClass().getResource("/view/images/이동가능점.png"));
+                    movablePoint = new JLabel(movePointIcon);
+                    movablePoint.setBounds(target.x-2, target.y-25, 30, 30);
+                }
+                else if(boardType == BoardType.PENTAGON){
+                    movePointIcon = new ImageIcon(getClass().getResource("/view/images/이동가능점오각형.png"));
+                    movablePoint = new JLabel(movePointIcon);
+                    movablePoint.setBounds(target.x-13, target.y-16, 30, 30);
+                }
+                else {
+                    movePointIcon = new ImageIcon(getClass().getResource("/view/images/이동가능점육각형.png"));
+                    movablePoint = new JLabel(movePointIcon);
+                    movablePoint.setBounds(target.x-7, target.y-22, 30, 30);
+                }
+
                 movablePoint.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
                 movablePoints.add(movablePoint);
@@ -634,7 +670,7 @@
             }
         }
     
-        // 말 꺼내기 시 메서드
+        // 말 꺼내기 시 메서드(사용 안 함)
         public void takeOutPiece(int playerId, List<PositionDTO> currentPositions) {
             boolean ownAlreadyStart = false;
             boolean canTakeOut = false;
@@ -858,7 +894,15 @@
             // 다이얼로그 표시
             endDialog.setVisible(true);
         }
-        
+
+        // 보드에 따른 좌표 반환 메서드
+        private Point getPositionByBoardType(int cellId){
+            if(boardType == BoardType.SQUARE) return squarePositionMap.get(cellId);
+            else if(boardType == BoardType.PENTAGON) return pentagonPositionMap.get(cellId);
+            else if(boardType == BoardType.HEXAGON) return hexagonPositionMap.get(cellId);
+            else return null;
+        }
+
         // 말 전체 다시 그리기 메서드
         public void repaintAllPieces() {
             if(takeOutButtonListener == null) return;
@@ -924,7 +968,7 @@
             for (Map.Entry<Integer, List<PositionDTO>> entry : cellPieces.entrySet()) {
                 int cellId = entry.getKey();
                 List<PositionDTO> piecesAtCell = entry.getValue();
-                Point pos = squarePositionMap.get(cellId);
+                Point pos = getPositionByBoardType(cellId);
 
                 if (pos == null) continue;
 
@@ -934,7 +978,9 @@
                     JLabel pieceLabel = playerPiecesMap.get(dto.getPlayerId() + "_" + dto.getPieceId());
 
                     if (pieceLabel != null) {
-                        pieceLabel.setBounds(pos.x - 5, pos.y - 35, 40, 40);
+                        if(boardType == BoardType.SQUARE) pieceLabel.setBounds(pos.x - 5, pos.y - 35, 40, 40);
+                        else if (boardType == BoardType.PENTAGON) pieceLabel.setBounds(pos.x - 12, pos.y - 25, 40, 40);
+                        else pieceLabel.setBounds(pos.x - 8, pos.y - 35, 40, 40);
                         boardPanel.add(pieceLabel);
                         boardPanel.setComponentZOrder(pieceLabel, 0);
                     }
@@ -946,7 +992,9 @@
                     JLabel mainPieceLabel = playerPiecesMap.get(mainDto.getPlayerId() + "_" + mainDto.getPieceId());
 
                     if (mainPieceLabel != null) {
-                        mainPieceLabel.setBounds(pos.x - 5, pos.y - 35, 40, 40);
+                        if(boardType == BoardType.SQUARE) mainPieceLabel.setBounds(pos.x - 5, pos.y - 35, 40, 40);
+                        else if (boardType == BoardType.PENTAGON) mainPieceLabel.setBounds(pos.x - 14, pos.y - 25, 40, 40);
+                        else mainPieceLabel.setBounds(pos.x - 8, pos.y - 35, 40, 40);
                         boardPanel.add(mainPieceLabel);
                         boardPanel.setComponentZOrder(mainPieceLabel, 0);
 
@@ -1149,6 +1197,65 @@
 
             pentagonPositionMap.put(1000, new Point(350,375));
 
+        }
+
+        private void initializeHexagonPositions(){
+            hexagonPositionMap.put(0, new Point(534,477));
+            hexagonPositionMap.put(1, new Point(538,416));
+            hexagonPositionMap.put(2, new Point(538,381));
+            hexagonPositionMap.put(3, new Point(538,346));
+            hexagonPositionMap.put(4, new Point(538,310));
+
+            hexagonPositionMap.put(5, new Point(533,263));
+            hexagonPositionMap.put(6, new Point(492,220));
+            hexagonPositionMap.put(7, new Point(458,201));
+            hexagonPositionMap.put(8, new Point(427,183));
+            hexagonPositionMap.put(9, new Point(394,165));
+
+            hexagonPositionMap.put(10, new Point(336,157));
+            hexagonPositionMap.put(11, new Point(289,167));
+            hexagonPositionMap.put(12, new Point(257,185));
+            hexagonPositionMap.put(13, new Point(224,204));
+            hexagonPositionMap.put(14, new Point(191,222));
+
+            hexagonPositionMap.put(15, new Point(141,263));
+            hexagonPositionMap.put(16, new Point(145,310));
+            hexagonPositionMap.put(17, new Point(145,345));
+            hexagonPositionMap.put(18, new Point(145,381));
+            hexagonPositionMap.put(19, new Point(145,416));
+
+            hexagonPositionMap.put(20, new Point(141,477));
+            hexagonPositionMap.put(21, new Point(194,494));
+            hexagonPositionMap.put(22, new Point(226,512));
+            hexagonPositionMap.put(23, new Point(257,530));
+            hexagonPositionMap.put(24, new Point(290,549));
+
+            hexagonPositionMap.put(25, new Point(336,580));
+            hexagonPositionMap.put(26, new Point(396,551));
+            hexagonPositionMap.put(27, new Point(428,532));
+            hexagonPositionMap.put(28, new Point(458,514));
+            hexagonPositionMap.put(29, new Point(491,497));
+            hexagonPositionMap.put(30, new Point(534,477));
+
+            hexagonPositionMap.put(300, new Point(471,435));
+            hexagonPositionMap.put(330, new Point(415,405));
+
+            hexagonPositionMap.put(50, new Point(473,293));
+            hexagonPositionMap.put(55, new Point(416,323));
+
+            hexagonPositionMap.put(100, new Point(341,219));
+            hexagonPositionMap.put(110, new Point(341,281));
+
+            hexagonPositionMap.put(150, new Point(209,293));
+            hexagonPositionMap.put(165, new Point(267,323));
+
+            hexagonPositionMap.put(200, new Point(214,434));
+            hexagonPositionMap.put(220, new Point(269,403));
+
+            hexagonPositionMap.put(250, new Point(342,506));
+            hexagonPositionMap.put(275, new Point(342,447));
+
+            hexagonPositionMap.put(1000, new Point(334,371));
         }
 
 
