@@ -21,7 +21,7 @@ class BoardTest {
         players.add(player1);
         players.add(player2);
 
-        board = new Board(players, BoardType.SQUARE);
+        board = new Board(players, BoardType.HEXAGON);
     }
 
     @Test
@@ -78,11 +78,13 @@ class BoardTest {
     @Test
     void movePiecePositive3() {
         //완주
-        int move = 31;
+        int move = 30;
         Piece piece1 = player1.getPieces(1);
 
-        board.movePiecePositive(piece1, move);
 
+        board.movePiecePositive(piece1, move);
+        move = 1;
+        board.movePiecePositive(piece1, move);
         boolean test = piece1.getFinished();
         boolean expected = true;
 
