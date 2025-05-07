@@ -196,7 +196,8 @@ public class GameScreenController {
         // 현재 extraTurn 상태 저장 (말을 잡았는지 확인용)
         boolean wasExtraTurn = gameManager.getExtraTurn();
 
-        // 선택한 좌표로 말 이동
+        // 윷 결과 리스트를 뷰에 업데이트 하고 선택한 좌표로 말 이동
+        updateYutResultsInView();
         gameManager.processYutResult(value);
 
         // 말 이동 후 extraTurn 상태가 true로 바뀌었다면 말을 잡았다는 의미
