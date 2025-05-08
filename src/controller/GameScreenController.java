@@ -181,6 +181,8 @@ public class GameScreenController {
 
         gameManager.setSelectedpiece(selectpiece);
         Map<Integer, Integer> movable = gameManager.findMovableCells(gameManager.getselectedsellid());
+
+        gameManager.getGoalPossibleYutList();   //Todo: 결과 확인용. 구현 후 삭제 요망
         return movable;
     }
 
