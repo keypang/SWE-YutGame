@@ -59,7 +59,7 @@ public interface GamePlayView {
     void displayYutResultList(List<YutResult> results);
 
     // 윷 선택하는 패널(팝업) 생성 메서드
-    void showYutSelectPanel(YutResult[] yutResult);
+    String showYutSelectPanel(YutResult[] yutResult);
 
     // 새로운 말 꺼내기
     void setTakeOutButtonListener(TakeOutButtonListener takeOutButtonListener);
