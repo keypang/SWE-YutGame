@@ -1,15 +1,13 @@
 package controller;
 
-import model.GameManager;
-import model.PositionDTO;
-import model.Yut;
-import model.YutResult;
+import model.*;
 import view.GameConfigView;
 import view.GamePlayView;
 import view.SwingConfigScreen;
 import view.SwingPlayScreen;
 
 import javax.swing.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -182,25 +180,36 @@ public class GameScreenController {
         gameManager.setSelectedpiece(selectpiece);
         Map<Integer, Integer> movable = gameManager.findMovableCells(gameManager.getselectedsellid());
 
-        gameManager.getGoalPossibleYutList();   //Todo: 결과 확인용. 구현 후 삭제 요망
         return movable;
     }
 
     // 좌표 선택했을 때
     public void selectCoordinate(int cellId){
         // 골라서 넘겨준 해시맵을 리스트에서 제거해야함. + 잡혔을 때 extraturn이 바뀌어 있는지 확인해야함.
-        // 해시맵에서 선택했던 값만 추출
-        Integer value = gameManager.getMovableMap().get(cellId);
+        int value;
+        if (cellId == -1) {
+            ArrayList<YutResult> goallist = gameManager.getGoalPossibleYutList();
+            if (goallist.size() >= 2) {
+                YutResult[] yutArray = goallist.toArray(new YutResult[0]);
+                String selectedyut = gameView.showYutSelectPanel(yutArray);
+                // 읽어온 윷을 다시 변환하는 과정
+                YutResult selectedEnum = YutResult.valueOf(selectedyut);
+                value = selectedEnum.getMove();
+            } else {
+                value = gameManager.getMovableMap().get(cellId);
+            }
+        } else {
+            value = gameManager.getMovableMap().get(cellId);
+        }
 
         // 윷리스트에서 선택했던 값 삭제
         gameManager.removeYutResult(value);
-
-        // 현재 extraTurn 상태 저장 (말을 잡았는지 확인용)
-        boolean wasExtraTurn = gameManager.getExtraTurn();
-
         // 윷 결과 리스트를 뷰에 업데이트 하고 선택한 좌표로 말 이동
         updateYutResultsInView();
         gameManager.processYutResult(value);
+
+        // 현재 extraTurn 상태 저장 (말을 잡았는지 확인용)
+        boolean wasExtraTurn = gameManager.getExtraTurn();
 
         // 말 이동 후 extraTurn 상태가 true로 바뀌었다면 말을 잡았다는 의미
         boolean captureOccurred = !wasExtraTurn && gameManager.getExtraTurn();

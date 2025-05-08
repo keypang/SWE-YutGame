@@ -65,7 +65,6 @@
         private List<JLabel> stackCountLabels = new ArrayList<>();
 
 
-
         public SwingPlayScreen(int playerCount, int pieceCount, BoardType boardType) {
             super("게임 화면");
             this.playerCount = playerCount;
@@ -236,6 +235,7 @@
             testRollButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
+                    setThrowButtonEnabled(false);
                     displayResultSelect();
                 }
             });
@@ -616,7 +616,6 @@
             return selectedResult[0];
         }
 
-    
         // 말 선택 시 처리 메서드
         private void onPieceSelected(int pieceId) {
             //for test == null로 변경 후 test
@@ -1241,7 +1240,6 @@
             squarePositionMap.put(1000, new Point(330,370));
         }
 
-
         private void initializePentagonPositions(){
             pentagonPositionMap.put(-1, new Point(588,602));
             pentagonPositionMap.put(0, new Point(491,588));
@@ -1351,8 +1349,6 @@
             hexagonPositionMap.put(1000, new Point(334,371));
         }
 
-
-    
         @Override
         public void setStatusMessage(String message) {
             statusMessageLabel.setText(message);
