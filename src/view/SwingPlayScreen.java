@@ -4,6 +4,7 @@
     import java.awt.*;
     import java.awt.event.*;
     import model.BoardType;
+    import model.Yut;
     import model.YutResult;
     import model.PositionDTO;
     
@@ -111,6 +112,7 @@
     
             setLocationRelativeTo(null);
             setVisible(true);
+
         }
     
         // 게임 판 패널 생성
@@ -144,6 +146,22 @@
     
             // 보드 레이블 추가
             panel.add(boardLabel);
+
+            // 완주 셀 추가
+            ImageIcon goalCell = new ImageIcon(getClass().getResource("/view/images/" + "완주셀" + ".png"));
+            JLabel goalCellLabel = new JLabel(goalCell);
+
+            if(boardType == BoardType.SQUARE) {
+                goalCellLabel.setBounds(658, 570, 43, 43);
+            }
+            else if(boardType == BoardType.PENTAGON) {
+                goalCellLabel.setBounds(570, 580, 43, 43);
+            }
+            else{
+                goalCellLabel.setBounds(600, 445, 43, 43);
+            }
+
+            panel.add(goalCellLabel);
     
             return panel;
         }
@@ -478,7 +496,8 @@
             };
     
             // 선택 화면 생성 및 리스너 전달
-            new SelectYutResultScreen(listener);
+            String[] yutResult = {"백도", "도","개", "걸", "윷", "모"};
+            new SelectYutResultScreen(listener, yutResult);
         }
     
         // 단일 윷 결과를 표시 (팝업용)
@@ -553,6 +572,26 @@
                 resultDialog.setVisible(true);
             }
         }
+
+        // 윷 선택하는 패널(팝업) 생성 메서드
+        public void showYutSelectPanel(YutResult[] yutResult) {
+            String[] yutResultStirngs = new String[yutResult.length];
+
+            for (int i = 0; i < yutResult.length; i++) {
+                yutResultStirngs[i] = yutResult[i].name();
+            }
+
+            SelectYutResultScreen.YutSelectListener listener = result -> {
+                if (fixedYutButtonListener != null) {
+                    System.out.println("사용자가 선택한 윷: " + result);
+                    fixedYutButtonListener.onFixedYutSelected(result);
+                }
+            };
+
+            JOptionPane.showMessageDialog(SwingPlayScreen.this, "소모할 윷을 선택하세요!");
+            new SelectYutResultScreen(listener, yutResultStirngs);
+        }
+
     
         // 말 선택 시 처리 메서드
         private void onPieceSelected(int pieceId) {
@@ -594,24 +633,24 @@
                 // 완주 처리를 위한 특수 케이스 처리
                 if(boardType == BoardType.SQUARE){
                     if(cellId == -1) {
-                        // 도착 셀(20번) 위치 사용
-                        target = squarePositionMap.get(20);
+                        // 도착 셀(완주셀) 위치 사용
+                        target = squarePositionMap.get(-1);
                     } else {
                         target = squarePositionMap.get(cellId);
                     }
                 }
                 else if(boardType == BoardType.PENTAGON){
                     if(cellId == -1) {
-                        // 도착 셀(20번) 위치 사용
-                        target = pentagonPositionMap.get(25);
+                        // 도착 셀(완주셀) 위치 사용
+                        target = pentagonPositionMap.get(-1);
                     } else {
                         target = pentagonPositionMap.get(cellId);
                     }
                 }
                 else{
                     if(cellId == -1) {
-                        // 도착 셀(20번) 위치 사용
-                        target = hexagonPositionMap.get(30);
+                        // 도착 셀(완주셀) 위치 사용
+                        target = hexagonPositionMap.get(-1);
                     } else {
                         target = hexagonPositionMap.get(cellId);
                     }
@@ -1141,6 +1180,7 @@
     
         //좌표 초기화
         private void initializeSquarePositions(){
+            squarePositionMap.put(-1, new Point(667,602));
             squarePositionMap.put(0, new Point(568,604));
             squarePositionMap.put(1, new Point(574,494));
             squarePositionMap.put(2, new Point(574,405));
@@ -1179,7 +1219,7 @@
 
 
         private void initializePentagonPositions(){
-
+            pentagonPositionMap.put(-1, new Point(588,602));
             pentagonPositionMap.put(0, new Point(491,588));
             pentagonPositionMap.put(1, new Point(527,520));
             pentagonPositionMap.put(2, new Point(541,469));
@@ -1228,6 +1268,7 @@
         }
 
         private void initializeHexagonPositions(){
+            hexagonPositionMap.put(-1, new Point(613,474));
             hexagonPositionMap.put(0, new Point(534,477));
             hexagonPositionMap.put(1, new Point(538,416));
             hexagonPositionMap.put(2, new Point(538,381));
