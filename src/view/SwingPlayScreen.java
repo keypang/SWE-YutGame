@@ -956,12 +956,40 @@
             for (PositionDTO dto : currentPositions) {
                 int cellId = dto.getCellId();
                 // 완주한 말(21번 셀)과 대기 상태(-1번 셀)는 보드에 표시하지 않음
-                if (cellId != -1 && cellId != 21) {
-                    if (!cellPieces.containsKey(cellId)) {
-                        cellPieces.put(cellId, new ArrayList<>());
+
+                // SQUARE 일때
+                if (boardType == BoardType.SQUARE){
+                    if (cellId != -1 && cellId != 21) {
+                        if (!cellPieces.containsKey(cellId)) {
+                            cellPieces.put(cellId, new ArrayList<>());
+                        }
+                        cellPieces.get(cellId).add(dto);
                     }
-                    cellPieces.get(cellId).add(dto);
+                    // PENTAGON 일때
+                } else if (boardType == BoardType.PENTAGON) {
+                    if (cellId != -1 && cellId != 26) {
+                        if (!cellPieces.containsKey(cellId)) {
+                            cellPieces.put(cellId, new ArrayList<>());
+                        }
+                        cellPieces.get(cellId).add(dto);
+                    }
+                    // HEXAGON 일때
+                } else if (boardType == BoardType.HEXAGON) {
+                    if (cellId != -1 && cellId != 31) {
+                        if (!cellPieces.containsKey(cellId)) {
+                            cellPieces.put(cellId, new ArrayList<>());
+                        }
+                        cellPieces.get(cellId).add(dto);
+                    }
+
                 }
+
+
+
+
+
+
+
             }
 
             // 보드에 말 배치 (동일 셀에 여러 말이 있을 경우 겹쳐 표시)
@@ -1182,7 +1210,7 @@
             pentagonPositionMap.put(23, new Point(375,595));
             pentagonPositionMap.put(24, new Point(425,597));
 
-            pentagonPositionMap.put(25, new Point(491,588)); // 도착점
+
 
             pentagonPositionMap.put(50, new Point(503,320));
             pentagonPositionMap.put(55, new Point(430,345));
