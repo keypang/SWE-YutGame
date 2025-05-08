@@ -13,8 +13,6 @@ public class GameManager {
     ArrayList<Player> players = new ArrayList<>();
     ArrayList<YutResult> yutResults = new ArrayList<>();
     ArrayList<PositionDTO> posInfo = new ArrayList<>();
-    ArrayList<Integer> goalPossibleYutList = new ArrayList<>();
-
 
     // ('이동 가능 cell id', '해당 cell로 가기 위해 이동해야 하는 칸 수')를 map 구조로 저장
     Map<Integer, Integer> movableMap = new HashMap<>();
@@ -283,12 +281,9 @@ public class GameManager {
 
         movableCellIdArray = board.getMovableCells(currentCell, movableNumArray); // 이동 가능 cell id list
 
-        goalPossibleYutList.clear();    // 완주 가능한 윷 리스트 초기화
+
         for(int i=0; i<movableCellIdArray.length; i++){
             movableMap.put(movableCellIdArray[i], movableNumArray[i]);
-            if (movableCellIdArray[i] == -1){
-                goalPossibleYutList.add(movableNumArray[i]);    //완주 가능한 윷 리스트 추가
-            }
         }
 
         // 중간 과정 디버깅용 출력
@@ -296,8 +291,6 @@ public class GameManager {
         System.out.println("이동 가능 칸 수: " + movableNumList);
         System.out.println("이동 가능 칸 수(중복 제거): " + Arrays.toString(movableNumArray));
         System.out.println("이동 가능 지점 리스트: " + Arrays.toString(movableCellIdArray));
-        System.out.println("이동 해시맵: "+movableMap);
-        System.out.println("뭘로 완주할래: "+goalPossibleYutList);
 
         return movableMap;
     }
