@@ -3,6 +3,7 @@ package view;
 import model.YutResult;
 import model.PositionDTO;
 
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.List;
 
@@ -56,6 +57,9 @@ public interface GamePlayView {
 
     // 윷 결과 리스트를 표시하는 메서드 추가
     void displayYutResultList(List<YutResult> results);
+
+    // 윷 선택하는 패널(팝업) 생성 메서드
+    void showYutSelectPanel(YutResult[] yutResult);
 
     // 새로운 말 꺼내기
     void setTakeOutButtonListener(TakeOutButtonListener takeOutButtonListener);
