@@ -297,7 +297,6 @@ public class GameManager {
         System.out.println("이동 가능 칸 수(중복 제거): " + Arrays.toString(movableNumArray));
         System.out.println("이동 가능 지점 리스트: " + Arrays.toString(movableCellIdArray));
         System.out.println("이동 해시맵: "+movableMap);
-        System.out.println("뭘로 완주할래: "+goalPossibleYutList);
 
         return movableMap;
     }
@@ -321,6 +320,12 @@ public class GameManager {
             }
         }
         return winnerIndex;
+    }
+
+    public ArrayList<Integer> getGoalPossibleYutList(){
+        System.out.println("뭘로 완주할래: "+goalPossibleYutList);
+
+        return  goalPossibleYutList;
     }
 
 
