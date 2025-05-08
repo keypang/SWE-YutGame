@@ -14,21 +14,19 @@ public class SelectYutResultScreen extends JFrame{
 
     private YutSelectListener listener;
 
-    public SelectYutResultScreen(YutSelectListener listener) {
+    public SelectYutResultScreen(YutSelectListener listener, String[] yutResult) {
         super("지정윷 선택");
         this.listener = listener;
-        InitUI();
+        InitUI(yutResult);
     }
 
-    private void InitUI() {
+    private void InitUI(String[] yutResult) {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(800, 200);
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(20,20,10,10);
         getContentPane().setBackground(new Color(255, 245, 230));
-
-        String[] yutResult = {"백도", "도", "개", "걸", "윷", "모"};
 
         for (int i = 0; i < yutResult.length; i++) {
             JButton button = new JButton(yutResult[i]);
