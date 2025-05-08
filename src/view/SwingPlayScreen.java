@@ -12,6 +12,7 @@
     import java.util.HashMap;
     import java.util.List;
     import java.util.Map;
+    import java.util.Arrays;
     
     public class SwingPlayScreen extends JFrame implements GamePlayView {
     
@@ -573,22 +574,45 @@
         }
 
         // 윷 선택하는 패널(팝업) 생성 메서드
-        public void showYutSelectPanel(YutResult[] yutResult) {
-            String[] yutResultStirngs = new String[yutResult.length];
+        public String showYutSelectPanel(YutResult[] yutResult) {
+            final String[] selectedResult = {null};
 
-            for (int i = 0; i < yutResult.length; i++) {
-                yutResultStirngs[i] = yutResult[i].name();
+            String[] yutResultStrings = Arrays.stream(yutResult).map(Enum::name).toArray(String[]::new);
+
+            // 윷 선택창 생성
+            JDialog dialog = new JDialog(this, "소모할 윷을 선택하세요!", true);
+            dialog.setSize(800, 200);
+            dialog.setLayout(new GridBagLayout());
+            dialog.getContentPane().setBackground(new Color(255, 245, 230));
+            dialog.setLocationRelativeTo(this); // 화면 중앙 정렬
+
+            GridBagConstraints gbc = new GridBagConstraints();
+            gbc.insets = new Insets(20, 20, 10, 10);
+
+            for (int i = 0; i < yutResultStrings.length; i++) {
+                final String result = yutResultStrings[i];
+
+                JButton button = new JButton(result);
+                button.setFont(new Font("SansSerif", Font.BOLD, 18));
+                button.setBackground(new Color(120, 200, 120));
+                button.setForeground(Color.WHITE);
+                button.setFocusPainted(false);
+                button.setPreferredSize(new Dimension(100, 70));
+
+                button.addActionListener(e -> {
+                    selectedResult[0] = result;
+                    dialog.dispose();
+                });
+
+                gbc.gridx = i;
+                gbc.gridy = 0;
+                dialog.add(button, gbc);
             }
 
-            SelectYutResultScreen.YutSelectListener listener = result -> {
-                if (fixedYutButtonListener != null) {
-                    System.out.println("사용자가 선택한 윷: " + result);
-                    fixedYutButtonListener.onFixedYutSelected(result);
-                }
-            };
+            dialog.setVisible(true);
 
-            JOptionPane.showMessageDialog(SwingPlayScreen.this, "소모할 윷을 선택하세요!");
-            new SelectYutResultScreen(listener, yutResultStirngs);
+            // 선택된 윷 결과 반환
+            return selectedResult[0];
         }
 
         // 말 선택 시 처리 메서드
