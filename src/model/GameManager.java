@@ -241,13 +241,13 @@ public class GameManager {
 
         // 완주한 말은 21번 셀(완주 셀)로 설정
         if (piece.isFinished()) {
-            if (startInfo.getBoardType() == BoardType.SQUARE) {
-                cellId = 21; // 완주 셀 ID 지정
-            } else if (startInfo.getBoardType() == BoardType.PENTAGON) {
-                cellId = 26;
-            } else {
-                cellId = 31;
-            }
+          if (startInfo.getBoardType() == BoardType.SQUARE) {
+            cellId = 21; // 완주 셀 ID 지정
+          } else if (startInfo.getBoardType() == BoardType.PENTAGON) {
+            cellId = 26;
+          } else {
+            cellId = 31;
+          }
 
         } else {
           cellId = piece.getStartCell().getId();
