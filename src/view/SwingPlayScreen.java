@@ -4,7 +4,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import model.BoardType;
-import model.Yut;
 import model.YutResult;
 import model.PositionDTO;
 
