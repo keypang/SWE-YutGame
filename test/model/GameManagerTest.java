@@ -55,7 +55,7 @@ class GameManagerTest {
     @Test
     void checkWinner() {
         // 임시 테스트 - 2번 플레이어 승리하게
-        for (Piece piece : gameManager.players.get(1).getALlPieces()){
+        for (Piece piece : gameManager.getAllPlayer().get(1).getALlPieces()){
             piece.setFinished(true);
         }
 

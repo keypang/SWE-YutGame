@@ -10,10 +10,10 @@ public class GameManager {
     private int currentPlayer = 0;
     private int selectedpiece = 1;
     private boolean extraTurn = false;
-    ArrayList<Player> players = new ArrayList<>();
+    private final ArrayList<Player> players = new ArrayList<>();
     ArrayList<YutResult> yutResults = new ArrayList<>();
     private final ArrayList<PositionDTO> posInfo = new ArrayList<>();
-    ArrayList<YutResult> goalPossibleYutList = new ArrayList<>();
+    private final ArrayList<YutResult> goalPossibleYutList = new ArrayList<>();
 
     // ('이동 가능 cell id', '해당 cell로 가기 위해 이동해야 하는 칸 수')를 map 구조로 저장
     Map<Integer, Integer> movableMap = new HashMap<>();
@@ -334,6 +334,10 @@ public class GameManager {
     public ArrayList<YutResult> getGoalPossibleYutList(){
         System.out.println("뭘로 완주할래: "+ goalPossibleYutList);
         return goalPossibleYutList;
+    }
+
+    public ArrayList<Player> getAllPlayer(){
+        return players;
     }
 
 }
