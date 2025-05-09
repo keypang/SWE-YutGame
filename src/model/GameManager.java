@@ -12,7 +12,7 @@ public class GameManager {
     private boolean extraTurn = false;
     ArrayList<Player> players = new ArrayList<>();
     ArrayList<YutResult> yutResults = new ArrayList<>();
-    ArrayList<PositionDTO> posInfo = new ArrayList<>();
+    private final ArrayList<PositionDTO> posInfo = new ArrayList<>();
     ArrayList<YutResult> goalPossibleYutList = new ArrayList<>();
 
     // ('이동 가능 cell id', '해당 cell로 가기 위해 이동해야 하는 칸 수')를 map 구조로 저장
