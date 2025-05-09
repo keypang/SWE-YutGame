@@ -202,14 +202,14 @@ public class GameScreenController {
             value = gameManager.getMovableMap().get(cellId);
         }
 
+        // 현재 extraTurn 상태 저장 (말을 잡았는지 확인용)
+        boolean wasExtraTurn = gameManager.getExtraTurn();
+
         // 윷리스트에서 선택했던 값 삭제
         gameManager.removeYutResult(value);
         // 윷 결과 리스트를 뷰에 업데이트 하고 선택한 좌표로 말 이동
         updateYutResultsInView();
         gameManager.processYutResult(value);
-
-        // 현재 extraTurn 상태 저장 (말을 잡았는지 확인용)
-        boolean wasExtraTurn = gameManager.getExtraTurn();
 
         // 말 이동 후 extraTurn 상태가 true로 바뀌었다면 말을 잡았다는 의미
         boolean captureOccurred = !wasExtraTurn && gameManager.getExtraTurn();
@@ -221,6 +221,9 @@ public class GameScreenController {
         gameView.clearPieceSelection();
 
         // 캡처 발생 시 메시지 표시
+        System.out.println("-------------------"+captureOccurred);
+        System.out.println("-------------------"+wasExtraTurn);
+        System.out.println("-------------------"+captureOccurred);
         if (captureOccurred) {
             gameView.setStatusMessage("말을 잡았습니다! 한 번 더 던지세요.");
         }
