@@ -11,7 +11,7 @@ public class GameManager {
     private int selectedpiece = 1;
     private boolean extraTurn = false;
     private final ArrayList<Player> players = new ArrayList<>();
-    ArrayList<YutResult> yutResults = new ArrayList<>();
+    private final ArrayList<YutResult> yutResults = new ArrayList<>();
     private final ArrayList<PositionDTO> posInfo = new ArrayList<>();
     private final ArrayList<YutResult> goalPossibleYutList = new ArrayList<>();
 
