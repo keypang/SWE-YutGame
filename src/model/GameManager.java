@@ -90,13 +90,14 @@ public class GameManager {
         // 현재 플레이어 초기화
         currentPlayer = 1;
 
-        // 디버깅용
+/*        // 디버깅용
         System.out.println("플레이어 수: " + startInfo.getPlayerCount() +
                 ", 말 개수: " + startInfo.getPieceCount() +
                 ", 보드 타입: " + startInfo.getBoardType());
 
         // 디버깅 용
         System.out.println("윷 결과 개수: " + yutResults.size() + ", 추가 턴 여부: " + extraTurn);
+*/
     }
 
     // 현재 선택되어 있는 말이 있는 셀 위치 정보
@@ -196,7 +197,7 @@ public class GameManager {
         // 윷, 모 판단 후 추가 턴 여부 체크
         if (result.canRollAgain()) {
             extraTurn = true;
-            System.out.println(extraTurn);
+            //System.out.println(extraTurn);
         }
         return result;
     }
@@ -213,7 +214,7 @@ public class GameManager {
             if (checkextra) { extraTurn = true; }
             else { extraTurn = false;}
         }
-        System.out.println(getAllPiecePos());
+        // System.out.println(getAllPiecePos());
         System.out.println("말 옮기고 나서 선택된 플레이어:"+currentPlayer+"// 현재 선택된 말:"+selectedpiece);
     }
 
@@ -300,12 +301,14 @@ public class GameManager {
             }
         }
 
+/*
         // 중간 과정 디버깅용 출력
         System.out.println("윷 리스트: " + yutResults.toString());
         System.out.println("이동 가능 칸 수: " + movableNumList);
         System.out.println("이동 가능 칸 수(중복 제거): " + Arrays.toString(movableNumArray));
         System.out.println("이동 가능 지점 리스트: " + Arrays.toString(movableCellIdArray));
         System.out.println("이동 해시맵: "+movableMap);
+*/
 
         return movableMap;
     }
@@ -332,7 +335,7 @@ public class GameManager {
     }
 
     public ArrayList<YutResult> getGoalPossibleYutList(){
-        System.out.println("뭘로 완주할래: "+ goalPossibleYutList);
+        //System.out.println("뭘로 완주할래: "+ goalPossibleYutList);
         return goalPossibleYutList;
     }
 
