@@ -2,8 +2,6 @@ package view;
 
 import model.YutResult;
 import model.PositionDTO;
-
-import java.util.ArrayList;
 import java.util.Map;
 import java.util.List;
 
