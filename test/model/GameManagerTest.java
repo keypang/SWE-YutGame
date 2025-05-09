@@ -18,6 +18,37 @@ class GameManagerTest {
         StartInfo startInfo = new StartInfo(4, 3, BoardType.HEXAGON);
         gameManager.initGM(startInfo);
     }
+
+    @Test
+    void initGM(){
+
+    }
+
+    @Test
+    void removeYutResult(){
+
+    }
+
+    @Test
+    void checkPlayer(){
+
+    }
+
+    @Test
+    void getselectedsellid(){
+
+    }
+
+    @Test
+    void processYutResult(){
+
+    }
+
+    @Test
+    void getGoalPossibleYutList(){
+
+    }
+
     @Test
     void getAllPiecePos() {
         List<PositionDTO> result = gameManager.getAllPiecePos();
