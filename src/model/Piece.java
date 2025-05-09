@@ -1,46 +1,53 @@
 package model;
 
 public class Piece {
-    private int id;
-    private Cell startCell;
-    private boolean finished;
-    private Player player;
-    private int previousLine;
 
-    public Piece(int id, boolean finished, Player player) {
-        this.id = id;
-        this.finished = finished;
-        this.player = player;
-        this.previousLine = 0;
-    }
+  private int id;
+  private Cell startCell;
+  private boolean finished;
+  private Player player;
+  private int previousLine;
 
-    public void setStartCell(Cell startCell) {
-        this.startCell = startCell;
-    }
+  public Piece(int id, boolean finished, Player player) {
+    this.id = id;
+    this.finished = finished;
+    this.player = player;
+    this.previousLine = 0;
+  }
 
-    public void setFinished(boolean finished) {
-        this.finished = finished;
-    }
+  public void setStartCell(Cell startCell) {
+    this.startCell = startCell;
+  }
 
-    public boolean getFinished() { return finished; }
+  public void setFinished(boolean finished) {
+    this.finished = finished;
+  }
 
-    public Cell getStartCell() {
-        return startCell;
-    }
+  public boolean getFinished() {
+    return finished;
+  }
 
-    public boolean isFinished() {
-        return finished;
-    }
+  public Cell getStartCell() {
+    return startCell;
+  }
 
-    public int getId() {
-        return id;
-    }
+  public boolean isFinished() {
+    return finished;
+  }
 
-    public Player getPlayer() {
-        return player;
-    }
+  public int getId() {
+    return id;
+  }
 
-    public int getPreviousLine() { return previousLine; }
+  public Player getPlayer() {
+    return player;
+  }
 
-    public void setPreviousLine(int previousLine) { this.previousLine = previousLine; }
+  public int getPreviousLine() {
+    return previousLine;
+  }
+
+  public void setPreviousLine(int previousLine) {
+    this.previousLine = previousLine;
+  }
 }

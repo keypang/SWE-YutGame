@@ -9,85 +9,91 @@ import java.util.List;
 
 public interface GamePlayView {
 
-    interface ThrowButtonListener {
-        YutResult onThrowButtonClicked();
-    }
+  interface ThrowButtonListener {
 
-    // 지정 윷 던지기 리스너 추가
-    interface FixedYutButtonListener {
-        YutResult onFixedYutSelected(String yutType);
-    }
+    YutResult onThrowButtonClicked();
+  }
 
-    // 게임 종료 시 동작 리스너
-    interface GameEndListener {
-        void onRestartGame(); // 같은 설정으로 재시작
+  // 지정 윷 던지기 리스너 추가
+  interface FixedYutButtonListener {
 
-        void onNewGameSetup(); // 새 설정으로 게임 시작
+    YutResult onFixedYutSelected(String yutType);
+  }
 
-        void onExitGame(); // 게임 종료
-    }
+  // 게임 종료 시 동작 리스너
+  interface GameEndListener {
 
-    // 말 꺼내기 시 동작 리스너
-    interface TakeOutButtonListener{
-        List<PositionDTO> onTakeOutButtonClicked();
-    }
-    
-    // 말 선택 시 정보 전달 리스너
-    interface PieceSelectionListener {
-        Map<Integer, Integer> onPieceSelected(int pieceId);
-    }
+    void onRestartGame(); // 같은 설정으로 재시작
 
-    // 이동할 셀 선택 시 정보 전달 리스너
-    interface CellSelectionListener {
-        void onCellSelected(int cellId);
-    }
+    void onNewGameSetup(); // 새 설정으로 게임 시작
 
-    void setThrowButtonListener(ThrowButtonListener throwButtonListener);
+    void onExitGame(); // 게임 종료
+  }
 
-    // 지정 윷 리스너 설정 메서드 추가
-    void setFixedYutButtonListener(FixedYutButtonListener listener);
+  // 말 꺼내기 시 동작 리스너
+  interface TakeOutButtonListener {
 
-    // 말 선택 리스너 설정 메서드 추가
-    void setPieceSelectionListener(PieceSelectionListener listener);
+    List<PositionDTO> onTakeOutButtonClicked();
+  }
 
-    void setCellSelectionListener(CellSelectionListener listener);
+  // 말 선택 시 정보 전달 리스너
+  interface PieceSelectionListener {
 
-    // 게임 종료 리스너 설정
-    void setGameEndListener(GameEndListener listener);
+    Map<Integer, Integer> onPieceSelected(int pieceId);
+  }
 
-    // 윷 결과 리스트를 표시하는 메서드 추가
-    void displayYutResultList(List<YutResult> results);
+  // 이동할 셀 선택 시 정보 전달 리스너
+  interface CellSelectionListener {
 
-    // 윷 선택하는 패널(팝업) 생성 메서드
-    String showYutSelectPanel(YutResult[] yutResult);
+    void onCellSelected(int cellId);
+  }
 
-    // 새로운 말 꺼내기
-    void setTakeOutButtonListener(TakeOutButtonListener takeOutButtonListener);
+  void setThrowButtonListener(ThrowButtonListener throwButtonListener);
 
-    // 현재 턴 플레이어를 표시하는 메서드 추가
-    void updateCurrentPlayer(int playerNumber);
+  // 지정 윷 리스너 설정 메서드 추가
+  void setFixedYutButtonListener(FixedYutButtonListener listener);
 
-    // 윷 던지기 버튼 활성화/비활성화 설정 메서드 추가
-    void setThrowButtonEnabled(boolean enabled);
+  // 말 선택 리스너 설정 메서드 추가
+  void setPieceSelectionListener(PieceSelectionListener listener);
 
-    void enableWaitingPieceSelection();
+  void setCellSelectionListener(CellSelectionListener listener);
 
-    void disablePieceSelection();
+  // 게임 종료 리스너 설정
+  void setGameEndListener(GameEndListener listener);
 
-    // 현재 게임 상태 메시지 표시 메서드 추가
-    void setStatusMessage(String message);
+  // 윷 결과 리스트를 표시하는 메서드 추가
+  void displayYutResultList(List<YutResult> results);
 
-    // 말 전체 다시 그리기 메서드
-    void repaintAllPieces();
+  // 윷 선택하는 패널(팝업) 생성 메서드
+  String showYutSelectPanel(YutResult[] yutResult);
 
-    // 게임 종료 화면 표시
-    void showGameEndDialog(int winnerPlayer);
+  // 새로운 말 꺼내기
+  void setTakeOutButtonListener(TakeOutButtonListener takeOutButtonListener);
+
+  // 현재 턴 플레이어를 표시하는 메서드 추가
+  void updateCurrentPlayer(int playerNumber);
+
+  // 윷 던지기 버튼 활성화/비활성화 설정 메서드 추가
+  void setThrowButtonEnabled(boolean enabled);
+
+  void enableWaitingPieceSelection();
+
+  void disablePieceSelection();
+
+  // 현재 게임 상태 메시지 표시 메서드 추가
+  void setStatusMessage(String message);
+
+  // 말 전체 다시 그리기 메서드
+  void repaintAllPieces();
+
+  // 게임 종료 화면 표시
+  void showGameEndDialog(int winnerPlayer);
 
 
-    // 말이 윷판에 놓였을때 테두리 쳐지는 문제 해결
-    void clearPieceSelection();
+  // 말이 윷판에 놓였을때 테두리 쳐지는 문제 해결
+  void clearPieceSelection();
 
-    // 윷 이미지 초기화
-    void clearYutImage();
+  // 윷 이미지 초기화
+  void clearYutImage();
 
 }
