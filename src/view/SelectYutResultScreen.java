@@ -3,7 +3,7 @@ package view;
 import javax.swing.*;
 import java.awt.*;
 
-public class SelectYutResultScreen extends JFrame {
+public class SelectYutResultScreen extends JDialog {
 
   // 선택 결과를 전달할 리스너 인터페이스
   public interface YutSelectListener {
@@ -13,14 +13,14 @@ public class SelectYutResultScreen extends JFrame {
 
   private YutSelectListener listener;
 
-  public SelectYutResultScreen(YutSelectListener listener, String[] yutResult) {
-    super("지정윷 선택");
+  public SelectYutResultScreen(JFrame parent, YutSelectListener listener, String[] yutResult) {
+    super(parent, "지정윷 선택", true);
     this.listener = listener;
     InitUI(yutResult);
   }
 
   private void InitUI(String[] yutResult) {
-    setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
     setSize(800, 200);
     setLayout(new GridBagLayout());
     GridBagConstraints gbc = new GridBagConstraints();
@@ -37,11 +37,11 @@ public class SelectYutResultScreen extends JFrame {
       button.setPreferredSize(new Dimension(100, 70));
       button.addActionListener(e -> {
         // 선택된 결과를 리스너에 전달
+        dispose();
         if (listener != null) {
           listener.onYutSelected(result);
         }
         System.out.println("선택된 윷 결과: " + result);
-        dispose();
       });
 
       gbc.gridx = i;

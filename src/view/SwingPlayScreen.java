@@ -49,7 +49,7 @@ public class SwingPlayScreen extends JFrame implements GamePlayView {
 
   private JPanel yutResultsPanel;// 윷 결과 리스트를 표시할 패널 추가
 
-  private int currentPlayerIndex = 0; // 현재 플레이어 인덱스
+  private int currentPlayerIndex = 1; // 현재 플레이어 인덱스
   private int selectedPieceIndex = 0;
 
   // 플레이어 패널에 있는 말 이미지 (키: playerID_pieceID)
@@ -59,6 +59,8 @@ public class SwingPlayScreen extends JFrame implements GamePlayView {
   //for test true로 변경 후 테스트
   private boolean waitingPieceSelection = false;
 
+  // 턴 안내 flag 변수
+  private int isCorrectPlayer = 1;
 
   private Map<Integer, JPanel> playerPiecePanels = new HashMap<>();
   private List<JLabel> stackCountLabels = new ArrayList<>();
@@ -93,8 +95,8 @@ public class SwingPlayScreen extends JFrame implements GamePlayView {
     // 메인 패널을 프레임에 추가
     setContentPane(mainPanel);
 
-    //클릭 시 좌표 출력
-
+    /*
+    //클릭 시 좌표 출력(테스트용)
     getContentPane().addMouseListener(new MouseAdapter() {
       @Override
       public void mouseClicked(MouseEvent e) {
@@ -102,7 +104,7 @@ public class SwingPlayScreen extends JFrame implements GamePlayView {
         int y = e.getY();
         System.out.println("클릭한 위치: (" + x + ", " + y + ")");
       }
-    });
+    });*/
 
     //좌표 Hash map 초기화
     if (boardType == BoardType.SQUARE) {
@@ -378,7 +380,7 @@ public class SwingPlayScreen extends JFrame implements GamePlayView {
           @Override
           public void mouseClicked(MouseEvent e) {
             if (!waitingPieceSelection) {
-              JOptionPane.showMessageDialog(SwingPlayScreen.this, "윷을 던져주세요!");
+              JOptionPane.showMessageDialog(SwingPlayScreen.this, "먼저 윷을 던져주세요!");
               return;
             }
 
@@ -476,7 +478,7 @@ public class SwingPlayScreen extends JFrame implements GamePlayView {
 
     // 선택 화면 생성 및 리스너 전달
     String[] yutResult = {"백도", "도", "개", "걸", "윷", "모"};
-    new SelectYutResultScreen(listener, yutResult);
+    new SelectYutResultScreen(this, listener, yutResult);
   }
 
   // 단일 윷 결과를 표시 (팝업용)
@@ -526,8 +528,7 @@ public class SwingPlayScreen extends JFrame implements GamePlayView {
       JDialog resultDialog = new JDialog(this, "윷 결과: " + resultText, true);
       resultDialog.setLayout(new BorderLayout());
 
-      ImageIcon popupYutIcon = new ImageIcon(
-          getClass().getResource("/view/images/" + imageName + ".png"));
+      ImageIcon popupYutIcon = new ImageIcon(getClass().getResource("/view/images/" + imageName + ".png"));
       Image popupImg = popupYutIcon.getImage();
       Image resizedPopupImg = popupImg.getScaledInstance(300, 300, Image.SCALE_SMOOTH);
       popupYutIcon = new ImageIcon(resizedPopupImg);
@@ -551,6 +552,12 @@ public class SwingPlayScreen extends JFrame implements GamePlayView {
       timer.start();
 
       resultDialog.setVisible(true);
+      if(resultText.equals("윷") || resultText.equals("모")) {
+          JOptionPane.showMessageDialog(this, "윷을 한 번 더 던지세요!");
+      }
+      else{
+          JOptionPane.showMessageDialog(this, "이동할 말을 선택하세요!");
+      }
     }
   }
 
@@ -565,7 +572,8 @@ public class SwingPlayScreen extends JFrame implements GamePlayView {
     dialog.setSize(800, 200);
     dialog.setLayout(new GridBagLayout());
     dialog.getContentPane().setBackground(new Color(255, 245, 230));
-    dialog.setLocationRelativeTo(this); // 화면 중앙 정렬
+    dialog.setLocationRelativeTo(this);
+    dialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
     GridBagConstraints gbc = new GridBagConstraints();
     gbc.insets = new Insets(20, 20, 10, 10);
@@ -835,6 +843,12 @@ public class SwingPlayScreen extends JFrame implements GamePlayView {
       }
     }
     repaint();
+
+    if(isCorrectPlayer == playerNumber) {
+        if(isCorrectPlayer > 4) isCorrectPlayer = 1;
+        isCorrectPlayer++;
+        JOptionPane.showMessageDialog(this, playerNumber + "번 플레이어의 턴입니다!");
+    }
   }
 
   @Override
@@ -1188,12 +1202,11 @@ public class SwingPlayScreen extends JFrame implements GamePlayView {
 
   // 말 선택 단계 판정(페이즈 전환)
   public void enableWaitingPieceSelection() {
-    JOptionPane.showMessageDialog(this, "이동할 말을 선택하세요!");
     this.waitingPieceSelection = true;
   }
 
   public void disablePieceSelection() {
-    JOptionPane.showMessageDialog(this, "윷을 던져주세요!");
+    JOptionPane.showMessageDialog(this, "먼저 윷을 던져주세요!");
     for (Map.Entry<String, JLabel> entry : playerPiecesMap.entrySet()) {
       JLabel pieceLabel = entry.getValue();
       pieceLabel.setBorder(null);
