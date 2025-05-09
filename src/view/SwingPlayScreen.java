@@ -1091,7 +1091,7 @@ public class SwingPlayScreen extends JFrame implements GamePlayView {
           stackCountLabels.add(stackCountLabel);
 
           // 나머지 말들은 살짝 겹쳐서 표시 (시각적 효과)
-          for (int i = 1; i < piecesAtCell.size() && i < 4; i++) { // 최대 3개까지만 표시
+          for (int i = 1; i < piecesAtCell.size() && i < 5; i++) { // 최대 4개까지
             PositionDTO dto = piecesAtCell.get(i);
             JLabel pieceLabel = playerPiecesMap.get(dto.getPlayerId() + "_" + dto.getPieceId());
 
