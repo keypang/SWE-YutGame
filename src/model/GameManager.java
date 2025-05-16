@@ -2,6 +2,11 @@ package model;
 
 import java.util.*;
 
+/**
+ * @author 조영찬
+ * 게임에 필요한 요소나 메소드를 종합적으로 관리하는 진행 담당 클래스입니다.
+ */
+
 public class GameManager {
 
   private StartInfo startInfo;
@@ -59,6 +64,10 @@ public class GameManager {
     yutResults.add(yutResult);
   }
 
+  /**
+   * 보유한 윷 리스트에서 사용한 윷을 제거합니다
+   * @param target 제거할 윷의 이동 칸 수 (예: 1=도, 2=개, ...)
+   */
   public void removeYutResult(int target) {
     Iterator<YutResult> iterator = yutResults.iterator();
     while (iterator.hasNext()) {
@@ -69,6 +78,10 @@ public class GameManager {
     }
   }
 
+  /**
+   * 초기 세팅을 통해 초기화를 진행합니다.
+   * @param startInfo 사용자가 입력한 시작 정보(플레이어 수, 말 수, 판 모양)
+   */
   public void initGM(StartInfo startInfo) {
     // 기존 윷 결과 초기화
     yutResults.clear();
@@ -112,14 +125,18 @@ public class GameManager {
     this.startInfo = startInfo;
   }
 
-  // 플레이어 초기화
+  /**
+   * 플레이어 정보를 초기화 합니다.
+   */
   public void initPlayers() {
     for (int i = 1; i <= startInfo.getPlayerCount(); i++) {
       players.add(new Player(i, startInfo.getPieceCount()));
     }
   }
 
-  // 최초 위치 정보 세팅
+  /**
+   * 초기 위치 정보를 세팅합니다.
+   */
   public void initPosInfo() {
     // 말 id, 플레이어 id, 지점 id
     for (Player player : players) {
@@ -141,7 +158,13 @@ public class GameManager {
     return startInfo;
   }
 
-  // 유효성 검사
+  /**
+   * 게임 설정 정보의 유효성을 검사합니다.
+   * @param playerCount 설정한 플레이어 수
+   * @param pieceCount 설정한 말 수
+   * @param boardType 설정한 판 모양
+   * @return 유효 여부
+   */
   public boolean validate(int playerCount, int pieceCount, BoardType boardType) {
 
     if (playerCount < 2 || playerCount > 4) {
@@ -156,7 +179,9 @@ public class GameManager {
     return true;
   }
 
-  // 모델에 제대로 startInfo 정보가 전달되었는지 확인하기 위한 메소드
+  /**
+   * 모델에 제대로 startInfo 정보가 전달되었는지 확인합니다. (테스트용)
+   */
   public void test() {
 
     System.out.println("Game started with settings:");
@@ -165,7 +190,10 @@ public class GameManager {
     System.out.println("Board: " + startInfo.getBoardType());
   }
 
-  // 턴 넘기는 메소드
+  /**
+   * 남은 윷이 있는지, 더 던질 수 기회가 있는지를 확인해서 플레이어 차례를 판단합니다.
+   * @return 이제 차례가 된 플레이어 번호 (1~4번)
+   */
   public int checkPlayer() {
     // 윷 리스트에 값이 들어있는지 + 추가 턴 여부 확인
     // 있으면 currentplayer값 변경 x
@@ -180,7 +208,10 @@ public class GameManager {
     return currentPlayer;
   }
 
-  // 랜덤 윷 던지기
+  /**
+   * 랜덤 윷 던지기 동작을 실행합니다.
+   * @return 윷 결과
+   */
   public YutResult throwYut() {
     YutResult result = yut.yutThrowRandom();
     yutResults.add(result);
@@ -192,7 +223,10 @@ public class GameManager {
     return result;
   }
 
-  // 지정 윷 던지기 (테스트용)
+  /**
+   * 지정 윷 던지기 동작을 실행합니다. 의도적인 진행을 위해 사용합니다.
+   * @return 윷 결과
+   */
   public YutResult throwFixedYut(String getResult) {
     YutResult result = yut.yutThrowFixed(getResult);
     yutResults.add(result);
@@ -204,6 +238,10 @@ public class GameManager {
     return result;
   }
 
+  /**
+   * 윷 결과에 따라 말을 이동하고, 상대 말을 잡았는지 여부를 확인해 추가 턴 기회를 부여합니다.
+   * @param move 이동하는 칸 수
+   */
   public void processYutResult(int move) {
     System.out.println("현재 선택된 플레이어:" + currentPlayer + "// 현재 선택된 말:" + selectedPiece);
     if (move == -1) {
@@ -227,7 +265,9 @@ public class GameManager {
     System.out.println("말 옮기고 나서 선택된 플레이어:" + currentPlayer + "// 현재 선택된 말:" + selectedPiece);
   }
 
-  // 전체 말 위치 세팅
+  /**
+   * 전체 말 위치를 업데이트 합니다.
+   */
   public void setPosInfo() {
     // player 돌면서 각 player의 말 정보 받아오기
     for (Player player : players) {
@@ -264,7 +304,10 @@ public class GameManager {
     }
   }
 
-  // 전체 말 위치 리턴
+  /**
+   * 저장된 데이터를 바탕으로 위치 정보 최신화 후 반환합니다.
+   * @return 전체 말 위치 정보를 담은 DTO
+   */
   public ArrayList<PositionDTO> getAllPiecePos() {
     // 위치 정보 업데이트
     setPosInfo();
@@ -278,7 +321,11 @@ public class GameManager {
     return yutResults;
   }
 
-  // Cell id 넘겨받아서 이동 가능한 Cell 리스트 반환
+  /**
+   * 선택한 말을, 사용자가 갖고 있는 윷들로 이동시킬 수 있는 지점들을 알려줍니다.
+   * @param cellId 사용자가 선택한 말이 있는 지점의 id
+   * @return <이동 가능한 지점, 그 지점으로 가기 위해 필요한 칸 수> (예. 1번 지점에서 도를 가지고 있다면 <2, 1>)
+   */
   public Map<Integer, Integer> findMovableCells(int cellId) {
 
     // moveableMap 초기화
@@ -326,8 +373,10 @@ public class GameManager {
     return movableMap;
   }
 
-  // 승리 판단 - 0이면 계속 진행, 유효한 플레이어 인덱스면 게임 종료
-  public int checkWin() {
+  /**
+   * 승자가 있는지 판단합니다.
+   * @return 승리한 플레이어 번호, 없을 경우 0
+   */  public int checkWin() {
     int winnerIndex = 0;
     for (Player player : players) {
       boolean allFinished = true;
