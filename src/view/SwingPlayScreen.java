@@ -168,7 +168,7 @@ public class SwingPlayScreen extends JFrame implements GamePlayView {
     return panel;
   }
 
-  // 게임 정보 및 컨트롤 패널 생성
+
   private JPanel createControlPanel() {
     JPanel panel = new JPanel();
     panel.setBackground(new Color(255, 245, 230));

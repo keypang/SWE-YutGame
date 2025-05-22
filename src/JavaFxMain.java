@@ -36,7 +36,7 @@ public class JavaFxMain extends Application {
 
     startButton.setOnAction(e -> {
       // 게임 설정 화면 실행
-      openConfigScreen();
+      openConfigScreen(primaryStage);
     });
 
     // 종료 버튼
@@ -56,11 +56,12 @@ public class JavaFxMain extends Application {
     primaryStage.show();
   }
 
-  private void openConfigScreen() {
+  private void openConfigScreen(Stage primaryStage) {
     try {
       // JavaFX 설정 화면 실행
       JavaFxConfigScreen configScreen = new JavaFxConfigScreen();
       configScreen.start(new Stage());
+      primaryStage.close();
     } catch (Exception e) {
       e.printStackTrace();
     }
