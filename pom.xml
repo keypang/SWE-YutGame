@@ -43,6 +43,8 @@
 
   <build>
     <sourceDirectory>src</sourceDirectory>
+
+
     <plugins>
       <!-- 단위 테스트 -->
       <plugin>
@@ -70,5 +72,9 @@
         </configuration>
       </plugin>
     </plugins>
+
+
   </build>
+
+
 </project>
