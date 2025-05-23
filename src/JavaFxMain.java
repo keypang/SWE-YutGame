@@ -7,6 +7,9 @@ import javafx.geometry.Pos;
 import javafx.geometry.Insets;
 import javafx.stage.Stage;
 import view.JavaFxConfigScreen;
+import view.GameConfigView;
+import controller.StartScreenController;
+import model.GameManager;
 
 public class JavaFxMain extends Application {
 
@@ -35,8 +38,8 @@ public class JavaFxMain extends Application {
         "-fx-background-color: #78c878; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14pt;");
 
     startButton.setOnAction(e -> {
-      // 게임 설정 화면 실행
-      openConfigScreen(primaryStage);
+      // 게임 설정 화면을 컨트롤러와 함께 실행
+      openConfigScreenWithController(primaryStage);
     });
 
     // 종료 버튼
@@ -56,12 +59,24 @@ public class JavaFxMain extends Application {
     primaryStage.show();
   }
 
-  private void openConfigScreen(Stage primaryStage) {
+  private void openConfigScreenWithController(Stage primaryStage) {
     try {
-      // JavaFX 설정 화면 실행
+      // 게임 매니저 생성
+      GameManager gameManager = new GameManager();
+
+      // JavaFX 설정 화면 생성
       JavaFxConfigScreen configScreen = new JavaFxConfigScreen();
-      configScreen.start(new Stage());
+
+      // 컨트롤러 생성 및 연결
+      StartScreenController startController = new StartScreenController(configScreen, gameManager);
+
+      // 설정 화면 시작
+      Stage configStage = new Stage();
+      configScreen.start(configStage);
+
+      // 메인 창 닫기
       primaryStage.close();
+
     } catch (Exception e) {
       e.printStackTrace();
     }
