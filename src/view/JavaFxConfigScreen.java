@@ -41,6 +41,21 @@ public class JavaFxConfigScreen extends Application {
     startButton.setStyle(
         "-fx-background-color: #78c878; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14pt;");
 
+    startButton.setOnAction(e -> {
+      int playerCount = playerCountCombo.getValue();
+      int pieceCount = pieceCountCombo.getValue();
+      BoardType boardType = boardTypeCombo.getValue();
+
+      JavaFxPlayScreen playScreen = new JavaFxPlayScreen(playerCount, pieceCount, boardType);
+      try {
+        Stage playStage = new Stage();
+        playScreen.start(playStage); // 새 창으로 PlayScreen 실행
+        primaryStage.close(); // 설정창 닫기 (선택사항)
+      } catch (Exception ex) {
+        ex.printStackTrace();
+      }
+    });
+
     // 컨테이너에 요소 추가
     mainContainer.getChildren().addAll(titleLabel, settingsGrid, descriptionBox, startButton);
     mainContainer.setAlignment(Pos.CENTER);
