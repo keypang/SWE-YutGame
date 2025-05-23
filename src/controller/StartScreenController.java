@@ -1,11 +1,15 @@
 package controller;
 
+import javafx.stage.Stage;
 import model.BoardType;
 import model.GameManager;
 import model.StartInfo;
 import view.GameConfigView;
 import view.GamePlayView;
+import view.JavaFxPlayScreen;
+import view.JavaFxConfigScreen;
 import view.SwingPlayScreen;
+import view.SwingConfigScreen;
 
 public class StartScreenController {
 
@@ -62,15 +66,58 @@ public class StartScreenController {
     // 게임 설정 화면 닫기
     view.close();
 
-    // 게임 화면 생성
-    GamePlayView gameView = new SwingPlayScreen(
-        gameManger.getStartInfo().getPlayerCount(),
-        gameManger.getStartInfo().getPieceCount(),
-        gameManger.getStartInfo().getBoardType()
-    );
+    // 설정 화면의 타입에 따라 적절한 게임 화면 실행
+    if (view instanceof JavaFxConfigScreen) {
+      // JavaFX 설정 화면 → JavaFX 게임 화면
+      startJavaFxGame();
+    } else if (view instanceof SwingConfigScreen) {
+      // Swing 설정 화면 → Swing 게임 화면
+      startSwingGame();
+    }
+  }
 
-    // 게임화면 컨트롤러 생성 및 연결
-    GameScreenController gameController = new GameScreenController(gameView, gameManger);
+  // JavaFX 게임 화면 시작
+  private void startJavaFxGame() {
+    try {
+      System.out.println("JavaFX 게임 화면을 시작합니다.");
+
+      // JavaFx 게임 화면 생성 및 시작
+      JavaFxPlayScreen playScreen = new JavaFxPlayScreen(
+          gameManger.getStartInfo().getPlayerCount(),
+          gameManger.getStartInfo().getPieceCount(),
+          gameManger.getStartInfo().getBoardType()
+      );
+
+      Stage playStage = new Stage();
+      playScreen.start(playStage);
+
+      // 게임화면 컨트롤러 생성 및 연결
+      GameScreenController gameController = new GameScreenController(playScreen, gameManger);
+
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+  // Swing 게임 화면 시작
+  private void startSwingGame() {
+    try {
+      System.out.println("Swing 게임 화면을 시작합니다.");
+
+      // Swing 게임 화면 생성
+      GamePlayView gameView = new SwingPlayScreen(
+          gameManger.getStartInfo().getPlayerCount(),
+          gameManger.getStartInfo().getPieceCount(),
+          gameManger.getStartInfo().getBoardType()
+      );
+
+      // 게임화면 컨트롤러 생성 및 연결
+      GameScreenController gameController = new GameScreenController(gameView, gameManger);
+
+    } catch (Exception e) {
+      e.printStackTrace();
+      System.err.println("Swing 게임 화면 실행 실패: " + e.getMessage());
+    }
   }
 
   // getter
@@ -86,6 +133,4 @@ public class StartScreenController {
   public void setGameManger(GameManager gameManger) {
     this.gameManger = gameManger;
   }
-
-
 }

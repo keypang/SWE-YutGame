@@ -9,15 +9,20 @@ import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import model.BoardType;
 
-public class JavaFxConfigScreen extends Application {
+public class JavaFxConfigScreen extends Application implements GameConfigView {
 
   private ComboBox<Integer> playerCountCombo;
   private ComboBox<Integer> pieceCountCombo;
   private ComboBox<BoardType> boardTypeCombo;
   private Button startButton;
+  private Stage primaryStage;
+
+  // 리스너
+  private StartButtonListener startButtonListener;
 
   @Override
   public void start(Stage primaryStage) {
+    this.primaryStage = primaryStage;
     primaryStage.setTitle("윷놀이 게임 설정");
 
     // 메인 컨테이너 생성
@@ -42,17 +47,9 @@ public class JavaFxConfigScreen extends Application {
         "-fx-background-color: #78c878; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14pt;");
 
     startButton.setOnAction(e -> {
-      int playerCount = playerCountCombo.getValue();
-      int pieceCount = pieceCountCombo.getValue();
-      BoardType boardType = boardTypeCombo.getValue();
-
-      JavaFxPlayScreen playScreen = new JavaFxPlayScreen(playerCount, pieceCount, boardType);
-      try {
-        Stage playStage = new Stage();
-        playScreen.start(playStage); // 새 창으로 PlayScreen 실행
-        primaryStage.close(); // 설정창 닫기 (선택사항)
-      } catch (Exception ex) {
-        ex.printStackTrace();
+      // 컨트롤러의 리스너 호출
+      if (startButtonListener != null) {
+        startButtonListener.onStartButtonClicked();
       }
     });
 
@@ -129,6 +126,43 @@ public class JavaFxConfigScreen extends Application {
 
     box.getChildren().addAll(title, description);
     return box;
+  }
+
+  // GameConfigView 인터페이스 구현
+  @Override
+  public int getSelectedPlayerCount() {
+    return playerCountCombo.getValue();
+  }
+
+  @Override
+  public int getSelectedPieceCount() {
+    return pieceCountCombo.getValue();
+  }
+
+  @Override
+  public BoardType getSelectedBoardType() {
+    return boardTypeCombo.getValue();
+  }
+
+  @Override
+  public void setStartButtonListener(StartButtonListener listener) {
+    this.startButtonListener = listener;
+  }
+
+  @Override
+  public void displayErrorMessage(String message) {
+    Alert alert = new Alert(Alert.AlertType.ERROR);
+    alert.setTitle("오류");
+    alert.setHeaderText(null);
+    alert.setContentText(message);
+    alert.showAndWait();
+  }
+
+  @Override
+  public void close() {
+    if (primaryStage != null) {
+      primaryStage.close();
+    }
   }
 
   public static void main(String[] args) {
