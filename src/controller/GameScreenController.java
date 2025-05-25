@@ -4,8 +4,10 @@ import model.*;
 import view.GameConfigView;
 import view.GamePlayView;
 import view.SwingConfigScreen;
+import view.JavaFxConfigScreen;
 
 import javax.swing.*;
+import javafx.stage.Stage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -258,14 +260,20 @@ public class GameScreenController {
     // 게임 매니저 초기화
     gameManager.initGM(gameManager.getStartInfo());
 
-    // 뷰 초기화
-    gameView.updateCurrentPlayer(0);
+    // 뷰 초기화 - 플레이어 번호를 1로 수정
+    gameView.updateCurrentPlayer(1);
 
     // 윷 결과 리스트 초기화
     updateYutResultsInView();
 
     // 윷 이미지 초기화
     gameView.clearYutImage();
+
+    // 말 위치 초기화 - 추가
+    gameView.repaintAllPieces();
+
+    // 말 선택 초기화 - 추가
+    gameView.clearPieceSelection();
 
     // 버튼 상태 초기화
     gameView.setThrowButtonEnabled(true);
@@ -276,14 +284,45 @@ public class GameScreenController {
 
   // 새 설정으로 게임 시작
   private void newGameSetup() {
-    // 현재 게임 화면 닫기
+    // 현재 게임 화면이 JavaFX인지 Swing인지 판단
+    boolean isJavaFX = false;
 
-    if (gameView instanceof JFrame) {
-      ((JFrame) gameView).dispose();
+    // JavaFX 화면인지 확인
+    if (gameView.getClass().getSimpleName().contains("JavaFx")) {
+      isJavaFX = true;
     }
 
-    // 설정 화면 생성 및 표시
-    GameConfigView configView = new SwingConfigScreen();
+    // 현재 게임 화면 닫기
+    if (gameView instanceof JFrame) {
+      ((JFrame) gameView).dispose();
+    } else if (isJavaFX) {
+      // JavaFX 화면인 경우 - closeStage() 메서드 호출
+      try {
+        if (gameView instanceof view.JavaFxPlayScreen) {
+          ((view.JavaFxPlayScreen) gameView).closeStage();
+        }
+      } catch (Exception e) {
+        System.err.println("JavaFX 화면 닫기 실패: " + e.getMessage());
+      }
+    }
+
+    // 화면 타입에 따라 적절한 설정 화면 생성
+    GameConfigView configView;
+    if (isJavaFX) {
+      // JavaFX 설정 화면 생성
+      configView = new JavaFxConfigScreen();
+      try {
+        Stage configStage = new Stage();
+        ((JavaFxConfigScreen) configView).start(configStage);
+      } catch (Exception e) {
+        e.printStackTrace();
+        // JavaFX 실행 실패 시 Swing으로 대체
+        configView = new SwingConfigScreen();
+      }
+    } else {
+      // Swing 설정 화면 생성
+      configView = new SwingConfigScreen();
+    }
 
     // 새 게임 관리자 생성
     GameManager newGameManager = new GameManager();
