@@ -118,7 +118,7 @@ public class JavaFxPlayScreen extends Application implements GamePlayView {
     File boardImageFile = new File(boardImagePath);
     Image boardImage = new Image(boardImageFile.toURI().toString());
     ImageView boardView = new ImageView(boardImage);
-    
+
     // 보드 타입에 따라 크기 및 위치 조정
     if (boardType == BoardType.SQUARE) {
       boardView.setFitWidth(600);
@@ -529,7 +529,7 @@ public class JavaFxPlayScreen extends Application implements GamePlayView {
     if (imageName != null) {
       String yutImagePath = "src/view/images/" + imageName + ".png";
       File yutImageFile = new File(yutImagePath);
-      Image yutImage = new Image(yutImageFile.toURI().toString(),false);
+      Image yutImage = new Image(yutImageFile.toURI().toString(), false);
       yutImageLabel.setImage(yutImage);
 
       // 팝업 창에 이미지 표시
@@ -711,7 +711,7 @@ public class JavaFxPlayScreen extends Application implements GamePlayView {
   }
 
   private void initializeHexagonPositions() {
-    hexagonPositionMap.put(-1, new Point2D(661,645));
+    hexagonPositionMap.put(-1, new Point2D(661, 645));
     hexagonPositionMap.put(0, new Point2D(613, 551));
     hexagonPositionMap.put(1, new Point2D(611, 480));
     hexagonPositionMap.put(2, new Point2D(612, 434));
@@ -1100,5 +1100,12 @@ public class JavaFxPlayScreen extends Application implements GamePlayView {
   public void clearYutImage() {
     yutResultLabel.setText("윷 결과: ");
     yutImageLabel.setImage(null);
+  }
+
+  // Stage 종료 메서드 추가
+  public void closeStage() {
+    if (parentStage != null) {
+      parentStage.close();
+    }
   }
 }
