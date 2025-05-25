@@ -38,16 +38,6 @@ public class JavaFxSelectYutResultScreen {
                     "-fx-background-color: #78c878; -fx-text-fill: white; -fx-font-weight: bold;"
             );
 
-            /*
-            button.setOnAction(e -> {
-                dialog.close();
-                if (listener != null) {
-                    listener.onYutSelected(result);
-                }
-                System.out.println("선택된 윷 결과: " + result);
-            });
-            */
-
             buttonContainer.getChildren().add(button);
         }
 
