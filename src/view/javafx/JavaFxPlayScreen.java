@@ -1,4 +1,4 @@
-package view;
+package view.javafx;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -14,13 +14,13 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 import model.BoardType;
 import model.YutResult;
 import model.PositionDTO;
 
 import java.io.File;
 import java.util.*;
+import view.global.GamePlayView;
 
 public class JavaFxPlayScreen extends Application implements GamePlayView {
 

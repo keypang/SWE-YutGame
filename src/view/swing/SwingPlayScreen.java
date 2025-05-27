@@ -1,4 +1,4 @@
-package view;
+package view.swing;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Arrays;
+import view.global.GamePlayView;
 
 public class SwingPlayScreen extends JFrame implements GamePlayView {
 
@@ -94,17 +95,6 @@ public class SwingPlayScreen extends JFrame implements GamePlayView {
 
     // 메인 패널을 프레임에 추가
     setContentPane(mainPanel);
-
-    /*
-    //클릭 시 좌표 출력(테스트용)
-    getContentPane().addMouseListener(new MouseAdapter() {
-      @Override
-      public void mouseClicked(MouseEvent e) {
-        int x = e.getX();
-        int y = e.getY();
-        System.out.println("클릭한 위치: (" + x + ", " + y + ")");
-      }
-    });*/
 
     //좌표 Hash map 초기화
     if (boardType == BoardType.SQUARE) {
@@ -528,7 +518,8 @@ public class SwingPlayScreen extends JFrame implements GamePlayView {
       JDialog resultDialog = new JDialog(this, "윷 결과: " + resultText, true);
       resultDialog.setLayout(new BorderLayout());
 
-      ImageIcon popupYutIcon = new ImageIcon(getClass().getResource("/view/images/" + imageName + ".png"));
+      ImageIcon popupYutIcon = new ImageIcon(
+          getClass().getResource("/view/images/" + imageName + ".png"));
       Image popupImg = popupYutIcon.getImage();
       Image resizedPopupImg = popupImg.getScaledInstance(300, 300, Image.SCALE_SMOOTH);
       popupYutIcon = new ImageIcon(resizedPopupImg);
@@ -552,11 +543,10 @@ public class SwingPlayScreen extends JFrame implements GamePlayView {
       timer.start();
 
       resultDialog.setVisible(true);
-      if(resultText.equals("윷") || resultText.equals("모")) {
-          JOptionPane.showMessageDialog(this, "윷을 한 번 더 던지세요!");
-      }
-      else{
-          JOptionPane.showMessageDialog(this, "이동할 말을 선택하세요!");
+      if (resultText.equals("윷") || resultText.equals("모")) {
+        JOptionPane.showMessageDialog(this, "윷을 한 번 더 던지세요!");
+      } else {
+        JOptionPane.showMessageDialog(this, "이동할 말을 선택하세요!");
       }
     }
   }
@@ -844,10 +834,12 @@ public class SwingPlayScreen extends JFrame implements GamePlayView {
     }
     repaint();
 
-    if(isCorrectPlayer == playerNumber) {
-        if(isCorrectPlayer > 4) isCorrectPlayer = 1;
-        isCorrectPlayer++;
-        JOptionPane.showMessageDialog(this, playerNumber + "번 플레이어의 턴입니다!");
+    if (isCorrectPlayer == playerNumber) {
+      if (isCorrectPlayer > 4) {
+        isCorrectPlayer = 1;
+      }
+      isCorrectPlayer++;
+      JOptionPane.showMessageDialog(this, playerNumber + "번 플레이어의 턴입니다!");
     }
   }
 

@@ -1,4 +1,4 @@
-package view;
+package view.swing;
 
 import javax.swing.*;
 import java.awt.*;
@@ -7,6 +7,7 @@ public class SelectYutResultScreen extends JDialog {
 
   // 선택 결과를 전달할 리스너 인터페이스
   public interface YutSelectListener {
+
     void onYutSelected(String result);
   }
 

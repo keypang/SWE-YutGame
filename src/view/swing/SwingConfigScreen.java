@@ -1,4 +1,4 @@
-package view;
+package view.swing;
 
 import model.BoardType;
 
@@ -6,6 +6,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import view.global.GameConfigView;
 
 public class SwingConfigScreen extends JFrame implements GameConfigView {
 
