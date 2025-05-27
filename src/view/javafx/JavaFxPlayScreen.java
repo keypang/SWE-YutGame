@@ -1,4 +1,4 @@
-package view;
+package view.javafx;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -14,13 +14,13 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 import model.BoardType;
 import model.YutResult;
 import model.PositionDTO;
 
 import java.io.File;
 import java.util.*;
+import view.global.GamePlayView;
 
 public class JavaFxPlayScreen extends Application implements GamePlayView {
 
@@ -128,12 +128,12 @@ public class JavaFxPlayScreen extends Application implements GamePlayView {
     } else if (boardType == BoardType.PENTAGON) {
       boardView.setFitWidth(700);
       boardView.setFitHeight(700);
-      boardView.setLayoutX(50);
+      boardView.setLayoutX(1);
       boardView.setLayoutY(30);
     } else { // HEXAGON
       boardView.setFitWidth(800);
       boardView.setFitHeight(800);
-      boardView.setLayoutX(10);
+      boardView.setLayoutX(-50);
       boardView.setLayoutY(0);
     }
 
@@ -154,13 +154,13 @@ public class JavaFxPlayScreen extends Application implements GamePlayView {
     } else if (boardType == BoardType.PENTAGON) {
       goalView.setFitWidth(43);
       goalView.setFitHeight(43);
-      goalView.setLayoutX(658);
-      goalView.setLayoutY(570);
+      goalView.setLayoutX(601);
+      goalView.setLayoutY(655);
     } else { // HEXAGON
       goalView.setFitWidth(43);
       goalView.setFitHeight(43);
-      goalView.setLayoutX(658);
-      goalView.setLayoutY(570);
+      goalView.setLayoutX(640);
+      goalView.setLayoutY(623);
     }
 
     pane.getChildren().add(goalView);
@@ -529,7 +529,7 @@ public class JavaFxPlayScreen extends Application implements GamePlayView {
     if (imageName != null) {
       String yutImagePath = "src/view/images/" + imageName + ".png";
       File yutImageFile = new File(yutImagePath);
-      Image yutImage = new Image(yutImageFile.toURI().toString());
+      Image yutImage = new Image(yutImageFile.toURI().toString(), false);
       yutImageLabel.setImage(yutImage);
 
       // 팝업 창에 이미지 표시
@@ -636,125 +636,126 @@ public class JavaFxPlayScreen extends Application implements GamePlayView {
   }
 
   private void initializeSquarePositions() {
-    squarePositionMap.put(-1, new Point2D(667, 602));
-    squarePositionMap.put(0, new Point2D(568, 604));
-    squarePositionMap.put(1, new Point2D(574, 494));
-    squarePositionMap.put(2, new Point2D(574, 405));
-    squarePositionMap.put(3, new Point2D(574, 320));
-    squarePositionMap.put(4, new Point2D(574, 234));
-    squarePositionMap.put(5, new Point2D(574, 131));
-    squarePositionMap.put(6, new Point2D(465, 127));
-    squarePositionMap.put(7, new Point2D(379, 127));
-    squarePositionMap.put(8, new Point2D(293, 127));
-    squarePositionMap.put(9, new Point2D(208, 127));
-    squarePositionMap.put(10, new Point2D(91, 131));
-    squarePositionMap.put(11, new Point2D(99, 234));
-    squarePositionMap.put(12, new Point2D(99, 320));
-    squarePositionMap.put(13, new Point2D(99, 405));
-    squarePositionMap.put(14, new Point2D(99, 494));
-    squarePositionMap.put(15, new Point2D(90, 604));
-    squarePositionMap.put(16, new Point2D(208, 602));
-    squarePositionMap.put(17, new Point2D(293, 602));
-    squarePositionMap.put(18, new Point2D(379, 602));
-    squarePositionMap.put(19, new Point2D(465, 602));
-    squarePositionMap.put(20, new Point2D(568, 602));
-    squarePositionMap.put(50, new Point2D(488, 212));
-    squarePositionMap.put(55, new Point2D(423, 277));
-    squarePositionMap.put(100, new Point2D(185, 213));
-    squarePositionMap.put(110, new Point2D(250, 277));
-    squarePositionMap.put(150, new Point2D(185, 515));
-    squarePositionMap.put(165, new Point2D(250, 450));
-    squarePositionMap.put(200, new Point2D(488, 516));
-    squarePositionMap.put(220, new Point2D(423, 450));
-    squarePositionMap.put(1000, new Point2D(330, 370));
+    squarePositionMap.put(-1, new Point2D(667 + 4, 602 + 20));
+    squarePositionMap.put(0, new Point2D(568 + 13, 604 + 15));
+    squarePositionMap.put(1, new Point2D(574 + 4, 494 + 20));
+    squarePositionMap.put(2, new Point2D(574 + 4, 405 + 20));
+    squarePositionMap.put(3, new Point2D(574 + 4, 320 + 20));
+    squarePositionMap.put(4, new Point2D(574 + 4, 234 + 20));
+    squarePositionMap.put(5, new Point2D(574 + 4, 131 + 10));
+    squarePositionMap.put(6, new Point2D(465 + 4, 127 + 20));
+    squarePositionMap.put(7, new Point2D(379 + 4, 127 + 20));
+    squarePositionMap.put(8, new Point2D(293 + 4, 127 + 20));
+    squarePositionMap.put(9, new Point2D(208 + 4, 127 + 20));
+    squarePositionMap.put(10, new Point2D(91 + 4, 131 + 10));
+    squarePositionMap.put(11, new Point2D(99 + 4, 234 + 20));
+    squarePositionMap.put(12, new Point2D(99 + 4, 320 + 20));
+    squarePositionMap.put(13, new Point2D(99 + 4, 405 + 20));
+    squarePositionMap.put(14, new Point2D(99 + 4, 494 + 20));
+    squarePositionMap.put(15, new Point2D(90 + 4, 604 + 10));
+    squarePositionMap.put(16, new Point2D(208 + 4, 602 + 20));
+    squarePositionMap.put(17, new Point2D(293 + 4, 602 + 20));
+    squarePositionMap.put(18, new Point2D(379 + 4, 602 + 20));
+    squarePositionMap.put(19, new Point2D(465 + 4, 602 + 20));
+    squarePositionMap.put(20, new Point2D(568 + 13, 602 + 15));
+    squarePositionMap.put(50, new Point2D(488 + 4, 212 + 20));
+    squarePositionMap.put(55, new Point2D(423 + 4, 277 + 20));
+    squarePositionMap.put(100, new Point2D(185 + 4, 213 + 20));
+    squarePositionMap.put(110, new Point2D(250 + 4, 277 + 20));
+    squarePositionMap.put(150, new Point2D(185 + 4, 515 + 20));
+    squarePositionMap.put(165, new Point2D(250 + 4, 450 + 20));
+    squarePositionMap.put(200, new Point2D(488 + 4, 516 + 20));
+    squarePositionMap.put(220, new Point2D(423 + 4, 450 + 20));
+    squarePositionMap.put(1000, new Point2D(330 + 11, 370 + 10));
   }
 
   private void initializePentagonPositions() {
-    pentagonPositionMap.put(-1, new Point2D(588, 602));
-    pentagonPositionMap.put(0, new Point2D(491, 588));
-    pentagonPositionMap.put(1, new Point2D(527, 520));
-    pentagonPositionMap.put(2, new Point2D(541, 469));
-    pentagonPositionMap.put(3, new Point2D(558, 419));
-    pentagonPositionMap.put(4, new Point2D(575, 367));
-    pentagonPositionMap.put(5, new Point2D(582, 296));
-    pentagonPositionMap.put(6, new Point2D(530, 240));
-    pentagonPositionMap.put(7, new Point2D(490, 210));
-    pentagonPositionMap.put(8, new Point2D(450, 184));
-    pentagonPositionMap.put(9, new Point2D(408, 155));
-    pentagonPositionMap.put(10, new Point2D(350, 130));
-    pentagonPositionMap.put(11, new Point2D(287, 157));
-    pentagonPositionMap.put(12, new Point2D(248, 184));
-    pentagonPositionMap.put(13, new Point2D(208, 212));
-    pentagonPositionMap.put(14, new Point2D(170, 240));
-    pentagonPositionMap.put(15, new Point2D(115, 292));
-    pentagonPositionMap.put(16, new Point2D(123, 366));
-    pentagonPositionMap.put(17, new Point2D(139, 417));
-    pentagonPositionMap.put(18, new Point2D(155, 470));
-    pentagonPositionMap.put(19, new Point2D(171, 522));
-    pentagonPositionMap.put(20, new Point2D(202, 594));
-    pentagonPositionMap.put(21, new Point2D(275, 598));
-    pentagonPositionMap.put(22, new Point2D(324, 596));
-    pentagonPositionMap.put(23, new Point2D(375, 595));
-    pentagonPositionMap.put(24, new Point2D(425, 597));
-    pentagonPositionMap.put(50, new Point2D(503, 320));
-    pentagonPositionMap.put(55, new Point2D(430, 345));
-    pentagonPositionMap.put(100, new Point2D(347, 212));
-    pentagonPositionMap.put(110, new Point2D(349, 285));
-    pentagonPositionMap.put(150, new Point2D(195, 318));
-    pentagonPositionMap.put(165, new Point2D(268, 344));
-    pentagonPositionMap.put(200, new Point2D(250, 517));
-    pentagonPositionMap.put(220, new Point2D(300, 450));
-    pentagonPositionMap.put(250, new Point2D(441, 520));
-    pentagonPositionMap.put(275, new Point2D(395, 446));
-    pentagonPositionMap.put(1000, new Point2D(350, 375));
+    pentagonPositionMap.put(-1, new Point2D(622, 678));
+    pentagonPositionMap.put(0, new Point2D(521, 665));
+    pentagonPositionMap.put(1, new Point2D(557, 583));
+    pentagonPositionMap.put(2, new Point2D(578, 522));
+    pentagonPositionMap.put(3, new Point2D(595, 462));
+    pentagonPositionMap.put(4, new Point2D(614, 402));
+    pentagonPositionMap.put(5, new Point2D(624, 316));
+    pentagonPositionMap.put(6, new Point2D(561, 254));
+    pentagonPositionMap.put(7, new Point2D(515, 221));
+    pentagonPositionMap.put(8, new Point2D(468, 190));
+    pentagonPositionMap.put(9, new Point2D(421, 157));
+    pentagonPositionMap.put(10, new Point2D(351, 120));
+    pentagonPositionMap.put(11, new Point2D(279, 155));
+    pentagonPositionMap.put(12, new Point2D(233, 189));
+    pentagonPositionMap.put(13, new Point2D(186, 222));
+    pentagonPositionMap.put(14, new Point2D(140, 254));
+    pentagonPositionMap.put(15, new Point2D(80, 315));
+    pentagonPositionMap.put(16, new Point2D(88, 402));
+    pentagonPositionMap.put(17, new Point2D(107, 462));
+    pentagonPositionMap.put(18, new Point2D(125, 522));
+    pentagonPositionMap.put(19, new Point2D(144, 581));
+    pentagonPositionMap.put(20, new Point2D(179, 663));
+    pentagonPositionMap.put(21, new Point2D(265, 670));
+    pentagonPositionMap.put(22, new Point2D(322, 669));
+    pentagonPositionMap.put(23, new Point2D(381, 669));
+    pentagonPositionMap.put(24, new Point2D(437, 669));
+    pentagonPositionMap.put(25, new Point2D(520, 665));
+    pentagonPositionMap.put(50, new Point2D(532, 346));
+    pentagonPositionMap.put(55, new Point2D(445, 379));
+    pentagonPositionMap.put(100, new Point2D(350, 223));
+    pentagonPositionMap.put(110, new Point2D(351, 311));
+    pentagonPositionMap.put(150, new Point2D(171, 348));
+    pentagonPositionMap.put(165, new Point2D(257, 378));
+    pentagonPositionMap.put(200, new Point2D(233, 580));
+    pentagonPositionMap.put(220, new Point2D(293, 501));
+    pentagonPositionMap.put(250, new Point2D(459, 580));
+    pentagonPositionMap.put(275, new Point2D(406, 499));
+    pentagonPositionMap.put(1000, new Point2D(351, 413));
   }
 
   private void initializeHexagonPositions() {
-    hexagonPositionMap.put(-1, new Point2D(613, 474));
-    hexagonPositionMap.put(0, new Point2D(534, 477));
-    hexagonPositionMap.put(1, new Point2D(538, 416));
-    hexagonPositionMap.put(2, new Point2D(538, 381));
-    hexagonPositionMap.put(3, new Point2D(538, 346));
-    hexagonPositionMap.put(4, new Point2D(538, 310));
-    hexagonPositionMap.put(5, new Point2D(533, 263));
-    hexagonPositionMap.put(6, new Point2D(492, 220));
-    hexagonPositionMap.put(7, new Point2D(458, 201));
-    hexagonPositionMap.put(8, new Point2D(427, 183));
-    hexagonPositionMap.put(9, new Point2D(394, 165));
-    hexagonPositionMap.put(10, new Point2D(336, 157));
-    hexagonPositionMap.put(11, new Point2D(289, 167));
-    hexagonPositionMap.put(12, new Point2D(257, 185));
-    hexagonPositionMap.put(13, new Point2D(224, 204));
-    hexagonPositionMap.put(14, new Point2D(191, 222));
-    hexagonPositionMap.put(15, new Point2D(141, 263));
-    hexagonPositionMap.put(16, new Point2D(145, 310));
-    hexagonPositionMap.put(17, new Point2D(145, 345));
-    hexagonPositionMap.put(18, new Point2D(145, 381));
-    hexagonPositionMap.put(19, new Point2D(145, 416));
-    hexagonPositionMap.put(20, new Point2D(141, 477));
-    hexagonPositionMap.put(21, new Point2D(194, 494));
-    hexagonPositionMap.put(22, new Point2D(226, 512));
-    hexagonPositionMap.put(23, new Point2D(257, 530));
-    hexagonPositionMap.put(24, new Point2D(290, 549));
-    hexagonPositionMap.put(25, new Point2D(336, 580));
-    hexagonPositionMap.put(26, new Point2D(396, 551));
-    hexagonPositionMap.put(27, new Point2D(428, 532));
-    hexagonPositionMap.put(28, new Point2D(458, 514));
-    hexagonPositionMap.put(29, new Point2D(491, 497));
-    hexagonPositionMap.put(30, new Point2D(534, 477));
-    hexagonPositionMap.put(300, new Point2D(471, 435));
-    hexagonPositionMap.put(330, new Point2D(415, 405));
-    hexagonPositionMap.put(50, new Point2D(473, 293));
-    hexagonPositionMap.put(55, new Point2D(416, 323));
-    hexagonPositionMap.put(100, new Point2D(341, 219));
-    hexagonPositionMap.put(110, new Point2D(341, 281));
-    hexagonPositionMap.put(150, new Point2D(209, 293));
-    hexagonPositionMap.put(165, new Point2D(267, 323));
-    hexagonPositionMap.put(200, new Point2D(214, 434));
-    hexagonPositionMap.put(220, new Point2D(269, 403));
-    hexagonPositionMap.put(250, new Point2D(342, 506));
-    hexagonPositionMap.put(275, new Point2D(342, 447));
-    hexagonPositionMap.put(1000, new Point2D(334, 371));
+    hexagonPositionMap.put(-1, new Point2D(661, 645));
+    hexagonPositionMap.put(0, new Point2D(613, 551));
+    hexagonPositionMap.put(1, new Point2D(611, 480));
+    hexagonPositionMap.put(2, new Point2D(612, 434));
+    hexagonPositionMap.put(3, new Point2D(612, 386));
+    hexagonPositionMap.put(4, new Point2D(612, 340));
+    hexagonPositionMap.put(5, new Point2D(611, 266));
+    hexagonPositionMap.put(6, new Point2D(551, 219));
+    hexagonPositionMap.put(7, new Point2D(505, 193));
+    hexagonPositionMap.put(8, new Point2D(466, 169));
+    hexagonPositionMap.put(9, new Point2D(421, 145));
+    hexagonPositionMap.put(10, new Point2D(350, 119));
+    hexagonPositionMap.put(11, new Point2D(278, 147));
+    hexagonPositionMap.put(12, new Point2D(236, 169));
+    hexagonPositionMap.put(13, new Point2D(192, 193));
+    hexagonPositionMap.put(14, new Point2D(148, 218));
+    hexagonPositionMap.put(15, new Point2D(88, 265));
+    hexagonPositionMap.put(16, new Point2D(88, 340));
+    hexagonPositionMap.put(17, new Point2D(88, 386));
+    hexagonPositionMap.put(18, new Point2D(88, 432));
+    hexagonPositionMap.put(19, new Point2D(88, 479));
+    hexagonPositionMap.put(20, new Point2D(87, 553));
+    hexagonPositionMap.put(21, new Point2D(155, 585));
+    hexagonPositionMap.put(22, new Point2D(196, 609));
+    hexagonPositionMap.put(23, new Point2D(239, 632));
+    hexagonPositionMap.put(24, new Point2D(282, 655));
+    hexagonPositionMap.put(25, new Point2D(349, 689));
+    hexagonPositionMap.put(26, new Point2D(421, 657));
+    hexagonPositionMap.put(27, new Point2D(463, 633));
+    hexagonPositionMap.put(28, new Point2D(505, 607));
+    hexagonPositionMap.put(29, new Point2D(547, 585));
+    hexagonPositionMap.put(30, new Point2D(613, 551));
+    hexagonPositionMap.put(300, new Point2D(522, 505));
+    hexagonPositionMap.put(330, new Point2D(449, 463));
+    hexagonPositionMap.put(50, new Point2D(525, 314));
+    hexagonPositionMap.put(55, new Point2D(448, 354));
+    hexagonPositionMap.put(100, new Point2D(349, 217));
+    hexagonPositionMap.put(110, new Point2D(349, 299));
+    hexagonPositionMap.put(150, new Point2D(175, 316));
+    hexagonPositionMap.put(165, new Point2D(251, 355));
+    hexagonPositionMap.put(200, new Point2D(178, 500));
+    hexagonPositionMap.put(220, new Point2D(254, 460));
+    hexagonPositionMap.put(250, new Point2D(350, 600));
+    hexagonPositionMap.put(275, new Point2D(350, 519));
+    hexagonPositionMap.put(1000, new Point2D(349, 407));
   }
 
   // GamePlayView 인터페이스 구현 메소드들
@@ -1099,5 +1100,12 @@ public class JavaFxPlayScreen extends Application implements GamePlayView {
   public void clearYutImage() {
     yutResultLabel.setText("윷 결과: ");
     yutImageLabel.setImage(null);
+  }
+
+  // Stage 종료 메서드 추가
+  public void closeStage() {
+    if (parentStage != null) {
+      parentStage.close();
+    }
   }
 }

@@ -1,4 +1,4 @@
-package view;
+package view.javafx;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -8,6 +8,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import model.BoardType;
+import view.global.GameConfigView;
 
 public class JavaFxConfigScreen extends Application implements GameConfigView {
 
