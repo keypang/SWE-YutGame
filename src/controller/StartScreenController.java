@@ -4,12 +4,12 @@ import javafx.stage.Stage;
 import model.BoardType;
 import model.GameManager;
 import model.StartInfo;
-import view.GameConfigView;
-import view.GamePlayView;
-import view.JavaFxPlayScreen;
-import view.JavaFxConfigScreen;
-import view.SwingPlayScreen;
-import view.SwingConfigScreen;
+import view.global.GameConfigView;
+import view.global.GamePlayView;
+import view.javafx.JavaFxPlayScreen;
+import view.javafx.JavaFxConfigScreen;
+import view.swing.SwingPlayScreen;
+import view.swing.SwingConfigScreen;
 
 public class StartScreenController {
 

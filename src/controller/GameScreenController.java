@@ -1,16 +1,17 @@
 package controller;
 
 import model.*;
-import view.GameConfigView;
-import view.GamePlayView;
-import view.SwingConfigScreen;
-import view.JavaFxConfigScreen;
+import view.global.GameConfigView;
+import view.global.GamePlayView;
+import view.swing.SwingConfigScreen;
+import view.javafx.JavaFxConfigScreen;
 
 import javax.swing.*;
 import javafx.stage.Stage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import view.javafx.JavaFxPlayScreen;
 
 public class GameScreenController {
 
@@ -298,8 +299,8 @@ public class GameScreenController {
     } else if (isJavaFX) {
       // JavaFX 화면인 경우 - closeStage() 메서드 호출
       try {
-        if (gameView instanceof view.JavaFxPlayScreen) {
-          ((view.JavaFxPlayScreen) gameView).closeStage();
+        if (gameView instanceof JavaFxPlayScreen) {
+          ((JavaFxPlayScreen) gameView).closeStage();
         }
       } catch (Exception e) {
         System.err.println("JavaFX 화면 닫기 실패: " + e.getMessage());

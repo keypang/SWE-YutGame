@@ -6,8 +6,7 @@ import javafx.scene.layout.VBox;
 import javafx.geometry.Pos;
 import javafx.geometry.Insets;
 import javafx.stage.Stage;
-import view.JavaFxConfigScreen;
-import view.GameConfigView;
+import view.javafx.JavaFxConfigScreen;
 import controller.StartScreenController;
 import model.GameManager;
 
