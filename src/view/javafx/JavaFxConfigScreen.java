@@ -10,17 +10,41 @@ import javafx.stage.Stage;
 import model.BoardType;
 import view.global.GameConfigView;
 
+/**
+ * JavaFx 기반의 게임 설정 화면을 구현한 클래스임. 사용자는 UI를 통하여 플레이어 수, 말 개수, 판 종류를 선택할 수 있으며, 게임 시작 버튼을
+ * 클릭하여 사용자가 선택한 정보를 컨트롤러에 전달하는 방식임. GameConfigView 인터페이스를 구현하여 컨트롤러와 연결되도록 함.
+ */
+
 public class JavaFxConfigScreen extends Application implements GameConfigView {
 
+  /**
+   * 게임 설정을 선택하는 콤보박스 (플레이어 수, 말 개수, 판 종류)
+   */
   private ComboBox<Integer> playerCountCombo;
   private ComboBox<Integer> pieceCountCombo;
   private ComboBox<BoardType> boardTypeCombo;
+
+  /**
+   * 게임 시작 버튼
+   */
   private Button startButton;
+
+  /**
+   * 현재 JavaFx Stage로 해당 화면 자체를 나타냅니다.
+   */
   private Stage primaryStage;
 
-  // 리스너
+  /**
+   * 시작 버튼 클릭 이벤트 리스너 (컨트롤러와 연결)
+   */
   private StartButtonListener startButtonListener;
 
+  /**
+   * JavaFx UI의 시작 지점
+   * 설정 화면 UI를 구성하고 표시합니다.
+   *
+   * @param primaryStage 현재 스테이지
+   */
   @Override
   public void start(Stage primaryStage) {
     this.primaryStage = primaryStage;
@@ -65,6 +89,11 @@ public class JavaFxConfigScreen extends Application implements GameConfigView {
     primaryStage.show();
   }
 
+  /**
+   * 게임 설정을 위헌 GridPane을 구성하고 생성합니다.
+   *
+   * @return 구성된 GridPane(패널)
+   */
   private GridPane createSettingsGrid() {
     GridPane grid = new GridPane();
     grid.setHgap(40);
@@ -107,6 +136,11 @@ public class JavaFxConfigScreen extends Application implements GameConfigView {
     return grid;
   }
 
+  /**
+   * 게임 설명을 보여주는 VBox를 생성합니다.
+   *
+   * @return 게임 설명 VBox
+   */
   private VBox createDescriptionBox() {
     VBox box = new VBox(10);
     box.setPadding(new Insets(15));
@@ -129,27 +163,55 @@ public class JavaFxConfigScreen extends Application implements GameConfigView {
     return box;
   }
 
-  // GameConfigView 인터페이스 구현
+  /**
+   * GameConfigView 인터페이스를 구현(implement)함.
+   */
+
+  /**
+   * 사용자가 선택한 플레이어 수를 반환합니다.
+   *
+   * @return 선택된 플레이어 수
+   */
   @Override
   public int getSelectedPlayerCount() {
     return playerCountCombo.getValue();
   }
 
+  /**
+   * 사용자가 선택한 말 개수를 반환합니다.
+   *
+   * @return 선택된 말 개수
+   */
   @Override
   public int getSelectedPieceCount() {
     return pieceCountCombo.getValue();
   }
 
+  /**
+   * 사용자가 선택한 판 종류를 반환합니다.
+   *
+   * @return 선택된 판 종류
+   */
   @Override
   public BoardType getSelectedBoardType() {
     return boardTypeCombo.getValue();
   }
 
+  /**
+   * 시작 버튼 리스너를 생성(설정)합니다.
+   *
+   * @param listener 시작 버튼이 클릭될 때 통보받을 리스너
+   */
   @Override
   public void setStartButtonListener(StartButtonListener listener) {
     this.startButtonListener = listener;
   }
 
+  /**
+   * 오류 메세지를 팝업으로 사용자에게 표시합니다.
+   *
+   * @param message 표시할 오류 메시지
+   */
   @Override
   public void displayErrorMessage(String message) {
     Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -159,6 +221,9 @@ public class JavaFxConfigScreen extends Application implements GameConfigView {
     alert.showAndWait();
   }
 
+  /**
+   * 설정 화면을 닫습니다.
+   */
   @Override
   public void close() {
     if (primaryStage != null) {
@@ -166,6 +231,11 @@ public class JavaFxConfigScreen extends Application implements GameConfigView {
     }
   }
 
+  /**
+   * JavaFx UI 실행을 위한 메인(엔트리) 메서드입니다.
+   *
+   * @param args 명령줄 인자
+   */
   public static void main(String[] args) {
     launch(args);
   }

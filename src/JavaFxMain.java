@@ -10,12 +10,25 @@ import view.javafx.JavaFxConfigScreen;
 import controller.StartScreenController;
 import model.GameManager;
 
+/**
+ * JavaFx 기반 윷놀이 게임의 메인 클래스임. 프로그램 시작 시 게임 초기 화면을 보여주며, 설정 화면으로 진입하거나 종료 기능을 제공함.
+ */
 public class JavaFxMain extends Application {
 
+  /**
+   * JavaFx 기반 UI 프로그램의 진입점
+   *
+   * @param args 커맨드라인 인자
+   */
   public static void main(String[] args) {
     launch(args); // JavaFX 앱 시작
   }
 
+  /**
+   * JavaFx 프로그램 시작 시 호출 되는 메서드입니다.
+   * 메인 시작 화면을 생성합니다.
+   * @param primaryStage 메인 Stage(현재)
+   */
   @Override
   public void start(Stage primaryStage) {
     primaryStage.setTitle("윷놀이 게임");
@@ -58,6 +71,12 @@ public class JavaFxMain extends Application {
     primaryStage.show();
   }
 
+  /**
+   * 설정 화면을 생성하고 컨트롤러를 연결한 후,
+   * 메인 타이틀 화면을 닫고 설정 화면을 띄운다.
+   *
+   * @param primaryStage 메인 Stage(현재)
+   */
   private void openConfigScreenWithController(Stage primaryStage) {
     try {
       // 게임 매니저 생성

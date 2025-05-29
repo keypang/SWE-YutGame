@@ -22,15 +22,28 @@ import java.io.File;
 import java.util.*;
 import view.global.GamePlayView;
 
+/**
+ * JavaFxPlayScreen 클래스는 JavaFx를 기반으로 구현된 윷놀이 게임의 플레이 화면임. GamePlayView 인터페이스를 구현(implement)하여 컨트
+ * 롤러와 YI의 상호작용을 처리하며, 플레이어 말의 이동, 윷 결과 표시, 게임 종료 처리 등의 기능을 수행함. UI의 구성 요소는 좌측과 우측으로 나
+ * 눌 수 있는데, 좌측은 보드 이미지, 말의 위치를 나타내고 우측은 플레이어의 현재 상태, 윷 결과, 윷 던지기, 게임 종료 버튼 등을 포함함.
+ */
 public class JavaFxPlayScreen extends Application implements GamePlayView {
 
+  /**
+   * 현재 JavaFx Stage로 해당 화면 자체를 나타냅니다.
+   */
   private Stage parentStage;
 
+  /**
+   * 게임 설정인 플레이어 수, 말 개수, 판 종류를 나타냅니다.
+   */
   private int playerCount;
   private int pieceCount;
   private BoardType boardType;
 
-  // 리스너들
+  /**
+   * 게임 내 컨트롤러와 정보를 주고 받을 수 있는 리스너를 나타냅니다.
+   */
   private ThrowButtonListener throwButtonListener;
   private FixedYutButtonListener fixedYutButtonListener;
   private PieceSelectionListener pieceSelectionListener;
@@ -38,11 +51,12 @@ public class JavaFxPlayScreen extends Application implements GamePlayView {
   private GameEndListener gameEndListener;
   private TakeOutButtonListener takeOutButtonListener;
 
-  // 버튼
+  /**
+   * UI 컴포넌트를 나타냅니다. (추후 위치 변경 및 UI repaint에 활용하기 위함)
+   */
   private Button testRollButton;
   private Button rollButton;
 
-  // UI 요소들
   private ImageView turnArrowLabel;
   private ArrayList<Image> playerIcons = new ArrayList<>();
   private ArrayList<ImageView> pieceLabels = new ArrayList<>();
@@ -56,30 +70,47 @@ public class JavaFxPlayScreen extends Application implements GamePlayView {
   private List<Circle> movablePoints = new ArrayList<>();
   private List<Label> stackCountLabels = new ArrayList<>();
 
-  // 게임 상태
+  private Pane boardPane;
+
+  /**
+   * 게임의 현재 진행 상태를 나타냅니다.
+   */
   private int currentPlayerIndex = 0;
   private int selectedPieceIndex = 0;
   private boolean waitingPieceSelection = false;
   private int isCorrectPlayer = 1;
 
-  // 말 관리
+  /**
+   * 여러 말들의 위치 정보를 나타냅니다.
+   */
   private Map<String, ImageView> playerPiecesMap = new HashMap<>();
   private Map<Integer, HBox> playerPiecePanels = new HashMap<>();
 
-  // 좌표 맵
+  /**
+   * 각 판 종류 별 좌표값을 나타냅니다.
+   */
   private Map<Integer, Point2D> squarePositionMap = new HashMap<>();
   private Map<Integer, Point2D> pentagonPositionMap = new HashMap<>();
   private Map<Integer, Point2D> hexagonPositionMap = new HashMap<>();
 
-  // 보드 패널 참조
-  private Pane boardPane;
-
+  /**
+   * 게임 설정 화면으로부터 초기 구성 정보를 받아 초기화합니다.
+   *
+   * @param playerCount 플레이어 수
+   * @param pieceCount 말 개수
+   * @param boardType 판 종류
+   */
   public JavaFxPlayScreen(int playerCount, int pieceCount, BoardType boardType) {
     this.playerCount = playerCount;
     this.pieceCount = pieceCount;
     this.boardType = boardType;
   }
 
+  /**
+   * JavaFx UI의 시작 지점으로, 전체 게임 화면을 구성합니다.
+   *
+   * @param primaryStage 메인 화면 Stage
+   */
   @Override
   public void start(Stage primaryStage) {
     primaryStage.setTitle("게임 화면");
@@ -107,7 +138,12 @@ public class JavaFxPlayScreen extends Application implements GamePlayView {
     primaryStage.show();
   }
 
-  // 게임 판 패널 생성
+  /**
+   * 선택된 판 종류에 따라 판에 해당하는 Panel을 구성 및 생성합니다.(완주 셀 포함)
+   * 전체 UI를 기준으로 왼쪽 화면에 해당합니다.
+   *
+   * @return 판 영역을 담는 패널 객체
+   */
   private Pane createBoardPane() {
     Pane pane = new Pane();
     pane.setPrefSize(700, 720);
@@ -168,7 +204,13 @@ public class JavaFxPlayScreen extends Application implements GamePlayView {
     return pane;
   }
 
-  // 게임 정보 및 컨트롤 패널 생성
+  /**
+   * 게임 상태, 플레이어 정보, 윷 버튼 등을 포함하는 Panel을 구성 및 생성합니다.
+   * 전체 UI를 기준으로 오른쪽 화면에 해당합니다.
+   * 해당 패널은 PlayerInfo, YutResult 패널을 포함합니다.
+   * 
+   * @return 게임 진행 요소가 포함된 VBox 객체
+   */
   private VBox createControlPane() {
     VBox pane = new VBox(5);
     pane.setPadding(new Insets(20));
@@ -247,7 +289,13 @@ public class JavaFxPlayScreen extends Application implements GamePlayView {
     return pane;
   }
 
-  // 플레이어 정보 패널 생성
+  /**
+   * 현재 플레이어와 게임 상태 정보를 표시하는 VBox를 생성합니다.
+   * TitledPane으로 감싸여 UI를 구별합니다.
+   * ControlPane의 일부 패널에 해당합니다.
+   *
+   * @return 플레이어의 말, 턴 정보 등의 담긴 VBox 객체
+   */
   private VBox createPlayerInfoPane() {
     VBox pane = new VBox(4);
     pane.setStyle(
@@ -347,7 +395,13 @@ public class JavaFxPlayScreen extends Application implements GamePlayView {
     return pane;
   }
 
-  // 윷 결과 표시 패널 생성
+  /**
+   * 윷 결과 정보를 시각적으로 보여주는 HBox 패널을 생성합니다.
+   * 최근 윷 결과 리스트가 포함됩니다.
+   * ControlPane의 일부 패널에 해당합니다.
+   *
+   * @return 윷 결과 이미지와 윷 결과 리스트가 담긴 HBox 객체
+   */
   private HBox createYutResultPane() {
     HBox pane = new HBox(20);
     pane.setPadding(new Insets(10));
@@ -397,12 +451,17 @@ public class JavaFxPlayScreen extends Application implements GamePlayView {
     return pane;
   }
 
-  // 말 선택 시 처리 메서드
+  /**
+   * 사용자가 선택 가능한 말을 선택할 시 리스너를 통하여 해당 말의 ID를 컨트롤러로 전달합니다.
+   * 클릭된 말은 파란색 테두리로 강조표시가 됩니다.
+   *
+   * @param pieceId 클릭된 말의 ID
+   */
   private void onPieceSelected(int pieceId) {
     Map<Integer, Integer> availableCells = null;
     if (pieceSelectionListener != null) {
       selectedPieceIndex = pieceId;
-      System.out.println("말 선택한 후 전달될 piece ID :" + pieceId);
+      //System.out.println("말 선택한 후 전달될 piece ID :" + pieceId);
       availableCells = pieceSelectionListener.onPieceSelected(pieceId);
 
       ImageView selectedPiece = playerPiecesMap.get((currentPlayerIndex + 1) + "_" + pieceId);
@@ -414,7 +473,12 @@ public class JavaFxPlayScreen extends Application implements GamePlayView {
     showMovablePoints(availableCells);
   }
 
-  // 말 옮기는 지점 표시 메서드
+  /**
+   * 말 이동 가능 지점을 보드에 빨간 원으로 표시합니다.
+   * 클릭 시 해당 셀로 이동한 것으로 처리합니다.
+   *
+   * @param availableCells 이동 가능한 셀 정보
+   */
   public void showMovablePoints(Map<Integer, Integer> availableCells) {
     // 기존 이동 가능 지점들 제거
     for (Circle point : movablePoints) {
@@ -482,7 +546,10 @@ public class JavaFxPlayScreen extends Application implements GamePlayView {
     }
   }
 
-  // 지정 윷을 정하는 화면 표시하는 메서드
+  /**
+   * 지정윷 던지기 버튼을 누른 후, 사용자에게 선택할 수 있도록 다이얼로그를 표시합니다.
+   * 선택된 결과는 리스너를 통해 컨트롤러로 전달됩니다.
+   */
   private void displayResultSelect() {
     String[] yutResult = {"백도", "도", "개", "걸", "윷", "모"};
 
@@ -519,7 +586,7 @@ public class JavaFxPlayScreen extends Application implements GamePlayView {
     dialog.showAndWait();
   }
 
-  // 단일 윷 결과를 표시
+
   private void displaySingleYutResult(YutResult result) {
     String resultText = result.name();
     String imageName = getYutImageName(result.getMove());
@@ -537,7 +604,12 @@ public class JavaFxPlayScreen extends Application implements GamePlayView {
     }
   }
 
-  // 윷 이미지 이름 반환
+  /**
+   * 이동 칸 수에 따라 해당하는 윷 결과의 한글 이름을 반환합니다.
+   *
+   * @param move 이동 칸 수
+   * @return 윷 결과 한글 이름
+   */
   private String getYutImageName(int move) {
     switch (move) {
       case -1:
@@ -557,7 +629,13 @@ public class JavaFxPlayScreen extends Application implements GamePlayView {
     }
   }
 
-  // 윷 결과 팝업 표시
+  /**
+   * 윷 결과를 시각적으로 보여주는 팝업을 표시하고 2초 후 자동으로 닫습니다.
+   * 결과에 따라 추가 알림 메세지를 표시합니다.
+   *
+   * @param imageName 이미지 파일 이름
+   * @param resultText 윷 결과 한글 이름
+   */
   private void showYutResultPopup(String imageName, String resultText) {
     Stage resultDialog = new Stage();
     resultDialog.initOwner(parentStage);
@@ -602,7 +680,12 @@ public class JavaFxPlayScreen extends Application implements GamePlayView {
     }
   }
 
-  // 보드에 따른 좌표 반환 메서드
+  /**
+   * 판 종류에 따라 해당 셀 ID의 X,Y 좌표를 출력합니다.
+   *
+   * @param cellId 셀 번호
+   * @return 정수형 X,Y 좌표
+   */
   private Point2D getPositionByBoardType(int cellId) {
     if (boardType == BoardType.SQUARE) {
       return squarePositionMap.get(cellId);
@@ -615,7 +698,11 @@ public class JavaFxPlayScreen extends Application implements GamePlayView {
     }
   }
 
-  // Alert 표시
+  /**
+   * 알림창을 표시합니다.
+   *
+   * @param message 알림 내용
+   */
   private void showAlert(String message) {
     Alert alert = new Alert(Alert.AlertType.INFORMATION);
     alert.setTitle("알림");
@@ -624,7 +711,9 @@ public class JavaFxPlayScreen extends Application implements GamePlayView {
     alert.showAndWait();
   }
 
-  // 좌표 초기화
+  /**
+   * 현재 선택된 판 종류에 맞추어 좌표 맵을 초기화합니다.
+   */
   private void initializePositions() {
     if (boardType == BoardType.SQUARE) {
       initializeSquarePositions();
@@ -758,7 +847,9 @@ public class JavaFxPlayScreen extends Application implements GamePlayView {
     hexagonPositionMap.put(1000, new Point2D(349, 407));
   }
 
-  // GamePlayView 인터페이스 구현 메소드들
+  /**
+   * GamePlayView의 인터페이스를 구현한 것으로 컨트롤러와 정보를 주고 받기 위한 리스너를 설정합니다.
+   */
   @Override
   public void setThrowButtonListener(ThrowButtonListener throwButtonListener) {
     this.throwButtonListener = throwButtonListener;
@@ -785,6 +876,16 @@ public class JavaFxPlayScreen extends Application implements GamePlayView {
   }
 
   @Override
+  public void setTakeOutButtonListener(TakeOutButtonListener takeOutButtonListener) {
+    this.takeOutButtonListener = takeOutButtonListener;
+  }
+
+  /**
+   * 던져진 윷 결과 목록을 화면에 표시합니다.
+   *
+   * @param results 윷 결과 목록
+   */
+  @Override
   public void displayYutResultList(List<YutResult> results) {
     yutResultsPanel.getChildren().clear();
     yutResultLabels.clear();
@@ -805,6 +906,12 @@ public class JavaFxPlayScreen extends Application implements GamePlayView {
     }
   }
 
+  /**
+   * 사용자가 소모할 윷을 선택하도록 다이얼로그를 띄우고 결과를 반환합니다.
+   *
+   * @param yutResult 선택 가능한 윷 결과 배열
+   * @return 사용자가 선택한 윷 결과 한글 문자열
+   */
   @Override
   public String showYutSelectPanel(YutResult[] yutResult) {
     final String[] selectedResult = {null};
@@ -841,11 +948,11 @@ public class JavaFxPlayScreen extends Application implements GamePlayView {
     return selectedResult[0];
   }
 
-  @Override
-  public void setTakeOutButtonListener(TakeOutButtonListener takeOutButtonListener) {
-    this.takeOutButtonListener = takeOutButtonListener;
-  }
-
+  /**
+   * 현재 플레이어(턴정보)를 업데이트하고 UI에 표시합니다.
+   *
+   * @param playerNumber 현재 플레이어 번호 (1부터 시작하는 인덱스)
+   */
   @Override
   public void updateCurrentPlayer(int playerNumber) {
     currentPlayerLabel.setText("현재 플레이어: " + playerNumber);
@@ -878,6 +985,11 @@ public class JavaFxPlayScreen extends Application implements GamePlayView {
     }
   }
 
+  /**
+   * 윷 던지기 버튼과 지정 윷 던지기 버튼의 활성화 여부를 설정합니다.
+   *
+   * @param enabled true면 버튼 활성화, false면 비활성화
+   */
   @Override
   public void setThrowButtonEnabled(boolean enabled) {
     rollButton.setDisable(!enabled);
@@ -896,11 +1008,17 @@ public class JavaFxPlayScreen extends Application implements GamePlayView {
     }
   }
 
+  /**
+   * 현재 말 선택 기능을 활성화합니다.
+   */
   @Override
   public void enableWaitingPieceSelection() {
     this.waitingPieceSelection = true;
   }
 
+  /**
+   * 말 선택 기능을 비활성화하고 사용자에게 알림을 표시합니다.
+   */
   @Override
   public void disablePieceSelection() {
     showAlert("먼저 윷을 던져주세요!");
@@ -908,11 +1026,20 @@ public class JavaFxPlayScreen extends Application implements GamePlayView {
     this.waitingPieceSelection = false;
   }
 
+  /**
+   * 하단 상태 메세지를 갱신합니다.
+   *
+   * @param message 상태 메시지 텍스트
+   */
   @Override
   public void setStatusMessage(String message) {
     statusMessageLabel.setText(message);
   }
 
+  /**
+   * 말들의 현재(변화된) 위치 정보를 기반으로 보드 위에 다시 배치합니다.
+   * 말이 업혀 있는 경우에는 스택 수를 표시합니다.
+   */
   @Override
   public void repaintAllPieces() {
     if (takeOutButtonListener == null) {
@@ -1054,6 +1181,12 @@ public class JavaFxPlayScreen extends Application implements GamePlayView {
     }
   }
 
+  /**
+   * 게임 종료 팝업을 표새하고, 사용자의 선택에 따라
+   * 새 게임 설정, 같은 설정으로 재시작, 게임 종료를 선택하도록 합니다.
+   *
+   * @param winnerPlayer 승리한 플레이어 번호 (1부터 시작하는 인덱스)
+   */
   @Override
   public void showGameEndDialog(int winnerPlayer) {
     Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -1087,6 +1220,9 @@ public class JavaFxPlayScreen extends Application implements GamePlayView {
     }
   }
 
+  /**
+   * 선택된 말의 선택 효과를 제거하고 선택 인덱스를 초기화합니다.
+   */
   @Override
   public void clearPieceSelection() {
     for (Map.Entry<String, ImageView> entry : playerPiecesMap.entrySet()) {
@@ -1096,13 +1232,18 @@ public class JavaFxPlayScreen extends Application implements GamePlayView {
     this.selectedPieceIndex = -1;
   }
 
+  /**
+   * 윷 결과 이미지와 텍스트를 초기화합니다.
+   */
   @Override
   public void clearYutImage() {
     yutResultLabel.setText("윷 결과: ");
     yutImageLabel.setImage(null);
   }
 
-  // Stage 종료 메서드 추가
+  /**
+   * 현재 화면(Stage)을 닫습니다.
+   */
   public void closeStage() {
     if (parentStage != null) {
       parentStage.close();

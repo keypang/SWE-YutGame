@@ -8,12 +8,27 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import view.global.GameConfigView;
 
+/**
+ * SwingConfigScreen 클래스는 Swing 기반으로 구성된 윷놀이 게임 설정 화면임. 사용자는 이 화면에서 플레이어 수, 말 개수, 판 종류를 선택 할
+ * 수 있으며, 설정된 정보는 GameConfigView 인터페이스를 통해 컨트롤러와 연동됨.
+ */
 public class SwingConfigScreen extends JFrame implements GameConfigView {
 
+  /**
+   * 게임 설정을 선택하는 콤보박스 (플레이어 수, 말 개수, 판 종류)
+   */
   private JComboBox<Integer> playerCountCombo;
   private JComboBox<Integer> pieceCountCombo;
   private JComboBox<BoardType> boardTypeCombo;
+
+  /**
+   * 게임 시작 버튼
+   */
   private JButton startButton;
+
+  /**
+   * 시작 버튼 클릭 시 동작할 리스너
+   */
   private StartButtonListener startButtonListener;
 
   /**
@@ -29,11 +44,19 @@ public class SwingConfigScreen extends JFrame implements GameConfigView {
    * startButtonListener.onStartButtonClicked() 이 코드는 Controller 의 process() 코드와 동일하다고 보면 됨.
    */
 
+  /**
+   * Swing 기반 게임 설정 화면을 초기화합니다.
+   * 기본 제목과 UI 구성을 설정합니다.
+   */
   public SwingConfigScreen() {
     super("게임 설정");
     initUI();
   }
 
+  /**
+   * 게임 설정 UI를 초기화합니다.
+   * 각 요소(플레이어 수, 말 개수, 판 종류, 설명, 시작 버튼)를 배치하고 이벤트를 설정합니다.
+   */
   private void initUI() {
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     setSize(800, 500);
@@ -127,7 +150,11 @@ public class SwingConfigScreen extends JFrame implements GameConfigView {
     setVisible(true);
   }
 
-  // 게임 설명 패널 생성 메서드
+  /**
+   * 게임 설명을 포함하는 설명 패널을 생성합니다.
+   *
+   * @return 설명이 포함된 JLPanel 객체
+   */
   private JPanel createDescriptionPanel() {
 
     JPanel panel = new JPanel();
@@ -148,8 +175,11 @@ public class SwingConfigScreen extends JFrame implements GameConfigView {
     return panel;
   }
 
-
-  // GameView 인터페이스 구현 메서드들
+  /**
+   * 사용자가 선택한 정보를 정수형 또는 BoardType으로 반환합니다.
+   *
+   * @return 선택된 플레이어 수, 말 개수, 판 종류
+   */
   @Override
   public int getSelectedPlayerCount() {
     return (Integer) playerCountCombo.getSelectedItem();
@@ -165,17 +195,29 @@ public class SwingConfigScreen extends JFrame implements GameConfigView {
     return (BoardType) boardTypeCombo.getSelectedItem();
   }
 
-
+  /**
+   * GameConfigView 인터페이스를 구현(implement)하는 메서드입니다.
+   * 사용자가 선택한 정보를 컨트롤러로 전달하는 역할을 수행합니다.
+   *
+   */
   @Override
   public void setStartButtonListener(StartButtonListener listener) {
     this.startButtonListener = listener;
   }
 
+  /**
+   * 사용자에게 오류 메세지를 팝업으로 표시합니다.
+   *
+   * @param message 표시할 오류 메시지
+   */
   @Override
   public void displayErrorMessage(String message) {
     JOptionPane.showMessageDialog(this, message, "오류", JOptionPane.ERROR_MESSAGE);
   }
 
+  /**
+   * 게임 설정 창을 닫습니다.
+   */
   @Override
   public void close() {
     dispose();
