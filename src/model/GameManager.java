@@ -129,6 +129,7 @@ public class GameManager {
    * 플레이어 정보를 초기화 합니다.
    */
   public void initPlayers() {
+    players.clear();
     for (int i = 1; i <= startInfo.getPlayerCount(); i++) {
       players.add(new Player(i, startInfo.getPieceCount()));
     }
@@ -138,6 +139,7 @@ public class GameManager {
    * 초기 위치 정보를 세팅합니다.
    */
   public void initPosInfo() {
+    posInfo.clear();
     // 말 id, 플레이어 id, 지점 id
     for (Player player : players) {
       int playerId = player.getId();
