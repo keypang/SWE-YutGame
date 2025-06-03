@@ -1,6 +1,7 @@
 package view.javafx;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
@@ -600,7 +601,7 @@ public class JavaFxPlayScreen extends Application implements GamePlayView {
       yutImageLabel.setImage(yutImage);
 
       // 팝업 창에 이미지 표시
-      showYutResultPopup(imageName, resultText);
+      Platform.runLater(() -> showYutResultPopup(imageName, resultText));
     }
   }
 
@@ -649,7 +650,7 @@ public class JavaFxPlayScreen extends Application implements GamePlayView {
 
     String popupImagePath = "src/view/images/" + imageName + ".png";
     File popupImageFile = new File(popupImagePath);
-    Image popupImage = new Image(popupImageFile.toURI().toString());
+    Image popupImage = new Image(popupImageFile.toURI().toString(), false);
     ImageView imageView = new ImageView(popupImage);
     imageView.setFitWidth(300);
     imageView.setFitHeight(300);
