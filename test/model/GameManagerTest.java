@@ -38,7 +38,6 @@ class GameManagerTest {
     for (PositionDTO dto : result) {
       System.out.print(dto.toString());
     }
-
   }
 
   @Test
@@ -131,15 +130,6 @@ class GameManagerTest {
     gameManager.throwFixedYut("윷");
     gameManager.throwFixedYut("모");
 
-/*
-        // 윷 결과 확인
-        System.out.println(gameManager.getYutResults());
-
-        // 이동 가능 지점 확인
-        Map<Integer, Integer> movableMap = gameManager.findMovableCells(5);
-        System.out.println(movableMap);
-*/
-
     // 특정 cell에서 이동 가능한 셀 계산
     int startCellId = 1;
     Map<Integer, Integer> result = gameManager.findMovableCells(startCellId);
@@ -155,7 +145,5 @@ class GameManagerTest {
     );
 
     assertEquals(expected, result);
-
-
   }
 }

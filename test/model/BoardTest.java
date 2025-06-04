@@ -27,21 +27,14 @@ class BoardTest {
     @Test
     void getMovableCells() {
         int[] movableCells = new int[1];
-        //movableCells[0] = 1;
-        //movableCells[1] = 2;
         movableCells[0] = 4;
-        //movableCells[3] = -1;
 
         Cell cell = board.getCell(10);
 
         int[] result = board.getMovableCells(cell, movableCells);
+        int[] expected = { 275, };
 
-        int[] expected = { 50, 55, -1, 4 };
-
-        //assertArrayEquals(expected, result);
-        for(int i: result) {
-            System.out.print(i + " ");
-        }
+        assertArrayEquals(expected, result);
     }
 
     @Test
@@ -55,10 +48,7 @@ class BoardTest {
         move = 1;
         board.movePiecePositive(piece, move);
         Cell cell = board.getCell(move);
-        //assertEquals(cell.getId(), piece.getStartCell().getId());
-
-        System.out.println(piece.getStartCell().getId());
-
+        assertEquals(cell.getId(), 1);
     }
 
     @Test
