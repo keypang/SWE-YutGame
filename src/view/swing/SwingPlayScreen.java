@@ -14,29 +14,34 @@ import java.util.Map;
 import java.util.Arrays;
 import view.global.GamePlayView;
 
+/**
+ * 자바 Swing 기반의 윷놀이 게임 화면 클래스임. GamePLayView 인터페이스를 구현하여 컨트롤러와 연결됨. 말, 윷 결과, 윷 던지기 버튼 등의 UI
+ * 요소를 포함하고 있으며, 사용자와 상호작용하여 윷 던지기, 말 선택, 이동 등을 구현함.
+ *
+ * 게임 메인 화면을 구성하는 JFrame 클래스임. 플레이어 수, 말 수, 판 종류를 기반으로 화면을 구성함.
+ */
 public class SwingPlayScreen extends JFrame implements GamePlayView {
 
+  /**
+   * 게임 설정인 플레이어 수, 말 개수, 판 종류를 나타냅니다.
+   */
   private int playerCount;
   private int pieceCount;
   private BoardType boardType;
-  private ArrayList<ImageIcon> playerIcons = new ArrayList<>();
 
-  //좌표와 Cell 매핑 (키 : cell_numer_point(X,Y))
+  /**
+   * 각 판 종류 별 좌표값을 나타냅니다.
+   */
   private Map<Integer, Point> squarePositionMap = new HashMap<>();
   private Map<Integer, Point> pentagonPositionMap = new HashMap<>();
   private Map<Integer, Point> hexagonPositionMap = new HashMap<>();
 
-  // 버튼
+  /**
+   * UI 컴포넌트를 나타냅니다. (추후 위치 변경 및 UI repaint에 활용하기 위함)
+   */
+  //버튼
   private JButton rollButton;
   private JButton testRollButton;
-
-  // 필드 추가
-  private FixedYutButtonListener fixedYutButtonListener;
-  private ThrowButtonListener throwButtonListener;
-  private GameEndListener gameEndListener;
-  private TakeOutButtonListener takeOutButtonListener;
-  private PieceSelectionListener pieceSelectionListener;
-  private CellSelectionListener cellSelectionListener;
 
   // 라벨
   private JLabel yutImageLabel;
@@ -50,23 +55,50 @@ public class SwingPlayScreen extends JFrame implements GamePlayView {
 
   private JPanel yutResultsPanel;// 윷 결과 리스트를 표시할 패널 추가
 
-  private int currentPlayerIndex = 1; // 현재 플레이어 인덱스
-  private int selectedPieceIndex = 0;
-
   // 플레이어 패널에 있는 말 이미지 (키: playerID_pieceID)
   private Map<String, JLabel> playerPiecesMap = new HashMap<>();
 
+  /**
+   * 각 플레이어의 말 아이콘 이미지 리스트(이미지 로드용)
+   */
+  private ArrayList<ImageIcon> playerIcons = new ArrayList<>();
+
+  /**
+   * 게임의 현재 진행 상태를 나타냅니다.
+   */
+  private int currentPlayerIndex = 1; // 현재 플레이어 인덱스
+  private int selectedPieceIndex = 0;
+
   // 말 선택 가능 여부 변수
-  //for test true로 변경 후 테스트
   private boolean waitingPieceSelection = false;
 
   // 턴 안내 flag 변수
   private int isCorrectPlayer = 1;
 
+  /**
+   * 각 플레이어 및 말 ID의 조합으로 말 라벨을 저장한다.
+   * stackCount의 경우 말이 업힌 개수를 표시한다.
+   */
   private Map<Integer, JPanel> playerPiecePanels = new HashMap<>();
   private List<JLabel> stackCountLabels = new ArrayList<>();
 
+  /**
+   * UI와 컨트롤러의 상호작용을 위한 리스너들로 게임 진행 상황을 컨트롤러로 전달한다.
+   */
+  private FixedYutButtonListener fixedYutButtonListener;
+  private ThrowButtonListener throwButtonListener;
+  private GameEndListener gameEndListener;
+  private TakeOutButtonListener takeOutButtonListener;
+  private PieceSelectionListener pieceSelectionListener;
+  private CellSelectionListener cellSelectionListener;
 
+  /**
+   * 게임 설정 화면으로부터 초기 구성 정보를 받아 초기화합니다.
+   *
+   * @param playerCount 플레이어 수
+   * @param pieceCount 말 개수
+   * @param boardType 판 종류
+   */
   public SwingPlayScreen(int playerCount, int pieceCount, BoardType boardType) {
     super("게임 화면");
     this.playerCount = playerCount;
@@ -75,6 +107,10 @@ public class SwingPlayScreen extends JFrame implements GamePlayView {
     initUI();
   }
 
+  /**
+   * 자바 Swing UI의 시작 지점으로, 전체 게임 화면을 구성합니다.
+   *
+   */
   private void initUI() {
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     setSize(1280, 800); // 화면 높이 증가
@@ -110,7 +146,12 @@ public class SwingPlayScreen extends JFrame implements GamePlayView {
 
   }
 
-  // 게임 판 패널 생성
+  /**
+   * 선택된 판 종류에 따라 판에 해당하는 Panel을 구성 및 생성합니다.(완주 셀 포함)
+   * 전체 UI를 기준으로 왼쪽 화면에 해당합니다.
+   *
+   * @return 판 영역을 담는 패널 객체
+   */
   private JPanel createBoardPanel() {
     JPanel panel = new JPanel();
     panel.setPreferredSize(new Dimension(700, 720));
@@ -158,7 +199,13 @@ public class SwingPlayScreen extends JFrame implements GamePlayView {
     return panel;
   }
 
-
+  /**
+   * 게임 상태, 플레이어 정보, 윷 버튼 등을 포함하는 Panel을 구성 및 생성합니다.
+   * 전체 UI를 기준으로 오른쪽 화면에 해당합니다.
+   * 해당 패널은 PlayerInfo, YutResult 패널을 포함합니다.
+   *
+   * @return 게임 진행 요소가 포함된 JPanel 객체
+   */
   private JPanel createControlPanel() {
     JPanel panel = new JPanel();
     panel.setBackground(new Color(255, 245, 230));
@@ -285,7 +332,13 @@ public class SwingPlayScreen extends JFrame implements GamePlayView {
     return panel;
   }
 
-  // 플레이어 정보 패널 생성
+  /**
+   * 현재 플레이어와 게임 상태 정보를 표시하는 JPanel를 생성합니다.
+   * BorderLine으로 감싸여 UI를 구별합니다.
+   * ControlPanel의 일부 패널에 해당합니다.
+   *
+   * @return 플레이어의 말, 턴 정보 등의 담긴 JPanel 객체
+   */
   private JPanel createPlayerInfoPanel() {
     JPanel panel = new JPanel();
     panel.setLayout(new GridLayout(playerCount, 1, 0, 10));
@@ -404,7 +457,13 @@ public class SwingPlayScreen extends JFrame implements GamePlayView {
     return panel;
   }
 
-  // 윷 결과 표시 패널 생성
+  /**
+   * 윷 결과 정보를 시각적으로 보여주는 JPanel 패널을 생성합니다.
+   * 최근 윷 결과 리스트가 포함됩니다.
+   * ControlPanel의 일부 패널에 해당합니다.
+   *
+   * @return 윷 결과 이미지와 윷 결과 리스트가 담긴 JPanel 객체
+   */
   private JPanel createYutResultPanel() {
     JPanel panel = new JPanel(new BorderLayout(10, 10));
     panel.setBackground(new Color(255, 245, 230));
@@ -454,7 +513,10 @@ public class SwingPlayScreen extends JFrame implements GamePlayView {
     return panel;
   }
 
-  //지정 윷을 정하는 화면 표시하는 메서드
+  /**
+   * 지정윷 던지기 버튼을 누른 후, 사용자에게 선택할 수 있도록 다이얼로그를 표시합니다.
+   * 선택된 결과는 리스너를 통해 컨트롤러로 전달됩니다.
+   */
   private void displayResultSelect() {
     // 윷 선택 리스너 생성
     SelectYutResultScreen.YutSelectListener listener = result -> {
@@ -471,7 +533,12 @@ public class SwingPlayScreen extends JFrame implements GamePlayView {
     new SelectYutResultScreen(this, listener, yutResult);
   }
 
-  // 단일 윷 결과를 표시 (팝업용)
+  /**
+   * 윷 결과를 화면에 표시하고 결과를 시각적으로 보여주는 팝업을 표시하고 3초 후 자동으로 닫습니다.
+   * 결과에 따라 추가 알림 메세지를 표시합니다.
+   *
+   * @param result 윷 결과
+   */
   private void displaySingleYutResult(YutResult result) {
     String resultText = result.name();
     String imageName = "";
@@ -551,7 +618,12 @@ public class SwingPlayScreen extends JFrame implements GamePlayView {
     }
   }
 
-  // 윷 선택하는 패널(팝업) 생성 메서드
+  /**
+   * 사용자가 소모할 윷을 선택하도록 다이얼로그를 띄우고 결과를 반환합니다.
+   *
+   * @param yutResult 선택 가능한 윷 결과 배열
+   * @return 사용자가 선택한 윷 결과 한글 문자열
+   */
   public String showYutSelectPanel(YutResult[] yutResult) {
     final String[] selectedResult = {null};
 
@@ -594,7 +666,12 @@ public class SwingPlayScreen extends JFrame implements GamePlayView {
     return selectedResult[0];
   }
 
-  // 말 선택 시 처리 메서드
+  /**
+   * 사용자가 선택 가능한 말을 선택할 시 리스너를 통하여 해당 말의 ID를 컨트롤러로 전달합니다.
+   * 클릭된 말은 파란색 테두리로 강조표시가 됩니다.
+   *
+   * @param pieceId 클릭된 말의 ID
+   */
   private void onPieceSelected(int pieceId) {
     //for test == null로 변경 후 test
     Map<Integer, Integer> availableCells = null;
@@ -614,7 +691,12 @@ public class SwingPlayScreen extends JFrame implements GamePlayView {
     showMovablePoints(availableCells);
   }
 
-  // 말 옮기는 지점 표시 메서드
+  /**
+   * 말 이동 가능 지점을 보드에 빨간 원으로 표시합니다.
+   * 클릭 시 해당 셀로 이동한 것으로 처리합니다.
+   *
+   * @param availableCells 이동 가능한 셀 정보
+   */
   public void showMovablePoints(Map<Integer, Integer> availableCells) {
     JPanel boardPanel = getBoardPanel();
     for (JLabel label : movablePoints) {
@@ -706,7 +788,7 @@ public class SwingPlayScreen extends JFrame implements GamePlayView {
     }
   }
 
-  // 말 꺼내기 시 메서드(사용 안 함)
+  // 말 꺼내기 시 메서드(테스트용)
   public void takeOutPiece(int playerId, List<PositionDTO> currentPositions) {
     boolean ownAlreadyStart = false;
     boolean canTakeOut = false;
@@ -745,8 +827,6 @@ public class SwingPlayScreen extends JFrame implements GamePlayView {
       System.out.println(dto);
     }
 
-    //이상부분 컨트롤러로 이전 필요======================================================================
-
     //View에서 위치 업데이트
     JLabel pieceLabel = playerPiecesMap.get(playerId + "_" + pieceIdToTakeOut);
     if (pieceLabel != null) {
@@ -760,7 +840,11 @@ public class SwingPlayScreen extends JFrame implements GamePlayView {
     }
   }
 
-  // 윷 결과 리스트를 화면에 표시하는 메서드 구현
+  /**
+   * 던져진 윷 결과 목록을 화면에 표시합니다.
+   *
+   * @param results 윷 결과 목록
+   */
   @Override
   public void displayYutResultList(List<YutResult> results) {
     // 기존 결과 라벨들 모두 제거
@@ -796,7 +880,11 @@ public class SwingPlayScreen extends JFrame implements GamePlayView {
     yutResultsPanel.repaint();
   }
 
-  // 현재 플레이어 업데이트
+  /**
+   * 현재 플레이어(턴정보)를 업데이트하고 UI에 표시합니다.
+   *
+   * @param playerNumber 현재 플레이어 번호 (1부터 시작하는 인덱스)
+   */
   @Override
   public void updateCurrentPlayer(int playerNumber) {
     currentPlayerLabel.setText("현재 플레이어: " + playerNumber);
@@ -843,6 +931,12 @@ public class SwingPlayScreen extends JFrame implements GamePlayView {
     }
   }
 
+  /**
+   * 게임 종료 팝업을 표새하고, 사용자의 선택에 따라
+   * 새 게임 설정, 같은 설정으로 재시작, 게임 종료를 선택하도록 합니다.
+   *
+   * @param winnerPlayer 승리한 플레이어 번호 (1부터 시작하는 인덱스)
+   */
   @Override
   public void showGameEndDialog(int winnerPlayer) {
     // 게임 종료 다이얼로그 생성
@@ -939,7 +1033,12 @@ public class SwingPlayScreen extends JFrame implements GamePlayView {
     endDialog.setVisible(true);
   }
 
-  // 보드에 따른 좌표 반환 메서드
+  /**
+   * 판 종류에 따라 해당 셀 ID의 X,Y 좌표를 출력합니다.
+   *
+   * @param cellId 셀 번호
+   * @return 정수형 X,Y 좌표
+   */
   private Point getPositionByBoardType(int cellId) {
     if (boardType == BoardType.SQUARE) {
       return squarePositionMap.get(cellId);
@@ -952,7 +1051,10 @@ public class SwingPlayScreen extends JFrame implements GamePlayView {
     }
   }
 
-  // 말 전체 다시 그리기 메서드
+  /**
+   * 말들의 현재(변화된) 위치 정보를 기반으로 보드 위에 다시 배치합니다.
+   * 말이 업혀 있는 경우에는 스택 수를 표시합니다.
+   */
   public void repaintAllPieces() {
     if (takeOutButtonListener == null) {
       return;
@@ -1117,13 +1219,18 @@ public class SwingPlayScreen extends JFrame implements GamePlayView {
     boardPanel.repaint();
   }
 
-  // 윷 이미지 초기화 메서드
+  /**
+   * 윷 결과 이미지와 텍스트를 초기화합니다.
+   */
   @Override
   public void clearYutImage() {
     yutResultLabel.setText("윷 결과: ");
     yutImageLabel.setIcon(null);
   }
 
+  /**
+   * GamePlayView의 인터페이스를 구현한 것으로 컨트롤러와 정보를 주고 받기 위한 리스너를 설정합니다.
+   */
   @Override
   public void setThrowButtonListener(ThrowButtonListener throwButtonListener) {
     this.throwButtonListener = throwButtonListener;
@@ -1154,6 +1261,11 @@ public class SwingPlayScreen extends JFrame implements GamePlayView {
     this.gameEndListener = listener;
   }
 
+  /**
+   * 윷 던지기 버튼과 지정 윷 던지기 버튼의 활성화 여부를 설정합니다.
+   *
+   * @param enabled true면 버튼 활성화, false면 비활성화
+   */
   @Override
   public void setThrowButtonEnabled(boolean enabled) {
     rollButton.setEnabled(enabled);
@@ -1169,11 +1281,19 @@ public class SwingPlayScreen extends JFrame implements GamePlayView {
     }
   }
 
+  /**
+   * 하단 상태 메세지를 갱신합니다.
+   *
+   * @param message 상태 메시지 텍스트
+   */
   @Override
   public void setStatusMessage(String message) {
     statusMessageLabel.setText(message);
   }
 
+  /**
+   * 선택된 말의 선택 효과를 제거하고 선택 인덱스를 초기화합니다.
+   */
   @Override
   public void clearPieceSelection() {
     // 모든 말의 테두리 제거
@@ -1186,17 +1306,26 @@ public class SwingPlayScreen extends JFrame implements GamePlayView {
   }
 
 
-  // 게임 보드 패널 가져오기
+  /**
+   * 현재 생성된 BoardPanel 객체를 반환합니다.
+   *
+   * @return Board JPanel 객체
+   */
   private JPanel getBoardPanel() {
     return (JPanel) ((BorderLayout) getContentPane().getLayout()).getLayoutComponent(
         BorderLayout.WEST);
   }
 
-  // 말 선택 단계 판정(페이즈 전환)
+  /**
+   * 현재 말 선택 기능을 활성화합니다.
+   */
   public void enableWaitingPieceSelection() {
     this.waitingPieceSelection = true;
   }
 
+  /**
+   * 말 선택 기능을 비활성화하고 사용자에게 알림을 표시합니다.
+   */
   public void disablePieceSelection() {
     JOptionPane.showMessageDialog(this, "먼저 윷을 던져주세요!");
     for (Map.Entry<String, JLabel> entry : playerPiecesMap.entrySet()) {
@@ -1207,7 +1336,9 @@ public class SwingPlayScreen extends JFrame implements GamePlayView {
     this.waitingPieceSelection = false;
   }
 
-  //좌표 초기화
+  /**
+   * 현재 선택된 판 종류에 맞추어 좌표 맵을 초기화합니다.
+   */
   private void initializeSquarePositions() {
     squarePositionMap.put(-1, new Point(667, 602));
     squarePositionMap.put(0, new Point(568, 604));
@@ -1355,7 +1486,7 @@ public class SwingPlayScreen extends JFrame implements GamePlayView {
   }
 
   /**
-   * 화면을 닫는 메서드
+   * 현재 화면(Frame)을 닫습니다.
    */
   public void dispose() {
     super.dispose();
